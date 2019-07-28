@@ -1,0 +1,30 @@
+{
+  "manifest_version": 2,
+  "name": "ResponsiveViewer",
+  "author": "Solaiman Kmail",
+  "version": "1.0.0",
+  "description": "Show multiple screens once.",
+  "icons": {
+    "128": "16.png"
+  },
+  "browser_action": {
+    "default_icon": "16.png"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "browsingData",
+    "webNavigation",
+    "management",
+    "<all_urls>",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_security_policy": "script-src 'self' 'sha256-5As4+3YpY62+l38PsxCEkjB1R4YtyktBtRScTJ3fyLU=';object-src 'self'"
+}
