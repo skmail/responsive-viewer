@@ -3,9 +3,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import MuiAppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import AddressBar from "./AddressBar";
-import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
 import AddIcon from "@material-ui/icons/Add";
 import HelpIcon from "@material-ui/icons/Help";
 
@@ -28,7 +29,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const AppBar = props => {
-  const { updateUrl, url, toggleDrawer, toggleScreenDialog, toggleHelpDialog } = props;
+  const {
+    updateUrl,
+    url,
+    toggleDrawer,
+    toggleScreenDialog,
+    toggleHelpDialog
+  } = props;
   const classes = useStyles();
   return (
     <MuiAppBar color="default" className={classes.root}>
@@ -45,9 +52,16 @@ const AppBar = props => {
         <Typography className={classes.title} variant="h6" noWrap>
           Responsive Viewer
         </Typography>
-        <AddressBar initialValues={{url}} onSubmit={updateUrl} />
+        <AddressBar initialValues={{ url }} onSubmit={updateUrl} />
         <div className={classes.grow} />
 
+        <Button
+          color="primary"
+          href="https://www.buymeacoffee.com/skmail"
+          target="_blank"
+        >
+          Buy me a coffee
+        </Button>
         <IconButton
           onClick={toggleHelpDialog}
           edge="end"
@@ -55,7 +69,7 @@ const AppBar = props => {
           aria-haspopup="true"
           color="inherit"
         >
-          <HelpIcon/>
+          <HelpIcon />
         </IconButton>
         <IconButton
           onClick={toggleScreenDialog}
@@ -64,7 +78,7 @@ const AppBar = props => {
           aria-haspopup="true"
           color="inherit"
         >
-          <AddIcon/>
+          <AddIcon />
         </IconButton>
       </Toolbar>
     </MuiAppBar>
