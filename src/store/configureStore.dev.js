@@ -6,31 +6,27 @@ import saga from './saga'
 
 const sagaMiddleware = createSagaMiddleware()
 
-
 const configureStore = preloadedState => {
-
-  const store = createStore(
-    rootReducer,
-    preloadedState,
-    compose(
-      applyMiddleware( createLogger(), sagaMiddleware ),
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+    const store = createStore(
+        rootReducer,
+        preloadedState,
+        compose(
+            applyMiddleware(createLogger(), sagaMiddleware),
+            window.__REDUX_DEVTOOLS_EXTENSION__ &&
+                window.__REDUX_DEVTOOLS_EXTENSION__()
+        )
     )
-  )
 
-  if (module.hot) {
-    // Enable Webpack hot module replacement for reducers
-    module.hot.accept('../reducers', () => {
-      store.replaceReducer(rootReducer)
-    })
-  }
+    if (module.hot) {
+        // Enable Webpack hot module replacement for reducers
+        module.hot.accept('../reducers', () => {
+            store.replaceReducer(rootReducer)
+        })
+    }
 
-  sagaMiddleware.run(saga)
+    sagaMiddleware.run(saga)
 
-  return store
+    return store
 }
-
-
-
 
 export default configureStore
