@@ -1,24 +1,24 @@
-import React, {useEffect} from "react";
-import AppBar from "./AppBar";
-import Screens from "./Screens";
-import {makeStyles} from "@material-ui/core/styles";
-import Sidebar from "./Sidebar";
+import React, { useEffect } from 'react'
+import AppBar from './AppBar'
+import Screens from './Screens'
+import { makeStyles } from '@material-ui/core/styles'
+import Sidebar from './Sidebar'
 import ScreenDialog from './ScreenDialog'
-import UserAgentDialog from "./UserAgentDialog";
+import UserAgentDialog from './UserAgentDialog'
 import HelpDialog from './HelpDialog'
 
 const useStyles = makeStyles(theme => {
   return {
     root: {
-      overflow:"hidden"
+      overflow: 'hidden',
     },
     toolbar: theme.mixins.toolbar,
     content: props => ({
-      width: `calc(100% - ${props.drawerOpened ?theme.drawerWidth : 0}px)`,
-      marginLeft: props.drawerOpened?theme.drawerWidth :0
-    })
-  };
-});
+      width: `calc(100% - ${props.drawerOpened ? theme.drawerWidth : 0}px)`,
+      marginLeft: props.drawerOpened ? theme.drawerWidth : 0,
+    }),
+  }
+})
 
 function App(props) {
   const {
@@ -49,14 +49,14 @@ function App(props) {
     helpDialog,
     toggleHelpDialog,
     deleteScreen,
-    appReset
+    appReset,
   } = props
 
   useEffect(() => {
     initialize()
-  },[])
+  }, [])
 
-  const classes = useStyles(props);
+  const classes = useStyles(props)
 
   return (
     <div className={classes.root}>
@@ -66,17 +66,21 @@ function App(props) {
         onClose={toggleScreenDialog}
         toggleUserAgentDialog={toggleUserAgentDialog}
         deleteScreen={deleteScreen}
-        {...screenDialog} />
+        {...screenDialog}
+      />
 
       <UserAgentDialog
         onSubmit={saveUserAgent}
         userAgents={userAgents}
-        onClose={toggleUserAgentDialog} {...userAgentDialog} />
+        onClose={toggleUserAgentDialog}
+        {...userAgentDialog}
+      />
 
       <HelpDialog
         onClose={toggleHelpDialog}
         appReset={appReset}
-        {...helpDialog}/>
+        {...helpDialog}
+      />
 
       <AppBar
         url={url}
@@ -86,7 +90,7 @@ function App(props) {
         toggleScreenDialog={toggleScreenDialog}
         toggleHelpDialog={toggleHelpDialog}
       />
-      <div className={classes.toolbar}/>
+      <div className={classes.toolbar} />
       <Sidebar
         screens={screens}
         updateScreen={updateScreen}
@@ -109,10 +113,11 @@ function App(props) {
           screens={screens}
           screenDirection={screenDirection}
           url={url}
-          versionedUrl={versionedUrl}/>
+          versionedUrl={versionedUrl}
+        />
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

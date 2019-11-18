@@ -2,78 +2,77 @@ import actionTypes from './actionTypes'
 
 export const updateUrl = url => ({
   type: actionTypes.UPDATE_URL,
-  payload:{
-    url
-  }
+  payload: {
+    url,
+  },
 })
-
 
 export const saveScreen = screen => ({
   type: actionTypes.SAVE_SCREEN,
-  payload:{
-    screen
-  }
+  payload: {
+    screen,
+  },
 })
 
 export const updateVisibility = (id, visibility) => ({
   type: actionTypes.UPDATE_VISIBILITY,
-  payload:{
+  payload: {
     id,
-    visibility
-  }
+    visibility,
+  },
 })
 
 export const sortScreens = screens => ({
   type: actionTypes.SORT_SCREENS,
-  payload:{
-    screens
-  }
+  payload: {
+    screens,
+  },
 })
 
 export const zoom = zoom => ({
   type: actionTypes.ZOOM,
-  payload:{
-    zoom
-  }
+  payload: {
+    zoom,
+  },
 })
 
 export const switchViewMode = viewMode => ({
   type: actionTypes.SWITCH_VIEW_MODE,
-  payload:{
-    viewMode
-  }
+  payload: {
+    viewMode,
+  },
 })
 
 export const scrollToScreen = id => ({
   type: actionTypes.SCROLL_TO_SCREEN,
-  payload:{
-    id
-  }
+  payload: {
+    id,
+  },
 })
 
 export const highlightScreen = id => ({
   type: actionTypes.HIGHLIGHT_SCREEN,
-  payload:{
-    id
-  }
+  payload: {
+    id,
+  },
 })
 
 export const unHighlightScreen = id => ({
   type: actionTypes.UNHIGHLIGHT_SCREEN,
-  payload:{
-    id
-  }
+  payload: {
+    id,
+  },
 })
 
 export const toggleDrawer = () => ({
-  type: actionTypes.TOGGLE_DRAWER
+  type: actionTypes.TOGGLE_DRAWER,
 })
 
-export const switchScreenDirection = (screenDirection) => ({
+export const switchScreenDirection = screenDirection => ({
   type: actionTypes.SWITCH_SCREEN_DIRECTION,
-  payload:{
-    screenDirection
-  }
+  payload: {
+    screenDirection,
+  },
 })
 
 export const initialize = () => ({
@@ -82,28 +81,28 @@ export const initialize = () => ({
 
 export const initialized = (payload = {}) => ({
   type: actionTypes.INITIALIZED,
-  payload
+  payload,
 })
 
 export const toggleScreenDialog = (initialValues = {}) => ({
   type: actionTypes.TOGGLE_SCREEN_DIALOG,
-  payload:{
-    initialValues
-  }
+  payload: {
+    initialValues,
+  },
 })
 
 export const toggleUserAgentDialog = (initialValues = {}) => ({
   type: actionTypes.TOGGLE_USER_AGENT_DIALOG,
-  payload:{
-    initialValues
-  }
+  payload: {
+    initialValues,
+  },
 })
 
 export const saveUserAgent = (userAgent = {}) => ({
   type: actionTypes.SAVE_USER_AGENT,
-  payload:{
-    userAgent
-  }
+  payload: {
+    userAgent,
+  },
 })
 
 export const toggleHelpDialog = () => ({
@@ -112,9 +111,9 @@ export const toggleHelpDialog = () => ({
 
 export const deleteScreen = id => ({
   type: actionTypes.DELETE_SCREEN,
-  payload:{
-    id
-  }
+  payload: {
+    id,
+  },
 })
 
 export const appReset = () => ({

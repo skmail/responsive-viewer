@@ -1,11 +1,11 @@
-import React from "react";
-import Drawer from "@material-ui/core/Drawer";
-import { makeStyles } from "@material-ui/core/styles";
+import React from 'react'
+import Drawer from '@material-ui/core/Drawer'
+import { makeStyles } from '@material-ui/core/styles'
 import Screens from './Screens'
 import Zoom from './Zoom'
-import ViewMode from "./ViewMode";
+import ViewMode from './ViewMode'
 import classNames from 'classnames'
-import ScreenDirection from "./ScreenDirection";
+import ScreenDirection from './ScreenDirection'
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -15,12 +15,12 @@ const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: theme.drawerWidth,
     padding: theme.spacing(2),
-    height: "100vh",
-    paddingBottom: theme.spacing(4)
+    height: '100vh',
+    paddingBottom: theme.spacing(4),
   },
   toolbar: theme.mixins.toolbar,
-  grow:{
-    flex: 1
+  grow: {
+    flex: 1,
   },
   drawerOpen: {
     width: theme.drawerWidth,
@@ -34,9 +34,9 @@ const useStyles = makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    transform: `translateX(-${theme.drawerWidth }px)`
+    transform: `translateX(-${theme.drawerWidth}px)`,
   },
-}));
+}))
 
 const Sidebar = props => {
   const {
@@ -51,10 +51,10 @@ const Sidebar = props => {
     open,
     switchScreenDirection,
     screenDirection,
-    toggleScreenDialog
-  } = props;
+    toggleScreenDialog,
+  } = props
 
-  const classes = useStyles();
+  const classes = useStyles()
 
   return (
     <Drawer
@@ -80,15 +80,19 @@ const Sidebar = props => {
           screens={screens}
           updateVisibility={updateVisibility}
           toggleScreenDialog={toggleScreenDialog}
-          sortScreens={sortScreens}/>
+          sortScreens={sortScreens}
+        />
 
-        <ViewMode value={viewMode} onChange={switchViewMode}/>
-        <ScreenDirection value={screenDirection} onChange={switchScreenDirection}/>
+        <ViewMode value={viewMode} onChange={switchViewMode} />
+        <ScreenDirection
+          value={screenDirection}
+          onChange={switchScreenDirection}
+        />
       </div>
 
-      <Zoom value={zoom} onChange={onZoom}/>
+      <Zoom value={zoom} onChange={onZoom} />
     </Drawer>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

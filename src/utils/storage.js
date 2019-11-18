@@ -1,26 +1,25 @@
 export default {
-
-  get (key) {
+  get(key) {
     try {
       return JSON.parse(localStorage.getItem(key))
     } catch (e) {}
   },
 
-  set (key, val) {
+  set(key, val) {
     try {
       localStorage.setItem(key, JSON.stringify(val))
     } catch (e) {}
   },
 
-  remove (key) {
+  remove(key) {
     try {
       localStorage.removeItem(key)
     } catch (e) {}
   },
 
-  clear () {
+  clear() {
     try {
       localStorage.clear()
     } catch (e) {}
-  }
+  },
 }

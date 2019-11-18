@@ -1,11 +1,9 @@
-import React from "react";
-import {Field} from "redux-form";
-import TextField from "@material-ui/core/TextField";
-import MenuItem from '@material-ui/core/MenuItem';
+import React from 'react'
+import { Field } from 'redux-form'
+import TextField from '@material-ui/core/TextField'
+import MenuItem from '@material-ui/core/MenuItem'
 
-
-const renderTextField = (props) => {
-
+const renderTextField = props => {
   const {
     placeholder,
     input,
@@ -20,7 +18,7 @@ const renderTextField = (props) => {
       placeholder={placeholder}
       error={touched && invalid}
       helperText={showError && touched && error}
-      variant={"outlined"}
+      variant={'outlined'}
       select
       {...input}
       {...custom}
@@ -34,6 +32,4 @@ const renderTextField = (props) => {
   )
 }
 
-export default props => (
-  <Field component={renderTextField} {...props} />
-)
+export default props => <Field component={renderTextField} {...props} />

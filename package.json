@@ -9,6 +9,9 @@
     "array-move": "^2.1.0",
     "chrome-extension-async": "^3.3.2",
     "classnames": "^2.2.6",
+    "husky": "^3.1.0",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
     "query-string": "^6.8.2",
     "react": "^16.8.6",
     "react-custom-scrollbars": "^4.2.1",
@@ -30,7 +33,8 @@
     "build": "INLINE_RUNTIME_CHUNK=false react-scripts build && yarn run build:bg",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:bg": "webpack --mode production ./src/background.js --output ./build/background.js && cp ./public/manifest.json ./build/manifest.json"
+    "build:bg": "webpack --mode production ./src/background.js --output ./build/background.js && cp ./public/manifest.json ./build/manifest.json",
+    "pretty": "prettier --check 'src/**/*.js' --write"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -49,5 +53,10 @@
   },
   "devDependencies": {
     "webpack-cli": "^3.3.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   }
 }

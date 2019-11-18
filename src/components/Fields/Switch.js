@@ -1,17 +1,16 @@
 import React from 'react'
 import Switch from '@material-ui/core/Switch'
-import {Field} from 'redux-form'
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import {makeStyles} from "@material-ui/core/styles";
+import { Field } from 'redux-form'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
-
   switchBase: {
     '&$checked': {
       color: theme.palette.primary.main,
     },
     '&$checked + $track': {
-      backgroundColor:theme.palette.primary.main,
+      backgroundColor: theme.palette.primary.main,
     },
   },
   checked: {},
@@ -19,7 +18,6 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const RenderSwitch = ({ input, label }) => {
-
   const classes = useStyles()
 
   return (
@@ -36,11 +34,13 @@ const RenderSwitch = ({ input, label }) => {
             track: classes.track,
             checked: classes.checked,
           }}
-          label={label} checked={!!input.value} onChange={input.onChange}/>
+          label={label}
+          checked={!!input.value}
+          onChange={input.onChange}
+        />
       }
     />
   )
 }
 
-
-export default props => <Field component={RenderSwitch} {...props}/>
+export default props => <Field component={RenderSwitch} {...props} />

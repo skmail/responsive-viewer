@@ -1,49 +1,51 @@
-import React, {useState, useEffect} from "react";
-import {makeStyles} from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
-import {getIframeId} from '../utils/screen'
+import React, { useState, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import { getIframeId } from '../utils/screen'
 import classNames from 'classnames'
-import appendQuery from "append-query";
+import appendQuery from 'append-query'
 
 const useStyles = makeStyles(theme => ({
   root: {
-    position: "relative",
-    transition: "all ease 0.5s"
+    position: 'relative',
+    transition: 'all ease 0.5s',
   },
   highlighted: {
     boxShadow: `0 0 0 4px ${theme.palette.primary.main}`,
     transform: 'scale(1.02)',
-    transition: "all ease 0.5s"
+    transition: 'all ease 0.5s',
   },
   iframe: {
-    backgroundColor: "#fff",
-    border: "none",
+    backgroundColor: '#fff',
+    border: 'none',
     borderRadius: 2,
-    display: "block"
+    display: 'block',
   },
   progress: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
-    width: "100%"
+    width: '100%',
   },
-}));
+}))
 
 const ScreenIframe = props => {
-  const {screen, versionedUrl, screenDirection} = props;
-  const [isLoading, setIsLoading] = useState(true);
-  const [scrolling, setScrolling] = useState(true);
+  const { screen, versionedUrl, screenDirection } = props
+  const [isLoading, setIsLoading] = useState(true)
+  const [scrolling, setScrolling] = useState(true)
 
-  const classes = useStyles();
+  const classes = useStyles()
 
-  const iframeUrl = appendQuery(versionedUrl, {__userAgent__: screen.userAgent})
+  const iframeUrl = appendQuery(versionedUrl, {
+    __userAgent__: screen.userAgent,
+  })
 
-  const onLoad = (e) => {
-    setIsLoading(false);
-  };
+  const onLoad = e => {
+    setIsLoading(false)
+  }
 
   useEffect(() => {
-    setIsLoading(true);
-  }, [iframeUrl]);
+    setIsLoading(true)
+  }, [iframeUrl])
 
   useEffect(() => {
     let isShift = false
@@ -56,7 +58,7 @@ const ScreenIframe = props => {
       setScrolling(true)
     }
 
-    const down = (e) => {
+    const down = e => {
       if (!e.shiftKey) {
         return
       }
@@ -74,28 +76,38 @@ const ScreenIframe = props => {
   }, [])
 
   return (
-    <div className={classNames(classes.root, screen.highlighted ? classes.highlighted : null)}>
+    <div
+      className={classNames(
+        classes.root,
+        screen.highlighted ? classes.highlighted : null
+      )}
+    >
       {isLoading && (
         <div className={classes.progress}>
-          <LinearProgress color="secondary"/>
+          <LinearProgress color="secondary" />
         </div>
       )}
 
       <iframe
-        scrolling={scrolling ? "auto" : "no"}
+        scrolling={scrolling ? 'auto' : 'no'}
         id={getIframeId(screen.id)}
-        sandbox={"allow-scripts allow-same-origin"}
+        sandbox={'allow-scripts allow-same-origin'}
         onLoad={onLoad}
         className={classes.iframe}
-        title={`${screen.name} - ${screenDirection === 'landscape' ? `${screen.height}x${screen.width}` : `${screen.width}x${screen.height}`}`}
+        title={`${screen.name} - ${
+          screenDirection === 'landscape'
+            ? `${screen.height}x${screen.width}`
+            : `${screen.width}x${screen.height}`
+        }`}
         style={{
           width: screenDirection === 'landscape' ? screen.height : screen.width,
-          height: screenDirection === 'landscape' ? screen.width : screen.height
+          height:
+            screenDirection === 'landscape' ? screen.width : screen.height,
         }}
         src={iframeUrl}
       />
     </div>
-  );
-};
+  )
+}
 
-export default ScreenIframe;
+export default ScreenIframe

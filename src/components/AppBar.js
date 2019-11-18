@@ -1,32 +1,32 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import MuiAppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import AddressBar from "./AddressBar";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
-import AddIcon from "@material-ui/icons/Add";
-import HelpIcon from "@material-ui/icons/Help";
+import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import MuiAppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
+import AddressBar from './AddressBar'
+import IconButton from '@material-ui/core/IconButton'
+import MenuIcon from '@material-ui/icons/Menu'
+import AddIcon from '@material-ui/icons/Add'
+import HelpIcon from '@material-ui/icons/Help'
 
 const useStyles = makeStyles(theme => ({
   grow: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   root: {
-    zIndex: theme.zIndex.drawer + 1
+    zIndex: theme.zIndex.drawer + 1,
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   title: {
-    display: "none",
-    [theme.breakpoints.up("sm")]: {
-      display: "block"
-    }
-  }
-}));
+    display: 'none',
+    [theme.breakpoints.up('sm')]: {
+      display: 'block',
+    },
+  },
+}))
 
 const AppBar = props => {
   const {
@@ -34,9 +34,9 @@ const AppBar = props => {
     url,
     toggleDrawer,
     toggleScreenDialog,
-    toggleHelpDialog
-  } = props;
-  const classes = useStyles();
+    toggleHelpDialog,
+  } = props
+  const classes = useStyles()
   return (
     <MuiAppBar color="default" className={classes.root}>
       <Toolbar>
@@ -82,7 +82,7 @@ const AppBar = props => {
         </IconButton>
       </Toolbar>
     </MuiAppBar>
-  );
-};
+  )
+}
 
-export default AppBar;
+export default AppBar

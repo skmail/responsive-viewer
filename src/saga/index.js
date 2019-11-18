@@ -5,8 +5,8 @@ import {
   put,
   delay,
   take,
-  select
-} from "redux-saga/effects";
+  select,
+} from 'redux-saga/effects'
 import {
   scrollToScreen,
   highlightScreen,
@@ -14,22 +14,22 @@ import {
   saveScreen,
   initialize,
   initialized,
-  saveUserAgent
-} from "../actions";
-import scrollIntoView from "scroll-into-view";
-import { getDomId } from "../utils/screen";
-import { eventChannel, END } from "redux-saga";
-import { waitFor } from "../utils/saga";
-import { NAME as APP_NAME, SCREEN_DIALOG_FORM_NAME } from "../constants";
-import { saveState, loadState } from "../utils/state";
-import { change as changeForm } from "redux-form";
+  saveUserAgent,
+} from '../actions'
+import scrollIntoView from 'scroll-into-view'
+import { getDomId } from '../utils/screen'
+import { eventChannel, END } from 'redux-saga'
+import { waitFor } from '../utils/saga'
+import { NAME as APP_NAME, SCREEN_DIALOG_FORM_NAME } from '../constants'
+import { saveState, loadState } from '../utils/state'
+import { change as changeForm } from 'redux-form'
 
 const doScrollToScreen = function*({ payload }) {
-  const { id } = payload;
+  const { id } = payload
 
-  const iframeId = yield call(getDomId, id);
+  const iframeId = yield call(getDomId, id)
 
-  const element = document.getElementById(iframeId);
+  const element = document.getElementById(iframeId)
 
   const scroll = () =>
     eventChannel(emitter => {
@@ -40,134 +40,134 @@ const doScrollToScreen = function*({ payload }) {
             top: 0.1,
             left: 0,
             topOffset: 25,
-            leftOffset: 0
-          }
+            leftOffset: 0,
+          },
         },
         () => {
-          emitter(END);
+          emitter(END)
         }
-      );
+      )
 
-      return () => {};
-    });
+      return () => {}
+    })
 
-  const scrollChannel = yield call(scroll);
+  const scrollChannel = yield call(scroll)
 
   try {
     while (true) {
-      yield take(scrollChannel);
+      yield take(scrollChannel)
     }
   } finally {
-    yield put(highlightScreen(id));
+    yield put(highlightScreen(id))
 
-    yield delay(400);
+    yield delay(400)
 
-    yield put(unHighlightScreen(id));
+    yield put(unHighlightScreen(id))
   }
-};
+}
 
 function* doScrollAfterScreenSaved({ payload }) {
   const {
-    screen: { id }
-  } = payload;
+    screen: { id },
+  } = payload
 
-  const state = yield select();
+  const state = yield select()
 
-  const alreadyExists = state.app.screens.find(screen => screen.id === id);
+  const alreadyExists = state.app.screens.find(screen => screen.id === id)
 
   if (alreadyExists) {
-    return;
+    return
   }
 
   yield call(waitFor, state =>
     state.app.screens.find(screen => screen.id === id)
-  );
+  )
 
-  yield delay(100);
+  yield delay(100)
 
-  yield put(scrollToScreen(id));
+  yield put(scrollToScreen(id))
 }
 
 function* doSaveToState() {
   while (true) {
-    const action = yield take("*");
-    const state = yield select();
+    const action = yield take('*')
+    const state = yield select()
 
     if (action.type.startsWith(APP_NAME)) {
-      yield call(saveState, state.app);
+      yield call(saveState, state.app)
     }
   }
 }
 
 function* doInitialize() {
-  let app = yield call(loadState);
+  let app = yield call(loadState)
 
   if (app) {
     app = {
       ...app,
       screens: app.screens.map(screen => ({
         ...screen,
-        highlighted: false
-      }))
-    };
-    yield put(initialized({ app }));
+        highlighted: false,
+      })),
+    }
+    yield put(initialized({ app }))
   }
 
   const initializeEvent = () =>
     eventChannel(emitter => {
       try {
-        window.chrome.runtime.sendMessage({ message: "GET_TAB_URL" }, function(
+        window.chrome.runtime.sendMessage({ message: 'GET_TAB_URL' }, function(
           response
         ) {
-          emitter(response);
-          emitter(END);
-        });
+          emitter(response)
+          emitter(END)
+        })
       } catch (e) {}
-      return () => {};
-    });
+      return () => {}
+    })
 
-  const initializeChannel = yield call(initializeEvent);
+  const initializeChannel = yield call(initializeEvent)
 
   try {
     while (true) {
-      const response = yield take(initializeChannel);
+      const response = yield take(initializeChannel)
 
-      const { tabUrl } = response;
+      const { tabUrl } = response
 
       if (app) {
         app = {
           ...app,
           screens: app.screens.map(screen => ({
             ...screen,
-            highlighted: false
+            highlighted: false,
           })),
           url: tabUrl || app.url,
-          versionedUrl: tabUrl || app.url
-        };
+          versionedUrl: tabUrl || app.url,
+        }
       } else {
         app = {
-          url: tabUrl ? tabUrl : "",
-          versionedUrl: tabUrl ? tabUrl : ""
-        };
+          url: tabUrl ? tabUrl : '',
+          versionedUrl: tabUrl ? tabUrl : '',
+        }
       }
 
-      yield put(initialized({ app }));
+      yield put(initialized({ app }))
     }
   } finally {
   }
 }
 
 function* doFillUserAgentInScreenDialog({ payload }) {
-  const { userAgent } = payload;
+  const { userAgent } = payload
 
-  yield put(changeForm(SCREEN_DIALOG_FORM_NAME, "userAgent", userAgent.name));
+  yield put(changeForm(SCREEN_DIALOG_FORM_NAME, 'userAgent', userAgent.name))
 }
 
 export default function*() {
-  yield takeEvery(scrollToScreen().type, doScrollToScreen);
-  yield takeEvery(saveScreen().type, doScrollAfterScreenSaved);
-  yield takeLatest(initialize().type, doInitialize);
-  yield takeLatest(saveUserAgent().type, doFillUserAgentInScreenDialog);
+  yield takeEvery(scrollToScreen().type, doScrollToScreen)
+  yield takeEvery(saveScreen().type, doScrollAfterScreenSaved)
+  yield takeLatest(initialize().type, doInitialize)
+  yield takeLatest(saveUserAgent().type, doFillUserAgentInScreenDialog)
 
-  yield doSaveToState();
+  yield doSaveToState()
 }

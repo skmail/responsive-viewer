@@ -6,15 +6,14 @@ import saga from './saga'
 
 const sagaMiddleware = createSagaMiddleware()
 
-
 const configureStore = preloadedState => {
-
   const store = createStore(
     rootReducer,
     preloadedState,
     compose(
-      applyMiddleware( createLogger(), sagaMiddleware ),
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+      applyMiddleware(createLogger(), sagaMiddleware),
+      window.__REDUX_DEVTOOLS_EXTENSION__ &&
+        window.__REDUX_DEVTOOLS_EXTENSION__()
     )
   )
 
@@ -29,8 +28,5 @@ const configureStore = preloadedState => {
 
   return store
 }
-
-
-
 
 export default configureStore

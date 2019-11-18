@@ -5,33 +5,31 @@ const initialState = {
   screenDialog: {
     open: false,
     initialValues: {
-      name: "",
-      width: "",
-      height: "",
-      userAgent: "",
-      visible: true
-    }
+      name: '',
+      width: '',
+      height: '',
+      userAgent: '',
+      visible: true,
+    },
   },
   userAgentDialog: {
     open: false,
     initialValues: {
-      name: "",
-      label: "",
-    }
+      name: '',
+      label: '',
+    },
   },
-  helpDialog:{
-    open: false
-  }
+  helpDialog: {
+    open: false,
+  },
 }
 
 export default (state = initialState, action) => {
-
   switch (action.type) {
-
     case actionTypes.TOGGLE_DRAWER:
       return {
         ...state,
-        drawerOpened: !state.drawerOpened
+        drawerOpened: !state.drawerOpened,
       }
 
     case actionTypes.TOGGLE_SCREEN_DIALOG: {
@@ -42,8 +40,8 @@ export default (state = initialState, action) => {
           initialValues: {
             ...initialState.screenDialog.initialValues,
             ...action.payload.initialValues,
-          }
-        }
+          },
+        },
       }
     }
     case actionTypes.TOGGLE_USER_AGENT_DIALOG: {
@@ -51,22 +49,21 @@ export default (state = initialState, action) => {
         ...state,
         userAgentDialog: {
           open: !state.userAgentDialog.open,
-          initialValues: action.payload.initialValues
-        }
+          initialValues: action.payload.initialValues,
+        },
       }
     }
 
-    case actionTypes.TOGGLE_HELP_DIALOG:{
+    case actionTypes.TOGGLE_HELP_DIALOG: {
       return {
         ...state,
         helpDialog: {
           ...state.helpDialog,
           open: !state.helpDialog.open,
-        }
+        },
       }
     }
     default:
       return state
   }
-
 }

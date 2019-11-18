@@ -6,7 +6,6 @@ import { createLogger } from 'redux-logger'
 const sagaMiddleware = createSagaMiddleware()
 
 const configureStore = preloadedState => {
-
   const store = createStore(
     rootReducer,
     preloadedState,
@@ -17,6 +16,5 @@ const configureStore = preloadedState => {
 
   return store
 }
-
 
 export default configureStore
