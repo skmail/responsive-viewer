@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "ResponsiveViewer",
   "author": "Solaiman Kmail",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Show multiple screens once.",
   "icons": {
     "128": "16.png"

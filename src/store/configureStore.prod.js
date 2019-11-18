@@ -9,7 +9,7 @@ const configureStore = preloadedState => {
   const store = createStore(
     rootReducer,
     preloadedState,
-    applyMiddleware(createLogger(), sagaMiddleware)
+    applyMiddleware(sagaMiddleware)
   )
 
   sagaMiddleware.run(saga)

@@ -23,7 +23,9 @@ let lastOpenedUrl
 
 chrome.browserAction.onClicked.addListener(tab => {
   lastOpenedUrl = tab.url
-
+  const onReady = () => {
+    chrome.tabs.create({ url: 'index.html' })
+  }
   if (!isLocalUrl(lastOpenedUrl)) {
     chrome.browsingData.remove(
       {
@@ -33,11 +35,11 @@ chrome.browserAction.onClicked.addListener(tab => {
         serviceWorkers: true,
       },
       function() {
-        chrome.tabs.create({ url: 'index.html' })
+        onReady()
       }
     )
   } else {
-    chrome.tabs.create({ url: 'index.html' })
+    onReady()
   }
 })
 
