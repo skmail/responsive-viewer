@@ -5,42 +5,42 @@ import FormControlLabel from '@material-ui/core/FormControlLabel'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
-    switchBase: {
-        '&$checked': {
-            color: theme.palette.primary.main,
-        },
-        '&$checked + $track': {
-            backgroundColor: theme.palette.primary.main,
-        },
+  switchBase: {
+    '&$checked': {
+      color: theme.palette.primary.main,
     },
-    checked: {},
-    track: {},
+    '&$checked + $track': {
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
+  checked: {},
+  track: {},
 }))
 
 const RenderSwitch = ({ input, label }) => {
-    const classes = useStyles()
+  const classes = useStyles()
 
-    return (
-        <FormControlLabel
-            value={input.value}
-            labelPlacement="end"
-            label={label}
-            control={
-                <Switch
-                    classes={{
-                        root: classes.root,
-                        switchBase: classes.switchBase,
-                        thumb: classes.thumb,
-                        track: classes.track,
-                        checked: classes.checked,
-                    }}
-                    label={label}
-                    checked={!!input.value}
-                    onChange={input.onChange}
-                />
-            }
+  return (
+    <FormControlLabel
+      value={input.value}
+      labelPlacement="end"
+      label={label}
+      control={
+        <Switch
+          classes={{
+            root: classes.root,
+            switchBase: classes.switchBase,
+            thumb: classes.thumb,
+            track: classes.track,
+            checked: classes.checked,
+          }}
+          label={label}
+          checked={!!input.value}
+          onChange={input.onChange}
         />
-    )
+      }
+    />
+  )
 }
 
 export default props => <Field component={RenderSwitch} {...props} />

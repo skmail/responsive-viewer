@@ -11,17 +11,17 @@ import { Provider } from 'react-redux'
 const store = configureStore()
 
 if ('scrollRestoration' in window.history) {
-    window.history.scrollRestoration = 'manual'
+  window.history.scrollRestoration = 'manual'
 }
 
 ReactDOM.render(
-    <Provider store={store}>
-        <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
-        </ThemeProvider>
-    </Provider>,
-    document.getElementById('root')
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
+  </Provider>,
+  document.getElementById('root')
 )
 
 // If you want your app to work offline and load faster, you can change

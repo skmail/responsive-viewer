@@ -4,7 +4,7 @@ import layoutReducer from './layout'
 import { reducer as formReducer } from 'redux-form'
 
 export default combineReducers({
-    app: appReducer,
-    layout: layoutReducer,
-    form: formReducer,
+  app: appReducer,
+  layout: layoutReducer,
+  form: formReducer,
 })
