@@ -32,6 +32,7 @@ export default (state = initialState, action) => {
       const foundScreen = state.screens.find(
         screen => screen.id === action.payload.screen.id
       )
+
       let screens = state.screens
 
       if (foundScreen) {

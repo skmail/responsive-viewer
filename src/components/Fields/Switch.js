@@ -36,7 +36,7 @@ const RenderSwitch = ({ input, label }) => {
           }}
           label={label}
           checked={!!input.value}
-          onChange={input.onChange}
+          onChange={e => input.onChange(e.target.checked)}
         />
       }
     />

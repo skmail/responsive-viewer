@@ -91,25 +91,36 @@ function* doScrollAfterScreenSaved({ payload }) {
 function* doSaveToState() {
   while (true) {
     const action = yield take('*')
-    const state = yield select()
-
     if (action.type.startsWith(APP_NAME)) {
+      const state = yield select()
       yield call(saveState, state.app)
+
+      yield call(window.chrome.runtime.sendMessage, {
+        message: 'LOAD_STATE',
+        state: state.app,
+      })
     }
   }
 }
 
 function* doInitialize() {
   let app = yield call(loadState)
-
+  const state = yield select()
   if (app) {
     app = {
+      ...state.app,
       ...app,
       screens: app.screens.map(screen => ({
         ...screen,
         highlighted: false,
       })),
     }
+
+    yield call(window.chrome.runtime.sendMessage, {
+      message: 'LOAD_STATE',
+      state: app,
+    })
+
     yield put(initialized({ app }))
   }
 
@@ -136,6 +147,7 @@ function* doInitialize() {
 
       if (app) {
         app = {
+          ...state.app,
           ...app,
           screens: app.screens.map(screen => ({
             ...screen,
@@ -146,10 +158,16 @@ function* doInitialize() {
         }
       } else {
         app = {
+          ...state.app,
           url: tabUrl ? tabUrl : '',
           versionedUrl: tabUrl ? tabUrl : '',
         }
       }
+
+      yield call(window.chrome.runtime.sendMessage, {
+        message: 'LOAD_STATE',
+        state: app,
+      })
 
       yield put(initialized({ app }))
     }

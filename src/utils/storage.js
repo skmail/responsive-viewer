@@ -1,25 +1,19 @@
+const storage = window.chrome.storage.local
+
 export default {
   get(key) {
-    try {
-      return JSON.parse(localStorage.getItem(key))
-    } catch (e) {}
+    return new Promise(resolve => {
+      storage.get(key, value =>
+        resolve(value[key] ? JSON.parse(value[key]) : undefined)
+      )
+    })
   },
 
-  set(key, val) {
-    try {
-      localStorage.setItem(key, JSON.stringify(val))
-    } catch (e) {}
-  },
-
-  remove(key) {
-    try {
-      localStorage.removeItem(key)
-    } catch (e) {}
-  },
-
-  clear() {
-    try {
-      localStorage.clear()
-    } catch (e) {}
+  set(key, value) {
+    return new Promise(resolve => {
+      storage.set({ [key]: JSON.stringify(value) }, result => {
+        resolve(result)
+      })
+    })
   },
 }

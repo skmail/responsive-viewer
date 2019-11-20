@@ -1,7 +1,9 @@
 import storage from './storage'
-export const loadState = () => {
+const STORAGE_KEY = 'APP_STATE'
+
+export const loadState = async () => {
   try {
-    const state = storage.get('appState')
+    const state = await storage.get(STORAGE_KEY)
     if (!state) {
       throw new Error('state not saved')
     }
@@ -11,6 +13,6 @@ export const loadState = () => {
   }
 }
 
-export const saveState = state => {
-  storage.set('appState', state)
+export const saveState = async state => {
+  await storage.set(STORAGE_KEY, state)
 }

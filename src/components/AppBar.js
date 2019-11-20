@@ -72,7 +72,7 @@ const AppBar = props => {
           <HelpIcon />
         </IconButton>
         <IconButton
-          onClick={toggleScreenDialog}
+          onClick={() => toggleScreenDialog()}
           edge="end"
           aria-label="Add Screen"
           aria-haspopup="true"

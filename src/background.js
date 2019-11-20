@@ -1,7 +1,8 @@
 const queryString = require('query-string')
-import { loadState } from './utils/state'
 import devices from './devices'
 const parse = require('url-parse')
+
+let state = {}
 
 const getOrigins = url => {
   const hostname = parse(lastOpenedUrl).hostname
@@ -119,8 +120,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
       }
     }
 
-    const state = loadState()
-
     const userAgents = state && state.userAgents ? state.userAgents : devices
 
     const value = userAgents.find(agent => agent.name === userAgent)
@@ -145,6 +144,10 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     sendResponse({
       tabUrl: isLocalUrl(lastOpenedUrl) ? null : lastOpenedUrl,
     })
+  }
+
+  if (request.message === 'LOAD_STATE') {
+    state = request.state
   }
   return true
 })
