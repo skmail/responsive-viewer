@@ -149,7 +149,6 @@ export default (state = initialState, action) => {
     }
 
     case actionTypes.TOGGLE_SYNC_SCROLL: {
-      console.log('toggle sync')
       return {
         ...state,
         syncScroll: !state.syncScroll,
