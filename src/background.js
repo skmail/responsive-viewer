@@ -186,7 +186,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 })
 
 chrome.webNavigation.onCompleted.addListener(function(details) {
-  const isAllowed = isAllowedToAction(details)
+  const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
 
   if (!isAllowed || details.frameId === 0) {
     return
