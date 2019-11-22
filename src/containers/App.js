@@ -18,6 +18,7 @@ import {
   deleteScreen,
   appReset,
   toggleSyncScroll,
+  toggleSyncClick,
 } from '../actions'
 import uuid from 'uuid'
 
@@ -32,6 +33,7 @@ const mapStateToProps = state => {
     zoom: state.app.zoom,
     screenDirection: state.app.screenDirection,
     syncScroll: state.app.syncScroll,
+    syncClick: state.app.syncClick,
 
     // Layout state
     drawerOpened: state.layout.drawerOpened,
@@ -64,6 +66,7 @@ const mapDispatchToProps = dispatch => ({
   deleteScreen: id => dispatch(deleteScreen(id)),
   appReset: () => dispatch(appReset()),
   toggleSyncScroll: () => dispatch(toggleSyncScroll()),
+  toggleSyncClick: () => dispatch(toggleSyncClick()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

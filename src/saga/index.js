@@ -185,7 +185,7 @@ function* doFillUserAgentInScreenDialog({ payload }) {
 function* doIframeCommunications() {
   const syncScrollChannel = eventChannel(emitter => {
     window.addEventListener('message', event => {
-      if (!event.data || event.data.message !== 'FRAME_SCROLL') {
+      if (!event.data || !String(event.data.message).startsWith('@APP/')) {
         return
       }
       emitter(event.data)
@@ -195,10 +195,19 @@ function* doIframeCommunications() {
   while (true) {
     const data = yield take(syncScrollChannel)
     const state = yield select()
+    let allowedToSend = false
 
-    if (state.app.syncScroll) {
+    switch (data.message) {
+      case '@APP/FRAME_SCROLL':
+        allowedToSend = state.app.syncScroll
+        break
+      case '@APP/CLICK':
+        allowedToSend = state.app.syncClick
+        break
+    }
+
+    if (allowedToSend) {
       const screens = state.app.screens.filter(screen => screen.visible)
-
       let counter = 0
       while (counter < screens.length) {
         const screen = screens[counter]

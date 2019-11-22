@@ -52,6 +52,8 @@ function App(props) {
     appReset,
     syncScroll,
     toggleSyncScroll,
+    syncClick,
+    toggleSyncClick,
     initialized,
   } = props
 
@@ -113,6 +115,8 @@ function App(props) {
         toggleScreenDialog={toggleScreenDialog}
         syncScroll={syncScroll}
         toggleSyncScroll={toggleSyncScroll}
+        syncClick={syncClick}
+        toggleSyncClick={toggleSyncClick}
       />
       <div className={classes.content}>
         <Screens

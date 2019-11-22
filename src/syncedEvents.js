@@ -1,5 +1,8 @@
+import $ from 'jquery'
 import onDomReady from './utils/onDomReady'
 import uuid from 'uuid'
+import getDomPath from './utils/domPath'
+
 const frameID = uuid.v4()
 
 let userScroll = false
@@ -41,7 +44,7 @@ onDomReady(() => {
       }
       window.top.postMessage(
         {
-          message: 'FRAME_SCROLL',
+          message: '@APP/FRAME_SCROLL',
           frameId: frameID,
           scrollTop: document.documentElement.scrollTop,
           scrollLeft: document.documentElement.scrollLeft,
@@ -52,8 +55,25 @@ onDomReady(() => {
     false
   )
 
+  document.addEventListener('click', e => {
+    if (!e.isTrusted) {
+      return true
+    }
+
+    const path = getDomPath(e.target)
+
+    window.top.postMessage(
+      {
+        message: '@APP/CLICK',
+        frameId: frameID,
+        path,
+      },
+      '*'
+    )
+  })
+
   window.addEventListener('message', event => {
-    if (!event.data || event.data.message !== 'FRAME_SCROLL') {
+    if (!event.data || !String(event.data.message).startsWith('@APP')) {
       return
     }
 
@@ -61,11 +81,30 @@ onDomReady(() => {
       return
     }
 
-    userScroll = false
+    switch (event.data.message) {
+      case '@APP/FRAME_SCROLL':
+        userScroll = false
+        window.scrollTo({
+          top: event.data.scrollTop,
+          left: event.data.scrollLeft,
+        })
+        break
 
-    window.scrollTo({
-      top: event.data.scrollTop,
-      left: event.data.scrollLeft,
-    })
+      case '@APP/CLICK':
+        const element = $(event.data.path)
+
+        if (element.length) {
+          const evt = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: false,
+            view: window,
+          })
+          element[0].dispatchEvent(evt)
+          console.log('FOUND', event.data.path)
+        } else {
+          console.log('NOT FOUND', event.data.path)
+        }
+        break
+    }
   })
 })
