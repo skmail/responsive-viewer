@@ -16,4 +16,11 @@ export default {
       })
     })
   },
+  remove(key) {
+    return new Promise(resolve => {
+      storage.set(key, result => {
+        resolve(result)
+      })
+    })
+  },
 }

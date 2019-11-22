@@ -11,7 +11,7 @@ const initialState = {
   viewMode: 'vertical',
   zoom: 1,
   screenDirection: 'portrait',
-  syncScroll: true,
+  syncScroll: false,
 }
 
 export default (state = initialState, action) => {

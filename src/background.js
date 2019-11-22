@@ -28,17 +28,7 @@ chrome.browserAction.onClicked.addListener(tab => {
     chrome.tabs.create({ url: 'index.html' })
   }
   if (!isLocalUrl(lastOpenedUrl)) {
-    chrome.browsingData.remove(
-      {
-        origins: getOrigins(lastOpenedUrl),
-      },
-      {
-        serviceWorkers: true,
-      },
-      function() {
-        onReady()
-      }
-    )
+    onReady()
   } else {
     onReady()
   }
@@ -78,13 +68,6 @@ chrome.webRequest.onHeadersReceived.addListener(
     if (!isAllowed || info.parentFrameId !== 0) {
       return { responseHeaders: headers }
     }
-
-    chrome.browsingData.removeServiceWorkers(
-      {
-        origins: getOrigins(info.url),
-      },
-      function() {}
-    )
 
     return {
       responseHeaders: headers.filter(header => {
@@ -156,22 +139,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   return true
 })
 
-// chrome.runtime.onMessage.addListener(function(request) {
-//   if (request.message == 'LOAD_STATE') {
-//     chrome.tabs.executeScript({
-//       file: 'syncedEvents.js',
-//       allFrames: true,
-//     })
-//   }
-// })
-
 chrome.webNavigation.onCompleted.addListener(function(details) {
-  const isAllowed = isAllowedToAction(tabStorage[details.tabId].url)
-
-  if (!isAllowed || details.frameId === 0) {
-    return
-  }
-
   chrome.tabs.executeScript(details.tabId, {
     file: 'syncedEvents.js',
     frameId: details.frameId,

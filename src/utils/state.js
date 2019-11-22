@@ -16,3 +16,7 @@ export const loadState = async () => {
 export const saveState = async state => {
   await storage.set(STORAGE_KEY, state)
 }
+
+export const resetState = async state => {
+  await storage.remove(STORAGE_KEY)
+}

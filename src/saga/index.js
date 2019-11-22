@@ -16,12 +16,13 @@ import {
   initialize,
   initialized,
   saveUserAgent,
+  appReset,
 } from '../actions'
 import scrollIntoView from 'scroll-into-view'
 import { getDomId, getIframeId } from '../utils/screen'
 import { waitFor } from '../utils/saga'
 import { NAME as APP_NAME, SCREEN_DIALOG_FORM_NAME } from '../constants'
-import { saveState, loadState } from '../utils/state'
+import { saveState, loadState, resetState } from '../utils/state'
 import { change as changeForm } from 'redux-form'
 
 const doScrollToScreen = function*({ payload }) {
@@ -210,11 +211,18 @@ function* doIframeCommunications() {
   }
 }
 
+function* doAppReset() {
+  yield call(resetState)
+
+  yield put(initialize())
+}
+
 export default function*() {
   yield takeEvery(scrollToScreen().type, doScrollToScreen)
   yield takeEvery(saveScreen().type, doScrollAfterScreenSaved)
   yield takeLatest(initialize().type, doInitialize)
   yield takeLatest(saveUserAgent().type, doFillUserAgentInScreenDialog)
   yield takeLatest(initialized().type, doIframeCommunications)
+  yield takeLatest(appReset().type, doAppReset)
   yield doSaveToState()
 }

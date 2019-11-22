@@ -93,6 +93,7 @@ const ScreenIframe = props => {
         id={getIframeId(screen.id)}
         onLoad={onLoad}
         className={classes.iframe}
+        sandbox="allow-scripts allow-forms	allow-presentation allow-same-origin"
         title={`${screen.name} - ${
           screenDirection === 'landscape'
             ? `${screen.height}x${screen.width}`
