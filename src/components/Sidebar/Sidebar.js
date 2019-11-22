@@ -55,6 +55,8 @@ const Sidebar = props => {
     toggleScreenDialog,
     syncScroll,
     toggleSyncScroll,
+    syncClick,
+    toggleSyncClick,
   } = props
 
   const classes = useStyles()
@@ -78,7 +80,12 @@ const Sidebar = props => {
       <div className={classes.toolbar} />
 
       <div className={classes.grow}>
-        <Toolbar syncScroll={syncScroll} toggleSyncScroll={toggleSyncScroll} />
+        <Toolbar
+          syncScroll={syncScroll}
+          toggleSyncScroll={toggleSyncScroll}
+          syncClick={syncClick}
+          toggleSyncClick={toggleSyncClick}
+        />
 
         <Screens
           onClick={scrollToScreen}

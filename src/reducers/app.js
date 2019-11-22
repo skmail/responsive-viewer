@@ -12,6 +12,7 @@ const initialState = {
   zoom: 1,
   screenDirection: 'portrait',
   syncScroll: false,
+  syncClick: false,
   initialized: false,
 }
 
@@ -155,6 +156,14 @@ export default (state = initialState, action) => {
         syncScroll: !state.syncScroll,
       }
     }
+
+    case actionTypes.TOGGLE_SYNC_CLICK: {
+      return {
+        ...state,
+        syncClick: !state.syncClick,
+      }
+    }
+
     default:
       return state
   }

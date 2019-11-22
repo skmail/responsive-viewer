@@ -123,3 +123,7 @@ export const appReset = () => ({
 export const toggleSyncScroll = () => ({
   type: actionTypes.TOGGLE_SYNC_SCROLL,
 })
+
+export const toggleSyncClick = () => ({
+  type: actionTypes.TOGGLE_SYNC_CLICK,
+})
