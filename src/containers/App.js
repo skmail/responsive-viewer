@@ -38,6 +38,7 @@ const mapStateToProps = state => {
     screenDialog: state.layout.screenDialog,
     userAgentDialog: state.layout.userAgentDialog,
     helpDialog: state.layout.helpDialog,
+    initialized: state.layout.initialized,
   }
 }
 

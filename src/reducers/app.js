@@ -12,6 +12,7 @@ const initialState = {
   zoom: 1,
   screenDirection: 'portrait',
   syncScroll: false,
+  initialized: false,
 }
 
 export default (state = initialState, action) => {

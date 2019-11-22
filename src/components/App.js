@@ -52,6 +52,7 @@ function App(props) {
     appReset,
     syncScroll,
     toggleSyncScroll,
+    initialized,
   } = props
 
   useEffect(() => {
@@ -60,6 +61,9 @@ function App(props) {
 
   const classes = useStyles(props)
 
+  if (!initialized) {
+    return <div>Loading ...</div>
+  }
   return (
     <div className={classes.root}>
       <ScreenDialog

@@ -1,111 +1,146 @@
-const queryString = require('query-string')
+import queryString from 'query-string'
 import devices from './devices'
-const parse = require('url-parse')
+import * as url from './utils/url'
+import tabStorage from './utils/tabStorage'
+import frameStorage from './utils/frameStorage'
 
 let state = {}
 
-const getOrigins = url => {
-  const hostname = parse(lastOpenedUrl).hostname
-  return [`https://${hostname}`, `http://${hostname}`]
-}
-
-const isLocalUrl = url => {
-  return (
-    String(url).startsWith('chrome://') ||
-    String(url).startsWith('chrome-extension://')
-  )
-}
-
-const isAllowedToAction = initiator => {
-  return String(initiator).startsWith(chrome.runtime.getURL('/').trim('/'))
+const isAllowedToAction = tab => {
+  if (!tab) {
+    return false
+  }
+  return tabStorage.isExtension(tab.id)
 }
 
 let lastOpenedUrl
 
 chrome.browserAction.onClicked.addListener(tab => {
   lastOpenedUrl = tab.url
+
   const onReady = () => {
     chrome.tabs.create({ url: 'index.html' })
   }
-  if (!isLocalUrl(lastOpenedUrl)) {
-    onReady()
+
+  if (!url.isLocal(tab.url)) {
+    chrome.browsingData.remove(
+      {
+        origins: url.origins(lastOpenedUrl),
+      },
+      {
+        serviceWorkers: true,
+      },
+      function() {
+        onReady()
+      }
+    )
   } else {
     onReady()
   }
 })
 
-const tabStorage = {}
-
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  tabStorage[changeInfo.tabId] = {
-    url: tab.url,
+  if (url.isExtension(tab.url)) {
+    tabStorage.set(tabId, tab)
+  } else {
+    tabStorage.remove(tabId)
   }
 })
 
-chrome.tabs.onActivated.addListener(function(activeInfo) {
-  // how to fetch tab url using activeInfo.tabid
-  chrome.tabs.get(activeInfo.tabId, function(tab) {
-    tabStorage[activeInfo.tabId] = {
-      url: tab.url,
-    }
-  })
-})
-
-chrome.tabs.onRemoved.addListener(tab => {
-  const tabId = tab.tabId
-  if (!tabStorage.hasOwnProperty(tabId)) {
+chrome.tabs.onRemoved.addListener(tabId => {
+  if (!tabStorage.has(tabId)) {
     return
   }
-  tabStorage[tabId] = null
+  tabStorage.remove(tabId)
 })
 
+chrome.webRequest.onBeforeRequest.addListener(
+  function(details) {
+    const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
+
+    if (!isAllowed || details.parentFrameId !== 0) {
+      return {
+        cancel: false,
+      }
+    }
+
+    chrome.browsingData.remove(
+      {
+        origins: url.origins(details.url),
+      },
+      {
+        serviceWorkers: true,
+      }
+    )
+    return {
+      cancel: false,
+    }
+  },
+  { urls: ['<all_urls>'] },
+  ['blocking']
+)
+
 chrome.webRequest.onHeadersReceived.addListener(
-  function(info) {
-    const headers = info.responseHeaders
+  function(details) {
+    const headers = details.responseHeaders
 
-    const isAllowed = isAllowedToAction(tabStorage[info.tabId].url)
+    const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
 
-    if (!isAllowed || info.parentFrameId !== 0) {
+    if (!isAllowed || details.parentFrameId !== 0) {
       return { responseHeaders: headers }
     }
 
+    const responseHeaders = headers.filter(header => {
+      const name = header.name.toLowerCase()
+      return (
+        ['x-frame-options', 'content-security-policy', 'frame-options'].indexOf(
+          name
+        ) === -1
+      )
+    })
+
+    const redirectUrl = headers.find(header => {
+      return header.name.toLowerCase() === 'location'
+    })
+
+    if (redirectUrl) {
+      chrome.browsingData.remove(
+        {
+          origins: url.origins(redirectUrl.value),
+        },
+        {
+          serviceWorkers: true,
+        }
+      )
+    }
+
     return {
-      responseHeaders: headers.filter(header => {
-        const name = header.name.toLowerCase()
-        return (
-          [
-            'x-frame-options',
-            'content-security-policy',
-            'frame-options',
-          ].indexOf(name) === -1
-        )
-      }),
+      responseHeaders,
     }
   },
   {
     urls: ['<all_urls>'],
-    types: ['sub_frame'],
+    types: ['sub_frame', 'main_frame'],
   },
   ['blocking', 'responseHeaders']
 )
 
 chrome.webRequest.onBeforeSendHeaders.addListener(
   function(details) {
-    const isAllowed = isAllowedToAction(tabStorage[details.tabId].url)
+    const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
 
-    if (!isAllowed) {
+    if (!isAllowed || details.parentFrameId !== 0) {
       return
     }
 
-    const parsed = queryString.parseUrl(details.url)
+    const frame = frameStorage.get(details.tabId, details.frameId)
 
-    let userAgent = parsed.query ? parsed.query.__userAgent__ : null
-
-    if (!userAgent) {
+    if (!frame) {
       return {
         requestHeaders: details.requestHeaders,
       }
     }
+    let userAgent = frame.userAgent
 
     const userAgents = state && state.userAgents ? state.userAgents : devices
 
@@ -128,9 +163,20 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.message === 'GET_TAB_URL') {
-    sendResponse({
-      tabUrl: isLocalUrl(lastOpenedUrl) ? null : lastOpenedUrl,
-    })
+    const tabUrl = url.isLocal(lastOpenedUrl) ? null : lastOpenedUrl
+
+    chrome.browsingData.remove(
+      {
+        origins: url.origins(tabUrl),
+      },
+      {
+        serviceWorkers: true,
+      },
+      () =>
+        sendResponse({
+          tabUrl,
+        })
+    )
   }
 
   if (request.message === 'LOAD_STATE') {
@@ -140,9 +186,35 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 })
 
 chrome.webNavigation.onCompleted.addListener(function(details) {
+  const isAllowed = isAllowedToAction(details)
+
+  if (!isAllowed || details.frameId === 0) {
+    return
+  }
   chrome.tabs.executeScript(details.tabId, {
     file: 'syncedEvents.js',
     frameId: details.frameId,
     runAt: 'document_end',
   })
+})
+
+chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
+  const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
+
+  if (!isAllowed || details.frameId === 0) {
+    return
+  }
+
+  if (details.parentFrameId === 0) {
+    const parsed = queryString.parseUrl(details.url)
+
+    let userAgent = parsed.query ? parsed.query.__userAgent__ : null
+
+    if (userAgent) {
+      frameStorage.set({
+        ...details,
+        userAgent,
+      })
+    }
+  }
 })
