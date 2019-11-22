@@ -91,7 +91,6 @@ const ScreenIframe = props => {
       <iframe
         scrolling={scrolling ? 'auto' : 'no'}
         id={getIframeId(screen.id)}
-        sandbox={'allow-scripts allow-same-origin'}
         onLoad={onLoad}
         className={classes.iframe}
         title={`${screen.name} - ${

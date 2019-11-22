@@ -119,3 +119,7 @@ export const deleteScreen = id => ({
 export const appReset = () => ({
   type: actionTypes.APP_RESET,
 })
+
+export const toggleSyncScroll = () => ({
+  type: actionTypes.TOGGLE_SYNC_SCROLL,
+})

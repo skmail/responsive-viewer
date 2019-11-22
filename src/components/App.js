@@ -50,6 +50,8 @@ function App(props) {
     toggleHelpDialog,
     deleteScreen,
     appReset,
+    syncScroll,
+    toggleSyncScroll,
   } = props
 
   useEffect(() => {
@@ -105,6 +107,8 @@ function App(props) {
         switchScreenDirection={switchScreenDirection}
         screenDirection={screenDirection}
         toggleScreenDialog={toggleScreenDialog}
+        syncScroll={syncScroll}
+        toggleSyncScroll={toggleSyncScroll}
       />
       <div className={classes.content}>
         <Screens

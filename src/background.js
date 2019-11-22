@@ -75,7 +75,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 
     const isAllowed = isAllowedToAction(tabStorage[info.tabId].url)
 
-    if (!isAllowed) {
+    if (!isAllowed || info.parentFrameId !== 0) {
       return { responseHeaders: headers }
     }
 
@@ -90,7 +90,11 @@ chrome.webRequest.onHeadersReceived.addListener(
       responseHeaders: headers.filter(header => {
         const name = header.name.toLowerCase()
         return (
-          ['x-frame-options', 'content-security-policy'].indexOf(name) === -1
+          [
+            'x-frame-options',
+            'content-security-policy',
+            'frame-options',
+          ].indexOf(name) === -1
         )
       }),
     }
@@ -150,4 +154,27 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     state = request.state
   }
   return true
+})
+
+// chrome.runtime.onMessage.addListener(function(request) {
+//   if (request.message == 'LOAD_STATE') {
+//     chrome.tabs.executeScript({
+//       file: 'syncedEvents.js',
+//       allFrames: true,
+//     })
+//   }
+// })
+
+chrome.webNavigation.onCompleted.addListener(function(details) {
+  const isAllowed = isAllowedToAction(tabStorage[details.tabId].url)
+
+  if (!isAllowed || details.frameId === 0) {
+    return
+  }
+
+  chrome.tabs.executeScript(details.tabId, {
+    file: 'syncedEvents.js',
+    frameId: details.frameId,
+    runAt: 'document_end',
+  })
 })

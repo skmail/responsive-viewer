@@ -7,6 +7,7 @@ import {
   take,
   select,
 } from 'redux-saga/effects'
+import { eventChannel, END } from 'redux-saga'
 import {
   scrollToScreen,
   highlightScreen,
@@ -17,8 +18,7 @@ import {
   saveUserAgent,
 } from '../actions'
 import scrollIntoView from 'scroll-into-view'
-import { getDomId } from '../utils/screen'
-import { eventChannel, END } from 'redux-saga'
+import { getDomId, getIframeId } from '../utils/screen'
 import { waitFor } from '../utils/saga'
 import { NAME as APP_NAME, SCREEN_DIALOG_FORM_NAME } from '../constants'
 import { saveState, loadState } from '../utils/state'
@@ -181,11 +181,40 @@ function* doFillUserAgentInScreenDialog({ payload }) {
   yield put(changeForm(SCREEN_DIALOG_FORM_NAME, 'userAgent', userAgent.name))
 }
 
+function* doIframeCommunications() {
+  const syncScrollChannel = eventChannel(emitter => {
+    window.addEventListener('message', event => {
+      if (!event.data || event.data.message !== 'FRAME_SCROLL') {
+        return
+      }
+      emitter(event.data)
+    })
+  })
+
+  while (true) {
+    const data = yield take(syncScrollChannel)
+    const state = yield select()
+
+    if (state.app.syncScroll) {
+      const screens = state.app.screens.filter(screen => screen.visible)
+
+      let counter = 0
+      while (counter < screens.length) {
+        const screen = screens[counter]
+        const iframeId = getIframeId(screen.id)
+        const element = document.getElementById(iframeId)
+        element.contentWindow.postMessage(data, '*')
+        counter++
+      }
+    }
+  }
+}
+
 export default function*() {
   yield takeEvery(scrollToScreen().type, doScrollToScreen)
   yield takeEvery(saveScreen().type, doScrollAfterScreenSaved)
   yield takeLatest(initialize().type, doInitialize)
   yield takeLatest(saveUserAgent().type, doFillUserAgentInScreenDialog)
-
+  yield takeLatest(initialized().type, doIframeCommunications)
   yield doSaveToState()
 }

@@ -25,15 +25,18 @@
     "redux-saga": "^1.0.5",
     "scroll-into-view": "^1.9.7",
     "url-parse": "^1.4.7",
-    "uuid": "^3.3.2",
+    "uuid": "^3.3.3",
     "validator": "^11.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build && yarn run build:bg",
+    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build && npm run build:chrome",
+    "build:chrome": "npm run build:background && npm run build:syncedEvents && npm run build:manifest",
+    "build:background": "webpack --mode production ./src/background.js --output ./build/background.js",
+    "build:syncedEvents": "webpack --mode production ./src/syncedEvents.js --output ./build/syncedEvents.js",
+    "build:manifest": "cp ./public/manifest.json ./build/manifest.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:bg": "webpack --mode production ./src/background.js --output ./build/background.js && cp ./public/manifest.json ./build/manifest.json",
     "pretty": "prettier --check 'src/**/*.js' --write"
   },
   "eslintConfig": {

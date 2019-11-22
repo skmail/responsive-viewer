@@ -6,6 +6,7 @@ import Zoom from './Zoom'
 import ViewMode from './ViewMode'
 import classNames from 'classnames'
 import ScreenDirection from './ScreenDirection'
+import Toolbar from './Toolbar'
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -52,6 +53,8 @@ const Sidebar = props => {
     switchScreenDirection,
     screenDirection,
     toggleScreenDialog,
+    syncScroll,
+    toggleSyncScroll,
   } = props
 
   const classes = useStyles()
@@ -75,6 +78,8 @@ const Sidebar = props => {
       <div className={classes.toolbar} />
 
       <div className={classes.grow}>
+        <Toolbar syncScroll={syncScroll} toggleSyncScroll={toggleSyncScroll} />
+
         <Screens
           onClick={scrollToScreen}
           screens={screens}

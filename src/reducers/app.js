@@ -11,6 +11,7 @@ const initialState = {
   viewMode: 'vertical',
   zoom: 1,
   screenDirection: 'portrait',
+  syncScroll: true,
 }
 
 export default (state = initialState, action) => {
@@ -144,6 +145,13 @@ export default (state = initialState, action) => {
         ...initialState,
         url: state.url,
         versionedUrl: state.versionedUrl,
+      }
+    }
+
+    case actionTypes.TOGGLE_SYNC_SCROLL: {
+      return {
+        ...state,
+        syncScroll: !state.syncScroll,
       }
     }
     default:
