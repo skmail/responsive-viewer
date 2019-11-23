@@ -19,6 +19,8 @@ import {
   appReset,
   toggleSyncScroll,
   toggleSyncClick,
+  searchElement,
+  toggleInspectByMouse,
 } from '../actions'
 import uuid from 'uuid'
 
@@ -41,6 +43,7 @@ const mapStateToProps = state => {
     userAgentDialog: state.layout.userAgentDialog,
     helpDialog: state.layout.helpDialog,
     initialized: state.layout.initialized,
+    inspectByMouse: state.layout.inspectByMouse,
   }
 }
 
@@ -67,6 +70,8 @@ const mapDispatchToProps = dispatch => ({
   appReset: () => dispatch(appReset()),
   toggleSyncScroll: () => dispatch(toggleSyncScroll()),
   toggleSyncClick: () => dispatch(toggleSyncClick()),
+  searchElement: selector => dispatch(searchElement(selector)),
+  toggleInspectByMouse: () => dispatch(toggleInspectByMouse()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

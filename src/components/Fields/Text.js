@@ -8,13 +8,14 @@ const renderTextField = props => {
     input,
     meta: { touched, invalid, error },
     showError,
+    validationError = true,
     ...custom
   } = props
   return (
     <TextField
       placeholder={placeholder}
-      error={touched && invalid}
-      helperText={showError && touched && error}
+      error={touched && invalid && validationError}
+      helperText={showError && touched && validationError && error}
       variant={'standard'}
       {...input}
       {...custom}

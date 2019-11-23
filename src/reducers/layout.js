@@ -3,6 +3,7 @@ import actionTypes from '../actions/actionTypes'
 const initialState = {
   initialized: false,
   drawerOpened: true,
+  inspectByMouse: false,
   screenDialog: {
     open: false,
     initialValues: {
@@ -69,6 +70,11 @@ export default (state = initialState, action) => {
         },
       }
     }
+    case actionTypes.TOGGLE_INSPECT_BY_MOUSE:
+      return {
+        ...state,
+        inspectByMouse: !state.inspectByMouse,
+      }
     default:
       return state
   }
