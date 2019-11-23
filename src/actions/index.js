@@ -127,3 +127,14 @@ export const toggleSyncScroll = () => ({
 export const toggleSyncClick = () => ({
   type: actionTypes.TOGGLE_SYNC_CLICK,
 })
+
+export const searchElement = selector => ({
+  type: actionTypes.SEARCH_ELEMENT,
+  payload: {
+    selector,
+  },
+})
+
+export const toggleInspectByMouse = () => ({
+  type: actionTypes.TOGGLE_INSPECT_BY_MOUSE,
+})

@@ -57,6 +57,9 @@ const Sidebar = props => {
     toggleSyncScroll,
     syncClick,
     toggleSyncClick,
+    searchElement,
+    inspectByMouse,
+    toggleInspectByMouse,
   } = props
 
   const classes = useStyles()
@@ -85,6 +88,9 @@ const Sidebar = props => {
           toggleSyncScroll={toggleSyncScroll}
           syncClick={syncClick}
           toggleSyncClick={toggleSyncClick}
+          searchElement={searchElement}
+          inspectByMouse={inspectByMouse}
+          toggleInspectByMouse={toggleInspectByMouse}
         />
 
         <Screens

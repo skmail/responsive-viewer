@@ -55,6 +55,9 @@ function App(props) {
     syncClick,
     toggleSyncClick,
     initialized,
+    searchElement,
+    inspectByMouse,
+    toggleInspectByMouse,
   } = props
 
   useEffect(() => {
@@ -117,6 +120,9 @@ function App(props) {
         toggleSyncScroll={toggleSyncScroll}
         syncClick={syncClick}
         toggleSyncClick={toggleSyncClick}
+        searchElement={searchElement}
+        inspectByMouse={inspectByMouse}
+        toggleInspectByMouse={toggleInspectByMouse}
       />
       <div className={classes.content}>
         <Screens

@@ -1,3 +1,5 @@
+import platform from '../platform'
+
 import {
   takeLatest,
   takeEvery,
@@ -12,11 +14,8 @@ import {
   scrollToScreen,
   highlightScreen,
   unHighlightScreen,
-  saveScreen,
   initialize,
   initialized,
-  saveUserAgent,
-  appReset,
 } from '../actions'
 import scrollIntoView from 'scroll-into-view'
 import { getDomId, getIframeId } from '../utils/screen'
@@ -24,6 +23,7 @@ import { waitFor } from '../utils/saga'
 import { NAME as APP_NAME, SCREEN_DIALOG_FORM_NAME } from '../constants'
 import { saveState, loadState, resetState } from '../utils/state'
 import { change as changeForm } from 'redux-form'
+import actionTypes from '../actions/actionTypes'
 
 const doScrollToScreen = function*({ payload }) {
   const { id } = payload
@@ -96,7 +96,7 @@ function* doSaveToState() {
       const state = yield select()
       yield call(saveState, state.app)
 
-      yield call(window.chrome.runtime.sendMessage, {
+      yield call(platform.runtime.sendMessage, {
         message: 'LOAD_STATE',
         state: state.app,
       })
@@ -105,75 +105,54 @@ function* doSaveToState() {
 }
 
 function* doInitialize() {
-  let app = yield call(loadState)
   const state = yield select()
-  if (app) {
+
+  let app = yield call(loadState)
+
+  app = app && typeof app === 'object' ? app : {}
+  const screens = Array.isArray(app.screens) ? app.screens : state.app.screens
+  app = {
+    ...state.app,
+    ...app,
+    screens: screens.map(screen => ({
+      ...screen,
+      highlighted: false,
+    })),
+  }
+
+  const initializeChannel = eventChannel(emitter => {
+    try {
+      platform.runtime.sendMessage({ message: 'GET_TAB_URL' }, function(
+        response
+      ) {
+        console.log(response)
+        emitter(response)
+        emitter(END)
+      })
+    } catch (e) {}
+
+    return () => {}
+  })
+
+  try {
+    const response = yield take(initializeChannel)
+
+    const { tabUrl } = response
+
     app = {
       ...state.app,
       ...app,
-      screens: app.screens.map(screen => ({
-        ...screen,
-        highlighted: false,
-      })),
+      url: tabUrl || app.url,
+      versionedUrl: tabUrl || app.url,
     }
+  } catch (err) {}
 
-    yield call(window.chrome.runtime.sendMessage, {
-      message: 'LOAD_STATE',
-      state: app,
-    })
+  yield call(platform.runtime.sendMessage, {
+    message: 'LOAD_STATE',
+    state: app,
+  })
 
-    yield put(initialized({ app }))
-  }
-
-  const initializeEvent = () =>
-    eventChannel(emitter => {
-      try {
-        window.chrome.runtime.sendMessage({ message: 'GET_TAB_URL' }, function(
-          response
-        ) {
-          emitter(response)
-          emitter(END)
-        })
-      } catch (e) {}
-      return () => {}
-    })
-
-  const initializeChannel = yield call(initializeEvent)
-
-  try {
-    while (true) {
-      const response = yield take(initializeChannel)
-
-      const { tabUrl } = response
-
-      if (app) {
-        app = {
-          ...state.app,
-          ...app,
-          screens: app.screens.map(screen => ({
-            ...screen,
-            highlighted: false,
-          })),
-          url: tabUrl || app.url,
-          versionedUrl: tabUrl || app.url,
-        }
-      } else {
-        app = {
-          ...state.app,
-          url: tabUrl ? tabUrl : '',
-          versionedUrl: tabUrl ? tabUrl : '',
-        }
-      }
-
-      yield call(window.chrome.runtime.sendMessage, {
-        message: 'LOAD_STATE',
-        state: app,
-      })
-
-      yield put(initialized({ app }))
-    }
-  } finally {
-  }
+  yield put(initialized({ app }))
 }
 
 function* doFillUserAgentInScreenDialog({ payload }) {
@@ -182,6 +161,17 @@ function* doFillUserAgentInScreenDialog({ payload }) {
   yield put(changeForm(SCREEN_DIALOG_FORM_NAME, 'userAgent', userAgent.name))
 }
 
+const sendMessageToScreens = (screens, message) => {
+  screens = screens.filter(screen => screen.visible)
+  let counter = 0
+  while (counter < screens.length) {
+    const screen = screens[counter]
+    const iframeId = getIframeId(screen.id)
+    const element = document.getElementById(iframeId)
+    element.contentWindow.postMessage(message, '*')
+    counter++
+  }
+}
 function* doIframeCommunications() {
   const syncScrollChannel = eventChannel(emitter => {
     window.addEventListener('message', event => {
@@ -190,10 +180,13 @@ function* doIframeCommunications() {
       }
       emitter(event.data)
     })
+
+    return () => {}
   })
 
   while (true) {
     const data = yield take(syncScrollChannel)
+
     const state = yield select()
     let allowedToSend = false
 
@@ -204,18 +197,15 @@ function* doIframeCommunications() {
       case '@APP/CLICK':
         allowedToSend = state.app.syncClick
         break
+      case '@APP/SCROLL_TO_ELEMENT':
+        allowedToSend = true
+        break
+      default:
+        allowedToSend = false
     }
 
     if (allowedToSend) {
-      const screens = state.app.screens.filter(screen => screen.visible)
-      let counter = 0
-      while (counter < screens.length) {
-        const screen = screens[counter]
-        const iframeId = getIframeId(screen.id)
-        const element = document.getElementById(iframeId)
-        element.contentWindow.postMessage(data, '*')
-        counter++
-      }
+      sendMessageToScreens(state.app.screens, data)
     }
   }
 }
@@ -226,12 +216,40 @@ function* doAppReset() {
   yield put(initialize())
 }
 
+function* doSearchElement(action) {
+  const { payload } = action
+  const { selector } = payload
+  const state = yield select()
+
+  sendMessageToScreens(state.app.screens, {
+    message: '@APP/SCROLL_TO_ELEMENT',
+    path: selector,
+  })
+}
+
+function* doInspectByMouse() {
+  const state = yield select()
+
+  if (state.layout.inspectByMouse) {
+    sendMessageToScreens(state.app.screens, {
+      message: '@APP/ENABLE_MOUSE_INSPECTOR',
+    })
+  } else {
+    sendMessageToScreens(state.app.screens, {
+      message: '@APP/DISABLE_MOUSE_INSPECTOR',
+    })
+  }
+}
+
 export default function*() {
-  yield takeEvery(scrollToScreen().type, doScrollToScreen)
-  yield takeEvery(saveScreen().type, doScrollAfterScreenSaved)
-  yield takeLatest(initialize().type, doInitialize)
-  yield takeLatest(saveUserAgent().type, doFillUserAgentInScreenDialog)
-  yield takeLatest(initialized().type, doIframeCommunications)
-  yield takeLatest(appReset().type, doAppReset)
+  yield takeEvery(actionTypes.SCROLL_TO_SCREEN, doScrollToScreen)
+  yield takeEvery(actionTypes.SAVE_SCREEN, doScrollAfterScreenSaved)
+  yield takeLatest(actionTypes.INITIALIZE, doInitialize)
+  yield takeLatest(actionTypes.SAVE_USER_AGENT, doFillUserAgentInScreenDialog)
+  yield takeLatest(actionTypes.INITIALIZED, doIframeCommunications)
+  yield takeLatest(actionTypes.APP_RESET, doAppReset)
+
+  yield takeLatest(actionTypes.SEARCH_ELEMENT, doSearchElement)
+  yield takeLatest(actionTypes.TOGGLE_INSPECT_BY_MOUSE, doInspectByMouse)
   yield doSaveToState()
 }

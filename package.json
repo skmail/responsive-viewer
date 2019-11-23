@@ -7,7 +7,6 @@
     "@material-ui/icons": "^4.2.1",
     "append-query": "^2.0.1",
     "array-move": "^2.1.0",
-    "chrome-extension-async": "^3.3.2",
     "classnames": "^2.2.6",
     "husky": "^3.1.0",
     "jquery": "^3.4.1",
@@ -31,7 +30,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build && npm run build:chrome",
+    "build": "REACT_APP_PLATFORM=CHROME INLINE_RUNTIME_CHUNK=false react-scripts build && npm run build:chrome",
     "build:chrome": "npm run build:background && npm run build:syncedEvents && npm run build:manifest",
     "build:background": "webpack --mode production ./src/background.js --output ./build/background.js",
     "build:syncedEvents": "webpack --mode production ./src/syncedEvents.js --output ./build/syncedEvents.js",
