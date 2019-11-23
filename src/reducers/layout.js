@@ -73,7 +73,10 @@ export default (state = initialState, action) => {
     case actionTypes.TOGGLE_INSPECT_BY_MOUSE:
       return {
         ...state,
-        inspectByMouse: !state.inspectByMouse,
+        inspectByMouse:
+          typeof action.payload.state !== 'undefined'
+            ? action.payload.state
+            : !state.inspectByMouse,
       }
     default:
       return state

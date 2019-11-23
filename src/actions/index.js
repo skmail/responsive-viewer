@@ -135,6 +135,16 @@ export const searchElement = selector => ({
   },
 })
 
-export const toggleInspectByMouse = () => ({
+export const toggleInspectByMouse = state => ({
   type: actionTypes.TOGGLE_INSPECT_BY_MOUSE,
+  payload: {
+    state,
+  },
+})
+
+export const appSaved = app => ({
+  type: actionTypes.APP_SAVED,
+  payload: {
+    app,
+  },
 })

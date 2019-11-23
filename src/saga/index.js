@@ -16,6 +16,8 @@ import {
   unHighlightScreen,
   initialize,
   initialized,
+  appSaved,
+  toggleInspectByMouse,
 } from '../actions'
 import scrollIntoView from 'scroll-into-view'
 import { getDomId, getIframeId } from '../utils/screen'
@@ -100,6 +102,8 @@ function* doSaveToState() {
         message: 'LOAD_STATE',
         state: state.app,
       })
+
+      yield put(appSaved(state.app))
     }
   }
 }
@@ -241,6 +245,10 @@ function* doInspectByMouse() {
   }
 }
 
+function* doTurnOffInspectByMouse() {
+  yield put(toggleInspectByMouse(false))
+}
+
 export default function*() {
   yield takeEvery(actionTypes.SCROLL_TO_SCREEN, doScrollToScreen)
   yield takeEvery(actionTypes.SAVE_SCREEN, doScrollAfterScreenSaved)
@@ -251,5 +259,6 @@ export default function*() {
 
   yield takeLatest(actionTypes.SEARCH_ELEMENT, doSearchElement)
   yield takeLatest(actionTypes.TOGGLE_INSPECT_BY_MOUSE, doInspectByMouse)
+  yield takeLatest(actionTypes.APP_SAVED, doTurnOffInspectByMouse)
   yield doSaveToState()
 }
