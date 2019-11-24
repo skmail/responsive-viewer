@@ -55,11 +55,7 @@ const AppBar = props => {
         <AddressBar initialValues={{ url }} onSubmit={updateUrl} />
         <div className={classes.grow} />
 
-        <Button
-          color="primary"
-          href="https://www.patreon.com/skmail"
-          target="_blank"
-        >
+        <Button color="primary" href="https://ko-fi.com/skmail" target="_blank">
           Support me
         </Button>
         <IconButton
