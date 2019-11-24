@@ -57,10 +57,10 @@ const AppBar = props => {
 
         <Button
           color="primary"
-          href="https://www.buymeacoffee.com/skmail"
+          href="https://www.patreon.com/skmail"
           target="_blank"
         >
-          Buy me a coffee
+          Support me
         </Button>
         <IconButton
           onClick={toggleHelpDialog}
