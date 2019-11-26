@@ -7,7 +7,7 @@ import ViewMode from './ViewMode'
 import classNames from 'classnames'
 import ScreenDirection from './ScreenDirection'
 import Toolbar from './Toolbar'
-
+import Advertisement from '../Advertisement'
 const useStyles = makeStyles(theme => ({
   drawer: {
     width: theme.drawerWidth,
@@ -17,7 +17,6 @@ const useStyles = makeStyles(theme => ({
     width: theme.drawerWidth,
     padding: theme.spacing(2),
     height: '100vh',
-    paddingBottom: theme.spacing(4),
   },
   toolbar: theme.mixins.toolbar,
   grow: {
@@ -106,9 +105,11 @@ const Sidebar = props => {
           value={screenDirection}
           onChange={switchScreenDirection}
         />
+
+        <Zoom value={zoom} onChange={onZoom} />
       </div>
 
-      <Zoom value={zoom} onChange={onZoom} />
+      <Advertisement />
     </Drawer>
   )
 }

@@ -164,7 +164,7 @@ export default props => {
         placeholder={'Search for screen'}
         fullWidth
       />
-      <Scrollbars style={{ height: 300 }}>
+      <Scrollbars style={{ height: 250 }}>
         <div ref={rootRef} className={classes.screensRoot}>
           {hasSearch &&
             searchResults.map(screen => (

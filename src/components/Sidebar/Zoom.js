@@ -7,6 +7,9 @@ import Box from '@material-ui/core/Box'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    margin: theme.spacing(2, 0),
+  },
   slider: {
     margin: theme.spacing(0, 1, 0, 1),
   },
@@ -38,7 +41,7 @@ const Zoom = props => {
   const zoomOut = () => onChange(value - zoomStep)
 
   return (
-    <Box display={'flex'} alignItems={'flex-start'}>
+    <Box className={classes.root} display={'flex'} alignItems={'flex-start'}>
       <IconButton
         classes={{ root: classes.zoomButton }}
         disabled={canZoomOut}

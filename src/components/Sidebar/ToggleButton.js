@@ -12,16 +12,28 @@ const useStyles = makeStyles(theme => ({
   activeButton: {
     backgroundColor: fade(theme.palette.secondary.main, 0.1),
   },
+  margin: {
+    '&:nth-child(odd)': {
+      marginRight: theme.spacing(0.5),
+    },
+    '&:nth-child(even)': {
+      marginLeft: theme.spacing(0.5),
+    },
+  },
 }))
 
 const ToggleButton = props => {
-  const { active, ...rest } = props
+  const { active, margin = false, ...rest } = props
   const classes = useStyles()
   return (
     <Button
       {...rest}
       classes={{
-        root: classNames(classes.button, active ? classes.activeButton : null),
+        root: classNames(
+          classes.button,
+          active ? classes.activeButton : null,
+          margin ? classes.margin : null
+        ),
       }}
     />
   )

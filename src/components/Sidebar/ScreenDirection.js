@@ -1,7 +1,7 @@
 import React from 'react'
 import Heading from './Heading'
 import ToggleButton from './ToggleButton'
-
+import Box from '@material-ui/core/Box'
 const ScreenDirection = props => {
   const { value, onChange } = props
   const modes = [
@@ -17,16 +17,18 @@ const ScreenDirection = props => {
   return (
     <React.Fragment>
       <Heading>Screen Direction</Heading>
-      {modes.map(mode => (
-        <ToggleButton
-          key={mode.name}
-          fullWidth
-          onClick={() => onChange(mode.name)}
-          active={value === mode.name}
-        >
-          {mode.label}
-        </ToggleButton>
-      ))}
+      <Box display="flex" alignItems="center">
+        {modes.map(mode => (
+          <ToggleButton
+            key={mode.name}
+            onClick={() => onChange(mode.name)}
+            active={value === mode.name}
+            margin
+          >
+            {mode.label}
+          </ToggleButton>
+        ))}
+      </Box>
     </React.Fragment>
   )
 }
