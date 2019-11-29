@@ -24,9 +24,7 @@ chrome.browserAction.onClicked.addListener(tab => {
 
   if (!url.isLocal(tab.url)) {
     chrome.browsingData.remove(
-      {
-        origins: url.origins(lastOpenedUrl),
-      },
+      {},
       {
         serviceWorkers: true,
       },
@@ -65,9 +63,7 @@ chrome.webRequest.onBeforeRequest.addListener(
     }
 
     chrome.browsingData.remove(
-      {
-        origins: url.origins(details.url),
-      },
+      {},
       {
         serviceWorkers: true,
       }
@@ -105,9 +101,7 @@ chrome.webRequest.onHeadersReceived.addListener(
 
     if (redirectUrl) {
       chrome.browsingData.remove(
-        {
-          origins: url.origins(redirectUrl.value),
-        },
+        {},
         {
           serviceWorkers: true,
         }
@@ -166,9 +160,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     const tabUrl = url.isLocal(lastOpenedUrl) ? null : lastOpenedUrl
 
     chrome.browsingData.remove(
-      {
-        origins: url.origins(tabUrl),
-      },
+      {},
       {
         serviceWorkers: true,
       },
