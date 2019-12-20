@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     width: `calc(100% + ${100 * (1 - props.zoom)}100%)`,
     flexWrap: props.viewMode === 'vertical' ? 'wrap' : 'nowrap',
-    padding: theme.spacing(1),
     transform: `  perspective(1px) translateZ(0) scale(${props.zoom})`,
     transformOrigin: 'top left',
     backfaceVisibility: 'hidden',
@@ -54,7 +53,7 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Screens = props => {
-  const { screens, url, versionedUrl, screenDirection } = props
+  const { screens, url, versionedUrl, screenDirection, screenshot } = props
   const classes = useStyles(props)
 
   if (url === '') {
@@ -79,7 +78,7 @@ const Screens = props => {
 
   return (
     <Scrollbars className={classes.root}>
-      <div className={classes.content}>
+      <div className={classes.content} id={'screens'}>
         {visibleScreens.map(screen => (
           <div
             id={getDomId(screen.id)}
@@ -90,6 +89,8 @@ const Screens = props => {
               <FormHelperText className={classes.text}>
                 {screen.name}
               </FormHelperText>
+
+              <button onClick={() => screenshot(screen)}>Screenshot</button>
               <FormHelperText className={classes.text}>
                 {screenDirection === 'landscape'
                   ? `${screen.height}x${screen.width}`

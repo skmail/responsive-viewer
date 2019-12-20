@@ -14,9 +14,7 @@ export default {
         storage.set({ [key]: value }, result => {
           resolve(result)
         })
-      } catch (error) {
-        console.log('error', error)
-      }
+      } catch (error) {}
     })
   },
 

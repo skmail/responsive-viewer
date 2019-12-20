@@ -11,7 +11,10 @@ const configureStore = preloadedState => {
     rootReducer,
     preloadedState,
     compose(
-      applyMiddleware(createLogger(), sagaMiddleware),
+      applyMiddleware(
+        // createLogger(),
+        sagaMiddleware
+      ),
       window.__REDUX_DEVTOOLS_EXTENSION__ &&
         window.__REDUX_DEVTOOLS_EXTENSION__()
     )

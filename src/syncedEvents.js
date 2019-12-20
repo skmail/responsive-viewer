@@ -167,9 +167,7 @@ onDomReady(() => {
               view: window,
             })
             element[0].dispatchEvent(evt)
-            console.log('FOUND', event.data.path)
           } else {
-            console.log('NOT FOUND', event.data.path)
           }
         }
 
@@ -277,10 +275,6 @@ onDomReady(() => {
                 }, 1500)
               }
             )
-
-            console.log('FOUND', event.data.path)
-          } else {
-            console.log('NOT FOUND', event.data.path)
           }
         }
         break
@@ -308,6 +302,34 @@ onDomReady(() => {
           'click',
           inspectedElementByMouseSelector,
           inspectByMouseClick
+        )
+        break
+
+      case '@APP/SCREENSHOT':
+        window.top.postMessage(
+          {
+            message: '@APP/SCREENSHOT',
+            frameId: frameID,
+            screen: event.data.screen,
+            height: Math.max(
+              document.body.scrollHeight,
+              document.documentElement.scrollHeight,
+              document.body.offsetHeight,
+              document.documentElement.offsetHeight,
+              document.body.clientHeight,
+              document.documentElement.clientHeight
+            ),
+            width: Math.max(
+              document.body.scrollWidth,
+              document.documentElement.scrollWidth,
+              document.body.offsetWidth,
+              document.documentElement.offsetWidth,
+              document.body.clientWidth,
+              document.documentElement.clientWidth
+            ),
+          },
+
+          '*'
         )
         break
     }

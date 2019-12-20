@@ -8,5 +8,6 @@ export default {
   },
   runtime: {
     sendMessage: (...args) => window.chrome.runtime.sendMessage(...args),
+    getURL: (...args) => window.browser.runtime.getURL(...args),
   },
 }

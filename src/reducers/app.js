@@ -6,8 +6,8 @@ import { generateVersionedUrl } from '../utils/screen'
 const initialState = {
   screens: devices,
   userAgents,
-  url: '',
-  versionedUrl: '',
+  url: 'http://job-board.test/new',
+  versionedUrl: 'http://job-board.test/new',
   viewMode: 'vertical',
   zoom: 1,
   screenDirection: 'portrait',

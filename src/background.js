@@ -174,6 +174,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.message === 'LOAD_STATE') {
     state = request.state
   }
+
+  if (request.message === 'CAPTURE_SCREEN') {
+    chrome.tabs.captureVisibleTab(null, {}, function(image) {
+      sendResponse({
+        image,
+      })
+    })
+  }
   return true
 })
 

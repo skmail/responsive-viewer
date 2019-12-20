@@ -11,6 +11,7 @@ const useStyles = makeStyles(theme => {
   return {
     root: {
       overflow: 'hidden',
+      transform: 'translate3d(0,0,0)',
     },
     toolbar: theme.mixins.toolbar,
     content: props => ({
@@ -58,6 +59,7 @@ function App(props) {
     searchElement,
     inspectByMouse,
     toggleInspectByMouse,
+    screenshot,
   } = props
 
   useEffect(() => {
@@ -132,6 +134,7 @@ function App(props) {
           screenDirection={screenDirection}
           url={url}
           versionedUrl={versionedUrl}
+          screenshot={screenshot}
         />
       </div>
     </div>
