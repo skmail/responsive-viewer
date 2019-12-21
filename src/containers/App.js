@@ -73,7 +73,7 @@ const mapDispatchToProps = dispatch => ({
   toggleSyncClick: () => dispatch(toggleSyncClick()),
   searchElement: selector => dispatch(searchElement(selector)),
   toggleInspectByMouse: () => dispatch(toggleInspectByMouse()),
-  screenshot: screen => dispatch(screenshot(screen)),
+  screenshot: (screen, type) => dispatch(screenshot(screen, type)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

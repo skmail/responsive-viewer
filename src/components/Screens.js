@@ -1,12 +1,9 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Box from '@material-ui/core/Box'
-import ScreenIframe from './ScreenIframe'
-import FormHelperText from '@material-ui/core/FormHelperText'
 import { Scrollbars } from 'react-custom-scrollbars'
-import { getDomId } from '../utils/screen'
 import NoUrlIcon from '@material-ui/icons/LinkOff'
 import NoScreensIcon from '@material-ui/icons/ViewModule'
+import Screen from './Screen'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -26,13 +23,6 @@ const useStyles = makeStyles(theme => ({
     backfaceVisibility: 'hidden',
     '-webkit-font-smoothing': 'antialiased',
   }),
-  screen: {
-    padding: theme.spacing(2),
-  },
-  text: {
-    marginBottom: theme.spacing(0.7),
-    marginTop: 0,
-  },
   emptyState: {
     minHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
     [theme.breakpoints.up('sm')]: {
@@ -80,30 +70,14 @@ const Screens = props => {
     <Scrollbars className={classes.root}>
       <div className={classes.content} id={'screens'}>
         {visibleScreens.map(screen => (
-          <div
-            id={getDomId(screen.id)}
-            className={classes.screen}
+          <Screen
             key={screen.id}
-          >
-            <Box display="flex" justifyContent="space-between">
-              <FormHelperText className={classes.text}>
-                {screen.name}
-              </FormHelperText>
-
-              <button onClick={() => screenshot(screen)}>Screenshot</button>
-              <FormHelperText className={classes.text}>
-                {screenDirection === 'landscape'
-                  ? `${screen.height}x${screen.width}`
-                  : `${screen.width}x${screen.height}`}
-              </FormHelperText>
-            </Box>
-            <ScreenIframe
-              screen={screen}
-              url={url}
-              versionedUrl={versionedUrl}
-              screenDirection={screenDirection}
-            />
-          </div>
+            screen={screen}
+            screenDirection={screenDirection}
+            url={url}
+            versionedUrl={versionedUrl}
+            screenshot={screenshot}
+          />
         ))}
       </div>
     </Scrollbars>

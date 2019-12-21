@@ -7,8 +7,11 @@ export const isLocal = url =>
   String(url).startsWith('chrome://') ||
   String(url).startsWith('chrome-extension://')
 
-export const isExtension = url =>
-  Boolean(url) && clean(url).startsWith(clean(platform.runtime.getURL('/')))
+export const isExtension = url => {
+  return (
+    Boolean(url) && clean(url).startsWith(clean(platform.runtime.getURL('/')))
+  )
+}
 
 export const origins = url => {
   const hostname = parse(url).hostname

@@ -20,5 +20,5 @@ export default createMuiTheme({
     },
   },
   drawerWidth: 240,
-  shadows: ['none'],
+  shadows: new Array(25).fill('none'),
 })

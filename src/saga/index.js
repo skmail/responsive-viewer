@@ -168,10 +168,12 @@ function* doFillUserAgentInScreenDialog({ payload }) {
 const sendMessageToScreens = (screens, message) => {
   screens = screens.filter(screen => screen.visible)
   let counter = 0
+
   while (counter < screens.length) {
     const screen = screens[counter]
     const iframeId = getIframeId(screen.id)
     const element = document.getElementById(iframeId)
+
     element.contentWindow.postMessage(
       {
         screen,
@@ -182,6 +184,7 @@ const sendMessageToScreens = (screens, message) => {
     counter++
   }
 }
+
 function* doIframeCommunications() {
   const waitIframeMessage = eventChannel(emitter => {
     window.addEventListener('message', event => {
@@ -204,22 +207,26 @@ function* doIframeCommunications() {
       case '@APP/FRAME_SCROLL':
         allowedToSend = state.app.syncScroll
         break
+
       case '@APP/CLICK':
         allowedToSend = state.app.syncClick
         break
+
       case '@APP/SCROLL_TO_ELEMENT':
         allowedToSend = true
         break
 
       case '@APP/SCREENSHOT':
+        allowedToSend = false
+
         yield call(captureScreen, {
           type: 'CAPTURE_SCREEN',
           payload: {
             ...data,
           },
         })
-        allowedToSend = false
         break
+
       default:
         allowedToSend = false
     }
@@ -265,12 +272,13 @@ function* doTurnOffInspectByMouse() {
   yield put(toggleInspectByMouse(false))
 }
 
-function* doScreenshot(action) {
+function doScreenshot(action) {
   const { payload } = action
-  const { screen } = payload
+  const { screen, type } = payload
 
   sendMessageToScreens([screen], {
     message: '@APP/SCREENSHOT',
+    type,
   })
 }
 
@@ -279,13 +287,20 @@ function* captureScreen(action) {
 
   const { payload } = action
 
-  const { screen, height: fullIframeHeight } = payload
+  const { screen, height: fullIframeHeight, type } = payload
 
-  const height = fullIframeHeight + fullIframeHeight * (state.app.zoom - 1)
+  const screenHeight =
+    state.app.screenDirection === 'landscape' ? screen.width : screen.height
+  const screenWidth =
+    state.app.screenDirection === 'landscape' ? screen.height : screen.width
+
+  const iframeHeight = type === 'full' ? fullIframeHeight : screenHeight
+
+  const height = iframeHeight + iframeHeight * (state.app.zoom - 1)
 
   const iframeElement = document.getElementById(getIframeId(screen.id))
 
-  iframeElement.style.height = `${fullIframeHeight}px`
+  iframeElement.style.height = `${iframeHeight}px`
 
   const screenElement = document.getElementById(getDomId(screen.id))
 
@@ -307,11 +322,7 @@ function* captureScreen(action) {
 
   const canvas = document.createElement('canvas')
 
-  if (state.app.screenDirection === 'landscape') {
-    canvas.width = screen.height + screen.height * (state.app.zoom - 1)
-  } else {
-    canvas.width = screen.width + screen.width * (state.app.zoom - 1)
-  }
+  canvas.width = screenWidth + screenWidth * (state.app.zoom - 1)
 
   canvas.height = height
 
@@ -374,12 +385,26 @@ function* captureScreen(action) {
       })
     })
 
-  const scrollTimes = Math.ceil(height / parentHeight)
-
   let scrolls = 0
 
-  while (scrolls < scrollTimes) {
-    yield call(scrollChannel, scrolls)
+  const scrollsArray = String(height / parentHeight).split('.')
+
+  let scrollTimes = (() => {
+    const array = []
+    for (let i = 0; i < scrollsArray[0]; i++) {
+      array.push(i)
+    }
+
+    if (scrollsArray.length === 2) {
+      array.push(parseFloat(`${array[array.length - 1]}.${scrollsArray[1]}`))
+    }
+
+    return array
+  })()
+
+  while (scrolls < scrollTimes.length) {
+    console.log(scrolls, scrollTimes[scrolls])
+    yield call(scrollChannel, scrollTimes[scrolls])
 
     yield delay(1000)
 
@@ -395,7 +420,7 @@ function* captureScreen(action) {
         image.width,
         image.height,
         0,
-        scale(parentHeight * scrolls),
+        scale(parentHeight * scrollTimes[scrolls]),
         image.width,
         image.height
       )
@@ -404,9 +429,7 @@ function* captureScreen(action) {
     scrolls++
   }
 
-  iframeElement.style.height = `${
-    state.app.screenDirection === 'landscape' ? screen.width : screen.height
-  }px`
+  iframeElement.style.height = `${screenHeight}px`
 
   scrollIntoView(screenElement, {
     align: {
@@ -421,11 +444,15 @@ function* captureScreen(action) {
     download(
       blob,
       slugify(
-        `${extractHostname(state.app.url)}-${screen.name}-${screen.width}x${
-          screen.height
-        }`
+        `${extractHostname(state.app.url)}-${
+          screen.name
+        }-${screenWidth}x${screenHeight}`
       )
     )
+  })
+
+  sendMessageToScreens([screen], {
+    message: '@APP/SCREENSHOT_DONE',
   })
 }
 

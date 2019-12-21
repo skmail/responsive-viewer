@@ -191,6 +191,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
   if (!isAllowed || details.frameId === 0) {
     return
   }
+
   chrome.tabs.executeScript(details.tabId, {
     file: 'syncedEvents.js',
     frameId: details.frameId,

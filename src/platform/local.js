@@ -15,6 +15,6 @@ export default {
   },
   runtime: {
     sendMessage: noobWithCallback,
-    getURL: () => '',
+    getURL: () => '/local',
   },
 }
