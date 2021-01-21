@@ -174,6 +174,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.message === 'LOAD_STATE') {
     state = request.state
   }
+
+  if (request.message === 'CAPTURE_SCREEN') {
+    chrome.tabs.captureVisibleTab(null, {}, function(image) {
+      sendResponse({
+        image,
+      })
+    })
+  }
   return true
 })
 
@@ -183,6 +191,7 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
   if (!isAllowed || details.frameId === 0) {
     return
   }
+
   chrome.tabs.executeScript(details.tabId, {
     file: 'syncedEvents.js',
     frameId: details.frameId,

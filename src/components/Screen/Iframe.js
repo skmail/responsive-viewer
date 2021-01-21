@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import { getIframeId } from '../utils/screen'
+import { getIframeId } from '../../utils/screen'
 import classNames from 'classnames'
 import appendQuery from 'append-query'
 
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const ScreenIframe = props => {
+const Iframe = props => {
   const { screen, versionedUrl, screenDirection } = props
   const [isLoading, setIsLoading] = useState(true)
   const [scrolling, setScrolling] = useState(true)
@@ -75,6 +75,9 @@ const ScreenIframe = props => {
     }
   }, [])
 
+  const width = screenDirection === 'landscape' ? screen.height : screen.width
+  const height = screenDirection === 'landscape' ? screen.width : screen.height
+
   return (
     <div
       className={classNames(
@@ -94,15 +97,11 @@ const ScreenIframe = props => {
         onLoad={onLoad}
         className={classes.iframe}
         sandbox="allow-scripts allow-forms allow-same-origin"
-        title={`${screen.name} - ${
-          screenDirection === 'landscape'
-            ? `${screen.height}x${screen.width}`
-            : `${screen.width}x${screen.height}`
-        }`}
+        key={'iframe'}
+        title={`${screen.name} - ${width}x${height}`}
         style={{
-          width: screenDirection === 'landscape' ? screen.height : screen.width,
-          height:
-            screenDirection === 'landscape' ? screen.width : screen.height,
+          width,
+          height,
         }}
         src={iframeUrl}
       />
@@ -110,4 +109,4 @@ const ScreenIframe = props => {
   )
 }
 
-export default ScreenIframe
+export default Iframe

@@ -30,4 +30,6 @@ export default {
 
   APP_RESET: 'APP_RESET',
   APP_SAVED: 'APP_SAVED',
+
+  SCREENSHOT: 'SCREENSHOT',
 }

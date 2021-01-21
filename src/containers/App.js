@@ -21,6 +21,7 @@ import {
   toggleSyncClick,
   searchElement,
   toggleInspectByMouse,
+  screenshot,
 } from '../actions'
 import uuid from 'uuid'
 
@@ -72,6 +73,7 @@ const mapDispatchToProps = dispatch => ({
   toggleSyncClick: () => dispatch(toggleSyncClick()),
   searchElement: selector => dispatch(searchElement(selector)),
   toggleInspectByMouse: () => dispatch(toggleInspectByMouse()),
+  screenshot: (screen, type) => dispatch(screenshot(screen, type)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

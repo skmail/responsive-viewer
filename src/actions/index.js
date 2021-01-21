@@ -148,3 +148,11 @@ export const appSaved = app => ({
     app,
   },
 })
+
+export const screenshot = (screen, type) => ({
+  type: actionTypes.SCREENSHOT,
+  payload: {
+    screen,
+    type,
+  },
+})

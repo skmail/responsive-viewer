@@ -30,10 +30,12 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "REACT_APP_PLATFORM=CHROME INLINE_RUNTIME_CHUNK=false react-scripts build && npm run build:chrome",
-    "build:chrome": "npm run build:background && npm run build:syncedEvents && npm run build:manifest",
-    "build:background": "webpack --mode production ./src/background.js --output ./build/background.js",
-    "build:syncedEvents": "webpack --mode production ./src/syncedEvents.js --output ./build/syncedEvents.js",
+    "build": "REACT_APP_PLATFORM=CHROME INLINE_RUNTIME_CHUNK=false react-scripts build && npm run build:browser",
+    "build:chrome": "cross-env REACT_APP_PLATFORM=CHROME && npm run build:browser",
+    "build:firefix": "cross-env REACT_APP_PLATFORM=FIREFOX && npm run build:browser",
+    "build:browser": "cross-env REACT_APP_PLATFORM=CHROME npm run build:background && npm run build:syncedEvents && npm run build:manifest",
+    "build:background": "cross-env REACT_APP_PLATFORM=CHROME webpack --mode production ./src/background.js --output ./build/background.js",
+    "build:syncedEvents": "cross-env REACT_APP_PLATFORM=CHROME webpack --mode production ./src/syncedEvents.js --output ./build/syncedEvents.js",
     "build:manifest": "cp ./public/manifest.json ./build/manifest.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -55,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "cross-env": "^6.0.3",
     "webpack-cli": "^3.3.6"
   },
   "husky": {
