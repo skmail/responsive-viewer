@@ -68,6 +68,7 @@ const AddressBar = props => {
           root: classes.inputInput + ' ' + classes.inputRoot,
         }}
       />
+
       <IconButton
         type={'submit'}
         disabled={invalid}

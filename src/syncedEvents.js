@@ -2,14 +2,13 @@ import onDomReady from './utils/onDomReady'
 import uuid from 'uuid'
 import './inject/utils'
 import scrollTo from './inject/scrollTo'
-import syncClick, { simulateClick } from './inject/syncClick'
+import syncClick, { simulateClick, triggerEvent } from './inject/syncClick'
 import {
   disableMouseInspector,
   enableMouseInspector,
   scrollToElement,
 } from './inject/scrollToElement'
 import screenshot, { screenshotDone } from './inject/screenshot'
-
 window.frameID = uuid.v4()
 
 onDomReady(() => {
@@ -51,6 +50,14 @@ onDomReady(() => {
       case '@APP/SCREENSHOT_DONE':
         screenshotDone(event.data)
         break
+
+      case '@APP/DELEGATE_EVENT':
+        triggerEvent(event.data)
+        break
+      default:
+        break
     }
   })
 })
+
+chrome.runtime.sendMessage({ message: 'SET_FRAME_ID', frameId: window.frameID })

@@ -1,89 +1,34 @@
 import queryString from 'query-string'
 import devices from './devices'
+
 import * as url from './utils/url'
-import tabStorage from './utils/tabStorage'
-import frameStorage from './utils/frameStorage'
 
-let state = {}
-
-const isAllowedToAction = tab => {
-  if (!tab) {
-    return false
-  }
-  return tabStorage.isExtension(tab.id)
-}
-
-let lastOpenedUrl
+const frames = {}
 
 chrome.browserAction.onClicked.addListener(tab => {
-  lastOpenedUrl = tab.url
+  let state = {}
 
-  const onReady = () => {
-    chrome.tabs.create({ url: 'index.html' })
-  }
+  chrome.tabs.executeScript({
+    file: 'init.js',
+  })
 
-  if (!url.isLocal(tab.url)) {
-    chrome.browsingData.remove(
-      {},
-      {
-        serviceWorkers: true,
-      },
-      function() {
-        onReady()
-      }
-    )
-  } else {
-    onReady()
-  }
-})
+  chrome.tabs.insertCSS({
+    file: 'static/css/main.css',
+  })
 
-chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-  if (url.isExtension(tab.url)) {
-    tabStorage.set(tabId, tab)
-  } else {
-    tabStorage.remove(tabId)
-  }
-})
+  chrome.tabs.executeScript({
+    file: 'static/js/main.js',
+  })
 
-chrome.tabs.onRemoved.addListener(tabId => {
-  if (!tabStorage.has(tabId)) {
-    return
-  }
-  tabStorage.remove(tabId)
-})
+  const tabHostname = url.extractHostname(tab.url)
 
-chrome.webRequest.onBeforeRequest.addListener(
-  function(details) {
-    const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
-
-    if (!isAllowed || details.parentFrameId !== 0) {
-      return {
-        cancel: false,
-      }
-    }
-
-    chrome.browsingData.remove(
-      {},
-      {
-        serviceWorkers: true,
-      }
-    )
-    return {
-      cancel: false,
-    }
-  },
-  { urls: ['<all_urls>'] },
-  ['blocking']
-)
-
-chrome.webRequest.onHeadersReceived.addListener(
-  function(details) {
+  const onHeadersReceived = function(details) {
     const headers = details.responseHeaders
 
-    const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
-
-    if (!isAllowed || details.parentFrameId !== 0) {
-      return { responseHeaders: headers }
+    if (details.frameId === 0) {
+      return {
+        responseHeaders: headers,
+      }
     }
 
     const responseHeaders = headers.filter(header => {
@@ -95,46 +40,108 @@ chrome.webRequest.onHeadersReceived.addListener(
       )
     })
 
-    const redirectUrl = headers.find(header => {
-      return header.name.toLowerCase() === 'location'
-    })
-
-    if (redirectUrl) {
-      chrome.browsingData.remove(
-        {},
-        {
-          serviceWorkers: true,
-        }
-      )
-    }
-
     return {
       responseHeaders,
     }
-  },
-  {
-    urls: ['<all_urls>'],
-    types: ['sub_frame', 'main_frame'],
-  },
-  ['blocking', 'responseHeaders']
-)
+  }
 
-chrome.webRequest.onBeforeSendHeaders.addListener(
-  function(details) {
-    const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
-
-    if (!isAllowed || details.parentFrameId !== 0) {
+  const onWebNavigationComplete = function(details) {
+    if (tab.id !== details.tabId) {
       return
     }
 
-    const frame = frameStorage.get(details.tabId, details.frameId)
+    if (details.url === 'about:blank') {
+      return
+    }
 
-    if (!frame) {
+    if (details.frameId === 0) {
+      return
+    }
+
+    if (url.extractHostname(details.url) !== tabHostname) {
+      return
+    }
+
+    chrome.tabs.executeScript(details.tabId, {
+      file: 'syncedEvents.js',
+      frameId: details.frameId,
+      runAt: 'document_start',
+    })
+  }
+
+  const onBeforeNavigate = function(details) {
+    if (details.frameId === 0) {
+      chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived)
+      chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders)
+
+      chrome.webNavigation.onCompleted.removeListener(onWebNavigationComplete)
+
+      chrome.webNavigation.onCommitted.removeListener(onBeforeNavigate)
+      chrome.runtime.onMessage.removeListener(onMessages)
+    }
+  }
+
+  const onMessages = function(request, sender, sendResponse) {
+    if (sender.tab.id !== tab.id) {
+      return
+    }
+
+    switch (request.message) {
+      case 'GET_TAB_URL':
+        sendResponse({
+          tabUrl: tab.url,
+        })
+        break
+
+      case 'CAPTURE_SCREEN':
+        chrome.tabs.captureVisibleTab(null, {}, function(image) {
+          console.log('image captured', image)
+          sendResponse({
+            image,
+          })
+        })
+        break
+
+      case 'SET_FRAME_ID':
+        frames[sender.frameId] = request.frameId
+        break
+
+      case 'LOAD_STATE':
+        state = request.state
+        break
+      default:
+        // do nothing.
+        break
+    }
+
+    return true
+  }
+
+  const onBeforeSendHeaders = function(details) {
+    if (details.tabId !== tab.id || tab.frameId === 0) {
       return {
         requestHeaders: details.requestHeaders,
       }
     }
-    let userAgent = frame.userAgent
+
+    if (!frames[details.frameId]) {
+      const parsed = queryString.parseUrl(details.url)
+      if (parsed && parsed.query && parsed.query._RSSID_) {
+        frames[details.frameId] = parsed.query._RSSID_
+      }
+    }
+
+    const screenId = frames[details.frameId]
+
+    const screen = state.screens.find(screen => screen.id === screenId)
+
+    if (!screenId || !screen) {
+      return {
+        requestHeaders: details.requestHeaders,
+      }
+    }
+
+    let userAgent = screen.userAgent
 
     const userAgents = state && state.userAgents ? state.userAgents : devices
 
@@ -144,78 +151,37 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
       userAgent = value.value
     }
 
+    details.requestHeaders = details.requestHeaders.filter(
+      header => header.name !== 'User-Agent'
+    )
+
     details.requestHeaders.push({
       name: 'User-Agent',
       value: userAgent,
     })
 
     return { requestHeaders: details.requestHeaders }
-  },
-  { urls: ['<all_urls>'], types: ['sub_frame'] },
-  ['blocking', 'requestHeaders']
-)
-
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  if (request.message === 'GET_TAB_URL') {
-    const tabUrl = url.isLocal(lastOpenedUrl) ? null : lastOpenedUrl
-
-    chrome.browsingData.remove(
-      {},
-      {
-        serviceWorkers: true,
-      },
-      () =>
-        sendResponse({
-          tabUrl,
-        })
-    )
   }
 
-  if (request.message === 'LOAD_STATE') {
-    state = request.state
-  }
+  chrome.webRequest.onHeadersReceived.addListener(
+    onHeadersReceived,
+    {
+      urls: ['<all_urls>'],
+      types: ['sub_frame'],
+      tabId: tab.id,
+    },
+    ['blocking', 'responseHeaders', 'extraHeaders']
+  )
 
-  if (request.message === 'CAPTURE_SCREEN') {
-    chrome.tabs.captureVisibleTab(null, {}, function(image) {
-      sendResponse({
-        image,
-      })
-    })
-  }
-  return true
-})
+  chrome.webNavigation.onCompleted.addListener(onWebNavigationComplete)
 
-chrome.webNavigation.onCompleted.addListener(function(details) {
-  const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
+  chrome.webNavigation.onCommitted.addListener(onBeforeNavigate)
 
-  if (!isAllowed || details.frameId === 0) {
-    return
-  }
+  chrome.runtime.onMessage.addListener(onMessages)
 
-  chrome.tabs.executeScript(details.tabId, {
-    file: 'syncedEvents.js',
-    frameId: details.frameId,
-    runAt: 'document_end',
-  })
-})
-
-chrome.webNavigation.onBeforeNavigate.addListener(function(details) {
-  const isAllowed = isAllowedToAction(tabStorage.get(details.tabId))
-
-  if (!isAllowed || details.frameId === 0) {
-    return
-  }
-
-  if (details.parentFrameId === 0) {
-    const parsed = queryString.parseUrl(details.url)
-
-    let userAgent = parsed.query ? parsed.query.__userAgent__ : null
-
-    if (userAgent) {
-      frameStorage.set({
-        ...details,
-        userAgent,
-      })
-    }
-  }
+  chrome.webRequest.onBeforeSendHeaders.addListener(
+    onBeforeSendHeaders,
+    { urls: ['<all_urls>'], types: ['sub_frame'], tabId: tab.id },
+    ['blocking', 'requestHeaders']
+  )
 })

@@ -29,6 +29,10 @@ export default (state = initialState, action) => {
         ...state,
         url: action.payload.url,
         versionedUrl: generateVersionedUrl(action.payload.url),
+        screens: state.screens.map(screen => ({
+          ...screen,
+          timestamp: Date.now(),
+        })),
       }
 
     case actionTypes.SAVE_SCREEN:

@@ -115,7 +115,11 @@ function* doInitialize() {
   let app = yield call(loadState)
 
   app = app && typeof app === 'object' ? app : {}
+
   const screens = Array.isArray(app.screens) ? app.screens : state.app.screens
+
+  const tabUrl = window.location.href
+
   app = {
     ...state.app,
     ...app,
@@ -123,33 +127,9 @@ function* doInitialize() {
       ...screen,
       highlighted: false,
     })),
+    url: tabUrl || app.url,
+    versionedUrl: tabUrl || app.url,
   }
-
-  const initializeChannel = eventChannel(emitter => {
-    try {
-      platform.runtime.sendMessage({ message: 'GET_TAB_URL' }, function(
-        response
-      ) {
-        emitter(response)
-        emitter(END)
-      })
-    } catch (e) {}
-
-    return () => {}
-  })
-
-  try {
-    const response = yield take(initializeChannel)
-
-    const { tabUrl } = response
-
-    app = {
-      ...state.app,
-      ...app,
-      url: tabUrl || app.url,
-      versionedUrl: tabUrl || app.url,
-    }
-  } catch (err) {}
 
   yield call(platform.runtime.sendMessage, {
     message: 'LOAD_STATE',
@@ -214,6 +194,10 @@ function* doIframeCommunications() {
 
       case '@APP/SCROLL_TO_ELEMENT':
         allowedToSend = true
+        break
+
+      case '@APP/DELEGATE_EVENT':
+        allowedToSend = state.app.syncClick
         break
 
       case '@APP/SCREENSHOT':
@@ -283,6 +267,7 @@ function doScreenshot(action) {
 }
 
 function* captureScreen(action) {
+  console.log('request capture image')
   const state = yield select()
 
   const { payload } = action
@@ -306,16 +291,19 @@ function* captureScreen(action) {
 
   const parent = document.getElementById('screens').parentElement
 
+  const parentBoundingBox = parent.getBoundingClientRect()
+  const screenElementBoundingBox = screenElement.getBoundingClientRect()
+
   const parentBox = {
-    x: parent.getBoundingClientRect().x,
-    y: parent.getBoundingClientRect().y,
-    width: parent.getBoundingClientRect().width,
-    height: parent.getBoundingClientRect().height,
+    x: parentBoundingBox.x,
+    y: parentBoundingBox.y,
+    width: parentBoundingBox.width,
+    height: parentBoundingBox.height,
   }
 
   const oldScreenPosition = {
-    y: screenElement.getBoundingClientRect().y - parentBox.y,
-    x: screenElement.getBoundingClientRect().x - parentBox.x,
+    y: screenElementBoundingBox.y - parentBox.y,
+    x: screenElementBoundingBox.x - parentBox.x,
   }
 
   const parentHeight = window.innerHeight - parentBox.y
@@ -376,20 +364,24 @@ function* captureScreen(action) {
 
         const image = new Image()
         image.onload = function() {
+          console.log('loaded', response.image)
           accept(image)
         }
         image.onerror = function() {
           accept(false)
+          console.log('unable to load')
         }
+
         image.src = response.image
       })
     })
 
-  let scrolls = 0
-
   const scrollsArray = String(height / parentHeight).split('.')
 
   let scrollTimes = (() => {
+    if (scrollsArray[0] === '0') {
+      return [0]
+    }
     const array = []
     for (let i = 0; i < scrollsArray[0]; i++) {
       array.push(i)
@@ -402,17 +394,18 @@ function* captureScreen(action) {
     return array
   })()
 
+  let scrolls = 0
+
   while (scrolls < scrollTimes.length) {
-    console.log(scrolls, scrollTimes[scrolls])
     yield call(scrollChannel, scrollTimes[scrolls])
 
     yield delay(1000)
 
     const image = yield call(captureChannel)
 
-    const iframeBox = iframeElement.getBoundingClientRect()
-
     if (image) {
+      const iframeBox = iframeElement.getBoundingClientRect()
+
       ctx.drawImage(
         image,
         scale(iframeBox.x),
@@ -426,6 +419,7 @@ function* captureScreen(action) {
       )
     }
 
+    yield delay(500)
     scrolls++
   }
 

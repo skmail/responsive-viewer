@@ -36,7 +36,7 @@ const Iframe = props => {
   const classes = useStyles()
 
   const iframeUrl = appendQuery(versionedUrl, {
-    __userAgent__: screen.userAgent,
+    _RSSID_: screen.id,
   })
 
   const onLoad = e => {
@@ -45,7 +45,7 @@ const Iframe = props => {
 
   useEffect(() => {
     setIsLoading(true)
-  }, [iframeUrl])
+  }, [iframeUrl, screen.timestamp])
 
   useEffect(() => {
     let isShift = false
@@ -96,8 +96,8 @@ const Iframe = props => {
         id={getIframeId(screen.id)}
         onLoad={onLoad}
         className={classes.iframe}
-        sandbox="allow-scripts allow-forms allow-same-origin"
-        key={'iframe'}
+        sandbox="allow-scripts allow-forms allow-same-origin allow-presentation allow-orientation-lock allow-modals allow-popups-to-escape-sandbox allow-pointer-lock "
+        key={`screen-${screen.timestamp}`}
         title={`${screen.name} - ${width}x${height}`}
         style={{
           width,

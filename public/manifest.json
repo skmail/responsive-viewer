@@ -17,14 +17,12 @@
   "permissions": [
     "storage",
     "tabs",
+    "activeTab",
     "webRequest",
     "webRequestBlocking",
     "browsingData",
     "webNavigation",
-    "management",
-    "<all_urls>",
-    "http://*/*",
-    "https://*/*"
+    "management"
   ],
   "content_security_policy": "script-src 'self' https://cdn.carbonads.com https://srv.carbonads.net/ads/ ;object-src 'self'"
 }
