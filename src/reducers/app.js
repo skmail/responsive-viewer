@@ -11,8 +11,8 @@ const initialState = {
   viewMode: 'vertical',
   zoom: 1,
   screenDirection: 'portrait',
-  syncScroll: false,
-  syncClick: false,
+  syncScroll: true,
+  syncClick: true,
   initialized: false,
 }
 

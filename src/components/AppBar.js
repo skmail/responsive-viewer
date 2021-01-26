@@ -10,6 +10,8 @@ import MenuIcon from '@material-ui/icons/Menu'
 import AddIcon from '@material-ui/icons/Add'
 import HelpIcon from '@material-ui/icons/Help'
 
+import TwitterIcon from '@material-ui/icons/Twitter'
+
 const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1,
@@ -58,6 +60,17 @@ const AppBar = props => {
         <Button color="primary" href="https://ko-fi.com/skmail" target="_blank">
           Support me
         </Button>
+        <IconButton
+          href="https://twitter.com/SolaimanKmail"
+          target="_blank"
+          edge="end"
+          aria-label="Follow me on twitter"
+          aria-haspopup="true"
+          color="inherit"
+        >
+          <TwitterIcon />
+        </IconButton>
+
         <IconButton
           onClick={toggleHelpDialog}
           edge="end"

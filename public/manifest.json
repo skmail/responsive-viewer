@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Responsive Viewer",
   "author": "Solaiman Kmail",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "Show multiple screens once, Responsive design tester",
   "icons": {
     "128": "16.png"
@@ -20,9 +20,7 @@
     "activeTab",
     "webRequest",
     "webRequestBlocking",
-    "browsingData",
-    "webNavigation",
-    "management"
+    "webNavigation"
   ],
   "content_security_policy": "script-src 'self' https://cdn.carbonads.com https://srv.carbonads.net/ads/ ;object-src 'self'"
 }
