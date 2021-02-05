@@ -104,6 +104,20 @@ chrome.browserAction.onClicked.addListener(tab => {
 
       case 'SET_FRAME_ID':
         frames[sender.frameId] = request.frameId
+
+        chrome.tabs.sendMessage(
+          tab.id,
+          {
+            message: 'SET_FRAME',
+            screenId: sender.frameId,
+            tabId: tab.id,
+            chromeFrameId: request.frameId,
+          },
+          () => {
+            console.log('done ..')
+          }
+        )
+
         break
 
       case 'LOAD_STATE':
@@ -111,6 +125,7 @@ chrome.browserAction.onClicked.addListener(tab => {
         break
       default:
         // do nothing.
+        sendResponse({})
         break
     }
 

@@ -450,12 +450,38 @@ function* captureScreen(action) {
   })
 }
 
+function* doBackgroundCommunications() {
+  const waitForBackgroundMessages = eventChannel(emitter => {
+    platform.runtime.onMessage.addListener(function(
+      message,
+      sender,
+      sendResponse
+    ) {
+      sendResponse({})
+
+      emitter(message)
+
+      return true
+    })
+
+    return () => {}
+  })
+
+  console.log('waiting for messages starts ..')
+  while (true) {
+    const data = yield take(waitForBackgroundMessages)
+
+    console.log('data message', data)
+  }
+}
+
 export default function*() {
   yield takeEvery(actionTypes.SCROLL_TO_SCREEN, doScrollToScreen)
   yield takeEvery(actionTypes.SAVE_SCREEN, doScrollAfterScreenSaved)
   yield takeLatest(actionTypes.INITIALIZE, doInitialize)
   yield takeLatest(actionTypes.SAVE_USER_AGENT, doFillUserAgentInScreenDialog)
   yield takeLatest(actionTypes.INITIALIZED, doIframeCommunications)
+  yield takeLatest(actionTypes.INITIALIZED, doBackgroundCommunications)
   yield takeLatest(actionTypes.APP_RESET, doAppReset)
 
   yield takeLatest(actionTypes.SCREENSHOT, doScreenshot)

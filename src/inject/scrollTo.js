@@ -1,3 +1,6 @@
+import { cloneEvent } from './utils'
+import getDomPath from '../utils/domPath'
+
 window.userScroll = false
 function mouseEvent(e) {
   window.userScroll = true
@@ -40,6 +43,8 @@ window.addEventListener(
         frameId: window.frameID,
         scrollTop: document.documentElement.scrollTop,
         scrollLeft: document.documentElement.scrollLeft,
+        path: getDomPath(e.target),
+        event: cloneEvent(e),
       },
       '*'
     )

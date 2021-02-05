@@ -1,23 +1,6 @@
 import getDomPath from '../utils/domPath'
+import { cloneEvent } from './utils'
 import $ from 'jquery'
-
-function cloneEvent(e) {
-  const obj = {}
-  for (let k in e) {
-    const v = e[k]
-
-    if (
-      v instanceof Node ||
-      v instanceof Window ||
-      typeof v === 'function' ||
-      Array.isArray(v) | (v && typeof v === 'object')
-    ) {
-      continue
-    }
-    obj[k] = v
-  }
-  return obj
-}
 
 export default () => {
   document.addEventListener('mousedown', e => {

@@ -205,3 +205,22 @@ export const disableMouseInspector = data => {
     inspectByMouseClick
   )
 }
+
+export const mouseWheel = data => {
+  const element = $(data.path)
+
+  console.log('try to trigger', data)
+  if (element.length) {
+    const evt = new WheelEvent('mousewheel', {
+      deltaMode: data.event.deltaMode,
+      deltaZ: data.event.deltaZ,
+      deltaY: data.event.deltaY,
+      deltaX: data.event.deltaX,
+      bubbles: true,
+      cancelable: true,
+      view: window,
+    })
+
+    element[0].dispatchEvent(evt)
+  }
+}

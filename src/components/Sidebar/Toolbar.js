@@ -49,12 +49,29 @@ const Toolbar = props => {
           />
         </svg>
       </ToolbarButton>
-
-      <ElementSelector
-        inspectByMouse={inspectByMouse}
-        toggleInspectByMouse={toggleInspectByMouse}
-        search={searchElement}
-      />
+      <ToolbarButton
+        title="Inspect by mouse"
+        active={inspectByMouse}
+        onClick={() => {
+          toggleInspectByMouse()
+        }}
+      >
+        <svg
+          style={{ width: 15 }}
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 268.71 256.02"
+        >
+          <path
+            d="M265.8 210.22l-59.11-59.11 42.17-24.35a9.93 9.93 0 00-1.29-17.83l-188-75a9.93 9.93 0 00-12.9 12.91l75 188.05a9.93 9.93 0 0017.83 1.29L163.81 194l59.1 59.11a9.93 9.93 0 0014.05 0l28.84-28.85a9.92 9.92 0 000-14.04zM229.94 232l-61.23-61.23a9.93 9.93 0 00-7-2.91 9.31 9.31 0 00-1.29.08 10 10 0 00-7.31 4.88L132.5 208.5 73.65 60.94 221.2 119.8l-35.65 20.59A9.92 9.92 0 00183.5 156l61.23 61.23z"
+            fill="currentColor"
+          />
+          <path
+            d="M73.27 181.57H26.4A26.42 26.42 0 010 155.18V26.4A26.43 26.43 0 0126.4 0h128.78a26.42 26.42 0 0126.39 26.4v23.9h-3V26.4A23.42 23.42 0 00155.18 3H26.4A23.43 23.43 0 003 26.4v128.78a23.42 23.42 0 0023.4 23.39h46.87z"
+            fill="currentColor"
+          />
+        </svg>
+      </ToolbarButton>
+      <ElementSelector inspectByMouse={inspectByMouse} search={searchElement} />
     </Box>
   )
 }

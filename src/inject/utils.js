@@ -6,3 +6,22 @@ $.fn.findOrAppend = function(selector) {
     ? elements
     : $(`<div class="${selector.replace('.', '')}">`).appendTo(this)
 }
+
+export function cloneEvent(e) {
+  const obj = {}
+  for (let k in e) {
+    const v = e[k]
+
+    if (
+      v === null ||
+      v instanceof Node ||
+      v instanceof Window ||
+      typeof v === 'function' ||
+      Array.isArray(v) | (v && typeof v === 'object')
+    ) {
+      continue
+    }
+    obj[k] = v
+  }
+  return obj
+}
