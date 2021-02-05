@@ -35,4 +35,8 @@
     iframe.style.width = '100%'
     iframe.style.height = `${height}px`
   })
+
+  window.addEventListener('scroll', e => {
+    console.log('scroll', e)
+  })
 })()
