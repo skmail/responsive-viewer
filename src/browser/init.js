@@ -1,12 +1,19 @@
 ;(() => {
-  const removeChildren = element => {
-    while (element.children.length) {
-      element.removeChild(element.children[0])
+  var console = {}
+  Object.keys(window.console).forEach(name => {
+    console[name] = function() {}
+  })
+
+  window.console = console
+
+  for (const element of document.documentElement.children) {
+    if (['head', 'body'].includes(element.tagName)) {
+      element.parentNode.removeChild(element)
     }
   }
 
-  removeChildren(document.head)
-  removeChildren(document.body)
+  document.head.innerHTML = ''
+  document.body.innerHTML = ''
 
   const removeAttributes = element => {
     Object.values(element.attributes).forEach(attribute => {
@@ -34,9 +41,5 @@
 
     iframe.style.width = '100%'
     iframe.style.height = `${height}px`
-  })
-
-  window.addEventListener('scroll', e => {
-    console.log('scroll', e)
   })
 })()
