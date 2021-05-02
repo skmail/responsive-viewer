@@ -26,7 +26,7 @@ const start = tab => {
   console.log('starting ...')
 
   chrome.tabs.executeScript(tab.id, {
-    code: 'window.location.reload(true)',
+    code: 'window.location.reload()',
   })
 
   const tabHostname = url.extractHostname(tab.url)
@@ -217,7 +217,18 @@ const start = tab => {
     onBeforeRequest,
     {
       urls: ['<all_urls>'],
-      types: ['script'],
+      types: [
+        'stylesheet',
+        'script',
+        'image',
+        'font',
+        'object',
+        'xmlhttprequest',
+        'ping',
+        'csp_report',
+        'media',
+        'websocket',
+      ],
       tabId: tab.id,
     },
     ['blocking']
