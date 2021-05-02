@@ -5,19 +5,28 @@ import * as url from './utils/url'
 
 const frames = {}
 
-chrome.browserAction.onClicked.addListener(tab => {
-  let state = {}
-
-  chrome.tabs.executeScript({
+const injectContents = tab => {
+  chrome.tabs.executeScript(tab.id, {
     file: 'init.js',
   })
 
-  chrome.tabs.insertCSS({
+  chrome.tabs.insertCSS(tab.id, {
     file: 'static/css/main.css',
   })
 
-  chrome.tabs.executeScript({
+  chrome.tabs.executeScript(tab.id, {
     file: 'static/js/main.js',
+  })
+}
+const start = tab => {
+  let state = {}
+
+  let started = false
+
+  console.log('starting ...')
+
+  chrome.tabs.executeScript(tab.id, {
+    code: 'window.location.reload(true)',
   })
 
   const tabHostname = url.extractHostname(tab.url)
@@ -55,6 +64,12 @@ chrome.browserAction.onClicked.addListener(tab => {
     }
 
     if (details.frameId === 0) {
+      console.log('main frame', started)
+      if (started === false) {
+        started = true
+        injectContents(tab)
+        return
+      }
       return
     }
 
@@ -70,14 +85,25 @@ chrome.browserAction.onClicked.addListener(tab => {
   }
 
   const onBeforeNavigate = function(details) {
-    if (details.frameId === 0) {
+    if (details.frameId === 0 && started === true) {
       chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived)
       chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders)
 
       chrome.webNavigation.onCompleted.removeListener(onWebNavigationComplete)
 
       chrome.webNavigation.onCommitted.removeListener(onBeforeNavigate)
+
+      chrome.webRequest.onBeforeRequest.removeListener(onBeforeRequest)
+
       chrome.runtime.onMessage.removeListener(onMessages)
+    }
+  }
+
+  const onBeforeRequest = details => {
+    if (details.frameId === 0) {
+      return {
+        cancel: true,
+      }
     }
   }
 
@@ -187,6 +213,15 @@ chrome.browserAction.onClicked.addListener(tab => {
     },
     ['blocking', 'responseHeaders', 'extraHeaders']
   )
+  chrome.webRequest.onBeforeRequest.addListener(
+    onBeforeRequest,
+    {
+      urls: ['<all_urls>'],
+      types: ['script'],
+      tabId: tab.id,
+    },
+    ['blocking']
+  )
 
   chrome.webNavigation.onCompleted.addListener(onWebNavigationComplete)
 
@@ -199,4 +234,7 @@ chrome.browserAction.onClicked.addListener(tab => {
     { urls: ['<all_urls>'], types: ['sub_frame'], tabId: tab.id },
     ['blocking', 'requestHeaders']
   )
+}
+chrome.browserAction.onClicked.addListener(tab => {
+  start(tab)
 })
