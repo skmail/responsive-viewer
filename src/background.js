@@ -41,25 +41,18 @@ const start = tab => {
   const tabHostname = url.extractHostname(tab.url)
 
   const onHeadersReceived = function(details) {
-    const headers = details.responseHeaders
-
-    if (details.frameId === 0) {
-      return {
-        responseHeaders: headers,
-      }
-    }
-
-    const responseHeaders = headers.filter(header => {
-      const name = header.name.toLowerCase()
-      return (
-        ['x-frame-options', 'content-security-policy', 'frame-options'].indexOf(
-          name
-        ) === -1
-      )
-    })
-
     return {
-      responseHeaders,
+      responseHeaders: details.responseHeaders.filter(header => {
+        const name = header.name.toLowerCase()
+
+        return (
+          [
+            'x-frame-options',
+            'content-security-policy',
+            'frame-options',
+          ].indexOf(name) === -1
+        )
+      }),
     }
   }
 
@@ -158,9 +151,7 @@ const start = tab => {
             tabId: tab.id,
             chromeFrameId: request.frameId,
           },
-          () => {
-            console.log('done ..')
-          }
+          () => {}
         )
 
         break
@@ -227,7 +218,7 @@ const start = tab => {
     onHeadersReceived,
     {
       urls: ['<all_urls>'],
-      types: ['sub_frame'],
+      types: ['main_frame', 'sub_frame'],
       tabId: tab.id,
     },
     ['blocking', 'responseHeaders', 'extraHeaders']

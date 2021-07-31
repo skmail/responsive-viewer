@@ -9,7 +9,7 @@ const initialState = {
   url: '',
   versionedUrl: '',
   viewMode: 'vertical',
-  zoom: 0.4,
+  zoom: 1,
   screenDirection: 'portrait',
   syncScroll: true,
   syncClick: true,

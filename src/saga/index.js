@@ -7,7 +7,7 @@ import {
   put,
   take,
   select,
-  delay,
+  fork,
 } from 'redux-saga/effects'
 import { eventChannel } from 'redux-saga'
 import {
@@ -88,21 +88,38 @@ function* doScrollAfterScreenSaved({ payload }) {
   yield put(scrollToScreen(id))
 }
 
-function* doSaveToState() {
+function* doWatchAllAction() {
   while (true) {
     const action = yield take('*')
     if (action.type.startsWith(APP_NAME)) {
-      const state = yield select()
-      yield call(saveState, state.app)
-
-      yield call(platform.runtime.sendMessage, {
-        message: 'LOAD_STATE',
-        state: state.app,
-      })
-
-      yield put(appSaved(state.app))
+      yield fork(doSaveToState)
     }
+    yield fork(notifyAdvertisment, action)
   }
+}
+
+function* notifyAdvertisment(action) {
+  const advertismentIframe = document.getElementById('advertismentIframe')
+  if (advertismentIframe) {
+    yield advertismentIframe.contentWindow.postMessage(
+      {
+        action: action.type,
+      },
+      '*'
+    )
+  }
+}
+
+function* doSaveToState() {
+  const state = yield select()
+  yield call(saveState, state.app)
+
+  yield call(platform.runtime.sendMessage, {
+    message: 'LOAD_STATE',
+    state: state.app,
+  })
+
+  yield put(appSaved(state.app))
 }
 
 function* doInitialize() {
@@ -191,6 +208,10 @@ function* doIframeCommunications() {
 
     const state = yield select()
     let allowedToSend = false
+
+    yield put({
+      type: `@IFRAME/${data.message}`,
+    })
 
     switch (data.message) {
       case '@APP/FRAME_SCROLL':
@@ -504,5 +525,5 @@ export default function*() {
   yield takeLatest(actionTypes.APP_SAVED, doTurnOffInspectByMouse)
   yield takeLatest(actionTypes.EXPORT_APP, doExportApp)
   yield takeLatest(actionTypes.IMPORT_APP, doImportApp)
-  yield doSaveToState()
+  yield doWatchAllAction()
 }
