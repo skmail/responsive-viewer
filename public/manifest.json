@@ -20,7 +20,8 @@
     "activeTab",
     "webRequest",
     "webRequestBlocking",
-    "webNavigation"
+    "webNavigation",
+    "contentSettings"
   ],
   "content_security_policy": "script-src 'self' https://cdn.carbonads.com https://srv.carbonads.net/ads/ ;object-src 'self'"
 }

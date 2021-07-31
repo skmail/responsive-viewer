@@ -31,6 +31,7 @@ import { extractHostname, slugify } from '../utils/url'
 const doScrollToScreen = function*({ payload }) {
   const { id } = payload
 
+  console.log(id)
   const iframeId = yield call(getDomId, id)
 
   const element = document.getElementById(iframeId)
@@ -118,7 +119,20 @@ function* doInitialize() {
 
   const screens = Array.isArray(app.screens) ? app.screens : state.app.screens
 
+  if (Array.isArray(app.screens)) {
+    const ids = screens.map(screen => screen.id)
+    const names = screens.map(screen => screen.name)
+    for (let screen of state.app.screens) {
+      if (!ids.includes(screen.id) && !names.includes(screen.name)) {
+        screens.push({
+          ...screen,
+          visible: false,
+        })
+      }
+    }
+  }
   const tabUrl = window.location.href
+  //const tabUrl = 'https://google.com'
 
   app = {
     ...state.app,
@@ -451,27 +465,31 @@ function* captureScreen(action) {
 }
 
 function* doBackgroundCommunications() {
-  const waitForBackgroundMessages = eventChannel(emitter => {
-    platform.runtime.onMessage.addListener(function(
-      message,
-      sender,
-      sendResponse
-    ) {
-      sendResponse({})
+  try {
+    const waitForBackgroundMessages = eventChannel(emitter => {
+      platform.runtime.onMessage.addListener(function(
+        message,
+        sender,
+        sendResponse
+      ) {
+        sendResponse({})
 
-      emitter(message)
+        emitter(message)
 
-      return true
+        return true
+      })
+
+      return () => {}
     })
 
-    return () => {}
-  })
+    console.log('waiting for messages starts ..')
+    while (true) {
+      const data = yield take(waitForBackgroundMessages)
 
-  console.log('waiting for messages starts ..')
-  while (true) {
-    const data = yield take(waitForBackgroundMessages)
-
-    console.log('data message', data)
+      console.log('data message', data)
+    }
+  } catch (error) {
+    console.error('unable to comunicate')
   }
 }
 

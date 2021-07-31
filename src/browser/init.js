@@ -1,8 +1,8 @@
 ;(() => {
-  var console = {}
-  Object.keys(window.console).forEach(name => {
-    console[name] = function() {}
-  })
+  // var console = {}
+  // Object.keys(window.console).forEach(name => {
+  //   console[name] = function() {}
+  // })
 
   window.console = console
 
@@ -30,16 +30,7 @@
 
   document.body.appendChild(appRoot)
 
-  window.addEventListener('message', function(message) {
-    if (message.data.message !== '@ADS/LOADED') {
-      return
-    }
-
-    const iframe = document.getElementById('advertismentIframe')
-
-    const height = Math.min(150, message.data.height)
-
-    iframe.style.width = '100%'
-    iframe.style.height = `${height}px`
-  })
+  window.WebSocket.prototype.onmessage = () => {
+    console.log('what')
+  }
 })()

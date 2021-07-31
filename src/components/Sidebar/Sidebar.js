@@ -1,5 +1,6 @@
 import React from 'react'
 import Drawer from '@material-ui/core/Drawer'
+import Box from '@material-ui/core/Box'
 import { makeStyles } from '@material-ui/core/styles'
 import Screens from './Screens'
 import Zoom from './Zoom'
@@ -8,6 +9,8 @@ import classNames from 'classnames'
 import ScreenDirection from './ScreenDirection'
 import Toolbar from './Toolbar'
 import Advertisement from '../Advertisement'
+import { Scrollbars } from 'react-custom-scrollbars'
+
 const useStyles = makeStyles(theme => ({
   drawer: {
     width: theme.drawerWidth,
@@ -15,12 +18,13 @@ const useStyles = makeStyles(theme => ({
   },
   drawerPaper: {
     width: theme.drawerWidth,
-    padding: theme.spacing(2),
+    padding: 0,
     height: '100vh',
   },
   toolbar: theme.mixins.toolbar,
   grow: {
     flex: 1,
+    padding: theme.spacing(2),
   },
   drawerOpen: {
     width: theme.drawerWidth,
@@ -35,6 +39,12 @@ const useStyles = makeStyles(theme => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     transform: `translateX(-${theme.drawerWidth}px)`,
+  },
+  advertisement: {
+    position: 'sticky',
+    top: 0,
+
+    zIndex: 99999,
   },
 }))
 
@@ -79,37 +89,41 @@ const Sidebar = props => {
       anchor="left"
       open={open}
     >
-      <div className={classes.toolbar} />
+      <Scrollbars style={{}}>
+        <div className={classes.advertisement}>
+          <Advertisement />
+        </div>
 
-      <div className={classes.grow}>
-        <Toolbar
-          syncScroll={syncScroll}
-          toggleSyncScroll={toggleSyncScroll}
-          syncClick={syncClick}
-          toggleSyncClick={toggleSyncClick}
-          searchElement={searchElement}
-          inspectByMouse={inspectByMouse}
-          toggleInspectByMouse={toggleInspectByMouse}
-        />
+        <div className={classes.grow}>
+          <Toolbar
+            syncScroll={syncScroll}
+            toggleSyncScroll={toggleSyncScroll}
+            syncClick={syncClick}
+            toggleSyncClick={toggleSyncClick}
+            searchElement={searchElement}
+            inspectByMouse={inspectByMouse}
+            toggleInspectByMouse={toggleInspectByMouse}
+          />
 
-        <Screens
-          onClick={scrollToScreen}
-          screens={screens}
-          updateVisibility={updateVisibility}
-          toggleScreenDialog={toggleScreenDialog}
-          sortScreens={sortScreens}
-        />
+          <Screens
+            onClick={scrollToScreen}
+            screens={screens}
+            updateVisibility={updateVisibility}
+            toggleScreenDialog={toggleScreenDialog}
+            sortScreens={sortScreens}
+          />
 
-        <ViewMode value={viewMode} onChange={switchViewMode} />
-        <ScreenDirection
-          value={screenDirection}
-          onChange={switchScreenDirection}
-        />
+          <Box display="flex">
+            <ViewMode value={viewMode} onChange={switchViewMode} />
+            <ScreenDirection
+              value={screenDirection}
+              onChange={switchScreenDirection}
+            />
+          </Box>
 
-        <Zoom value={zoom} onChange={onZoom} />
-      </div>
-
-      <Advertisement />
+          <Zoom value={zoom} onChange={onZoom} />
+        </div>
+      </Scrollbars>
     </Drawer>
   )
 }

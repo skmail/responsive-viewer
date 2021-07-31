@@ -23,11 +23,33 @@ const start = tab => {
 
   let started = false
 
-  console.log('starting ...')
+  chrome.contentSettings.javascript.get({ primaryUrl: tab.url }, function(
+    details
+  ) {
+    console.log('weeord ', details)
+    const url = tab.url
+    const extractHostname = new RegExp('^(?:f|ht)tp(?:s)?://([^/]+)', 'im')
 
-  chrome.tabs.executeScript(tab.id, {
-    code: 'window.location.reload()',
+    const pattern = /^file:/.test(url)
+      ? url
+      : url.match(extractHostname)[0] + '/*'
+
+    console.log('pattern', pattern)
+
+    chrome.contentSettings.javascript.set(
+      { primaryPattern: pattern, setting: 'block' },
+      function(details) {
+        chrome.tabs.executeScript(tab.id, {
+          code: 'window.location.reload()',
+        })
+      }
+    )
   })
+
+  chrome.contentSettings.javascript.set(
+    { primaryPattern: pattern, setting: 'allow' },
+    function(details) {}
+  )
 
   const tabHostname = url.extractHostname(tab.url)
 
@@ -64,7 +86,6 @@ const start = tab => {
     }
 
     if (details.frameId === 0) {
-      console.log('main frame', started)
       if (started === false) {
         started = true
         injectContents(tab)
@@ -121,7 +142,6 @@ const start = tab => {
 
       case 'CAPTURE_SCREEN':
         chrome.tabs.captureVisibleTab(null, {}, function(image) {
-          console.log('image captured', image)
           sendResponse({
             image,
           })

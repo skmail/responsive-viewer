@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -16,6 +16,7 @@ import * as normalizers from '../utils/normalizers'
 import AddIcon from '@material-ui/icons/Add'
 import IconButton from '@material-ui/core/IconButton'
 import { SCREEN_DIALOG_FORM_NAME } from '../constants'
+import devices from '../devices'
 
 const useStyles = makeStyles(theme => ({
   body: {
@@ -59,6 +60,10 @@ const ScreenDialog = props => {
 
   const screenId = initialValues && initialValues.id
 
+  const isNativeScreen = useMemo(() => {
+    return false
+    return devices.find(screen => screen.id === screenId)
+  }, [screenId])
   const isUpdate = Boolean(screenId)
 
   const handleClose = () => {
@@ -174,13 +179,16 @@ const ScreenDialog = props => {
                     </Button>
                   </DialogActions>
                 </Dialog>
-                <Button
-                  onClick={() => setIsDeleteDialogOpened(true)}
-                  variant={'contained'}
-                  className={classes.delete}
-                >
-                  Delete
-                </Button>
+
+                {!isNativeScreen && (
+                  <Button
+                    onClick={() => setIsDeleteDialogOpened(true)}
+                    variant={'contained'}
+                    className={classes.delete}
+                  >
+                    Delete
+                  </Button>
+                )}
               </React.Fragment>
             )}
 

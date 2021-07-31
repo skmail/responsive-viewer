@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     zIndex: theme.zIndex.drawer + 1,
+    width: `calc(100vw - ${theme.drawerWidth}px)`,
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -27,6 +28,12 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.up('sm')]: {
       display: 'block',
     },
+  },
+  logo: {
+    height: 40,
+  },
+  toolbar: {
+    alignItems: 'center',
   },
 }))
 
@@ -41,19 +48,12 @@ const AppBar = props => {
   const classes = useStyles()
   return (
     <MuiAppBar color="default" className={classes.root}>
-      <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={toggleDrawer}
-          edge="start"
-        >
-          <MenuIcon />
-        </IconButton>
-
-        <Typography className={classes.title} variant="h6" noWrap>
-          Responsive Viewer
-        </Typography>
+      <Toolbar className={classes.toolbar}>
+        <img
+          src="https://responsive-viewer-ads.netlify.app/logo.png"
+          alt="Responsive Viewer"
+          className={classes.logo}
+        />
         <AddressBar initialValues={{ url }} onSubmit={updateUrl} />
         <div className={classes.grow} />
 

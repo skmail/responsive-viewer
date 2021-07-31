@@ -16,10 +16,10 @@ const useStyles = makeStyles(theme => ({
   },
   content: props => ({
     display: 'flex',
-    width: `calc(100% + ${100 * (1 - props.zoom)}100%)`,
+    width: `calc( (100vw - ${theme.drawerWidth}px) / ${props.zoom})`,
     flexWrap: props.viewMode === 'vertical' ? 'wrap' : 'nowrap',
-    transform: `  perspective(1px) translateZ(0) scale(${props.zoom})`,
-    transformOrigin: 'top left',
+    transform: `scale(${props.zoom})`,
+    transformOrigin: '0 0',
     backfaceVisibility: 'hidden',
     '-webkit-font-smoothing': 'antialiased',
   }),
