@@ -28,27 +28,29 @@ const Screenshot = props => {
       <IconButton className={classes.action} size={'small'} onClick={onClick}>
         <CameraIcon fontSize={'small'} />
       </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-      >
-        <MenuItem onClick={() => handleMenuItemClick('visible')}>
-          Capture visible page
-        </MenuItem>
-        <MenuItem onClick={() => handleMenuItemClick('full')}>
-          Capture entire page
-        </MenuItem>
-      </Menu>
+      {!!anchorEl && (
+        <Menu
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+        >
+          <MenuItem onClick={() => handleMenuItemClick('visible')}>
+            Capture visible page
+          </MenuItem>
+          <MenuItem onClick={() => handleMenuItemClick('full')}>
+            Capture entire page
+          </MenuItem>
+        </Menu>
+      )}
     </React.Fragment>
   )
 }

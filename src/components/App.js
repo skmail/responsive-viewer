@@ -64,7 +64,7 @@ function App(props) {
 
   useEffect(() => {
     initialize()
-  }, [])
+  }, [initialize])
 
   const classes = useStyles(props)
 
@@ -102,6 +102,12 @@ function App(props) {
         userAgents={userAgents}
         toggleScreenDialog={toggleScreenDialog}
         toggleHelpDialog={toggleHelpDialog}
+        viewMode={viewMode}
+        switchViewMode={switchViewMode}
+        switchScreenDirection={switchScreenDirection}
+        screenDirection={screenDirection}
+        zoom={zoom}
+        onZoom={onZoom}
       />
       <div className={classes.toolbar} />
       <Sidebar
@@ -109,14 +115,8 @@ function App(props) {
         updateScreen={updateScreen}
         updateVisibility={updateVisibility}
         sortScreens={sortScreens}
-        zoom={zoom}
-        onZoom={onZoom}
-        viewMode={viewMode}
-        switchViewMode={switchViewMode}
         scrollToScreen={scrollToScreen}
         open={drawerOpened}
-        switchScreenDirection={switchScreenDirection}
-        screenDirection={screenDirection}
         toggleScreenDialog={toggleScreenDialog}
         syncScroll={syncScroll}
         toggleSyncScroll={toggleSyncScroll}

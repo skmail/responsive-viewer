@@ -39,7 +39,7 @@ const useStyles = makeStyles(theme => ({
   inputInput: {
     color: 'inherit',
     padding: theme.spacing(0, 1, 0, 7),
-    width: 500,
+    width: 350,
     borderBottom: 'none',
     '& > div:before': {
       content: 'initial',

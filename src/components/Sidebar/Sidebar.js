@@ -1,15 +1,10 @@
 import React from 'react'
 import Drawer from '@material-ui/core/Drawer'
-import Box from '@material-ui/core/Box'
 import { makeStyles } from '@material-ui/core/styles'
 import Screens from './Screens'
-import Zoom from './Zoom'
-import ViewMode from './ViewMode'
 import classNames from 'classnames'
-import ScreenDirection from './ScreenDirection'
 import Toolbar from './Toolbar'
 import Advertisement from '../Advertisement'
-import { Scrollbars } from 'react-custom-scrollbars'
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -25,6 +20,8 @@ const useStyles = makeStyles(theme => ({
   grow: {
     flex: 1,
     padding: theme.spacing(2),
+    display: 'flex',
+    flexDirection: 'column',
   },
   drawerOpen: {
     width: theme.drawerWidth,
@@ -46,6 +43,11 @@ const useStyles = makeStyles(theme => ({
 
     zIndex: 99999,
   },
+  container: {
+    height: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 }))
 
 const Sidebar = props => {
@@ -53,14 +55,7 @@ const Sidebar = props => {
     screens,
     updateVisibility,
     sortScreens,
-    zoom,
-    onZoom,
-    viewMode,
-    switchViewMode,
     scrollToScreen,
-    open,
-    switchScreenDirection,
-    screenDirection,
     toggleScreenDialog,
     syncScroll,
     toggleSyncScroll,
@@ -70,6 +65,8 @@ const Sidebar = props => {
     inspectByMouse,
     toggleInspectByMouse,
   } = props
+
+  const open = true
 
   const classes = useStyles()
 
@@ -89,7 +86,7 @@ const Sidebar = props => {
       anchor="left"
       open={open}
     >
-      <Scrollbars style={{}}>
+      <div className={classes.container}>
         <div className={classes.advertisement}>
           <Advertisement />
         </div>
@@ -112,18 +109,8 @@ const Sidebar = props => {
             toggleScreenDialog={toggleScreenDialog}
             sortScreens={sortScreens}
           />
-
-          <Box display="flex">
-            <ViewMode value={viewMode} onChange={switchViewMode} />
-            <ScreenDirection
-              value={screenDirection}
-              onChange={switchScreenDirection}
-            />
-          </Box>
-
-          <Zoom value={zoom} onChange={onZoom} />
         </div>
-      </Scrollbars>
+      </div>
     </Drawer>
   )
 }

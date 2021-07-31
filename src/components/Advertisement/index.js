@@ -7,7 +7,6 @@ const Advertisement = props => {
         return
       }
 
-      console.log('messsage', message.data)
       const iframe = document.getElementById('advertismentIframe')
 
       const height = Math.min(190, message.data.height)

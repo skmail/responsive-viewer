@@ -5,9 +5,9 @@ import {
   takeEvery,
   call,
   put,
-  delay,
   take,
   select,
+  delay,
 } from 'redux-saga/effects'
 import { eventChannel, END } from 'redux-saga'
 import {
@@ -27,48 +27,43 @@ import { saveState, loadState, resetState } from '../utils/state'
 import { change as changeForm } from 'redux-form'
 import actionTypes from '../actions/actionTypes'
 import { extractHostname, slugify } from '../utils/url'
+const wait = ms =>
+  new Promise(resolve =>
+    platform.runtime.sendMessage({ message: 'WAIT', time: ms }, () => resolve())
+  )
 
+const scrollTo = (element, align = {}) =>
+  new Promise(resolve => {
+    scrollIntoView(
+      element,
+      {
+        align: {
+          top: 0,
+          left: 0,
+          topOffset: 0,
+          leftOffset: 0,
+          ...align,
+        },
+      },
+      () => {
+        resolve()
+      }
+    )
+  })
 const doScrollToScreen = function*({ payload }) {
   const { id } = payload
 
-  console.log(id)
   const iframeId = yield call(getDomId, id)
 
   const element = document.getElementById(iframeId)
 
-  const scroll = () =>
-    eventChannel(emitter => {
-      scrollIntoView(
-        element,
-        {
-          align: {
-            top: 0,
-            left: 0,
-            topOffset: 0,
-            leftOffset: 0,
-          },
-        },
-        () => {
-          emitter(END)
-        }
-      )
+  yield scrollTo(element)
 
-      return () => {}
-    })
+  yield put(highlightScreen(id))
 
-  const scrollChannel = yield call(scroll)
+  yield wait(400)
 
-  try {
-    while (true) {
-      yield take(scrollChannel)
-    }
-  } finally {
-    yield put(highlightScreen(id))
-
-    yield delay(400)
-
-    yield put(unHighlightScreen(id))
-  }
+  yield put(unHighlightScreen(id))
 }
 
 function* doScrollAfterScreenSaved({ payload }) {
@@ -88,7 +83,7 @@ function* doScrollAfterScreenSaved({ payload }) {
     state.app.screens.find(screen => screen.id === id)
   )
 
-  yield delay(100)
+  yield wait(100)
 
   yield put(scrollToScreen(id))
 }
@@ -281,7 +276,6 @@ function doScreenshot(action) {
 }
 
 function* captureScreen(action) {
-  console.log('request capture image')
   const state = yield select()
 
   const { payload } = action
@@ -347,25 +341,6 @@ function* captureScreen(action) {
     document.body.removeChild(link)
   }
 
-  const scrollChannel = scrolls =>
-    new Promise(accept => {
-      scrollIntoView(
-        iframeElement,
-        {
-          align: {
-            top: 0,
-            left: 0,
-            topOffset: -parentHeight * scrolls,
-            leftOffset: 0,
-          },
-          time: 0,
-        },
-        () => {
-          accept()
-        }
-      )
-    })
-
   const captureChannel = () =>
     new Promise(accept => {
       platform.runtime.sendMessage({ message: 'CAPTURE_SCREEN' }, function(
@@ -378,12 +353,10 @@ function* captureScreen(action) {
 
         const image = new Image()
         image.onload = function() {
-          console.log('loaded', response.image)
           accept(image)
         }
         image.onerror = function() {
           accept(false)
-          console.log('unable to load')
         }
 
         image.src = response.image
@@ -411,11 +384,11 @@ function* captureScreen(action) {
   let scrolls = 0
 
   while (scrolls < scrollTimes.length) {
-    yield call(scrollChannel, scrollTimes[scrolls])
+    yield scrollTo(iframeElement, {
+      topOffset: -parentHeight * scrollTimes[scrolls],
+    })
 
-    yield delay(1000)
-
-    const image = yield call(captureChannel)
+    const image = yield captureChannel()
 
     if (image) {
       const iframeBox = iframeElement.getBoundingClientRect()
@@ -433,19 +406,14 @@ function* captureScreen(action) {
       )
     }
 
-    yield delay(500)
     scrolls++
   }
 
   iframeElement.style.height = `${screenHeight}px`
 
-  scrollIntoView(screenElement, {
-    align: {
-      top: 0,
-      left: 0,
-      topOffset: oldScreenPosition.y,
-      leftOffset: oldScreenPosition.x,
-    },
+  yield scrollTo(screenElement, {
+    topOffset: oldScreenPosition.y,
+    leftOffset: oldScreenPosition.x,
   })
 
   canvas.toBlob(blob => {
@@ -482,11 +450,8 @@ function* doBackgroundCommunications() {
       return () => {}
     })
 
-    console.log('waiting for messages starts ..')
     while (true) {
-      const data = yield take(waitForBackgroundMessages)
-
-      console.log('data message', data)
+      yield take(waitForBackgroundMessages)
     }
   } catch (error) {
     console.error('unable to comunicate')

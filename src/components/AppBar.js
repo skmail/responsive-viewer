@@ -2,13 +2,16 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import MuiAppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
-import Typography from '@material-ui/core/Typography'
+import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import AddressBar from './AddressBar'
 import IconButton from '@material-ui/core/IconButton'
-import MenuIcon from '@material-ui/icons/Menu'
 import AddIcon from '@material-ui/icons/Add'
 import HelpIcon from '@material-ui/icons/Help'
+
+import ViewMode from './Sidebar/ViewMode'
+import ScreenDirection from './Sidebar/ScreenDirection'
+import Zoom from './Sidebar/Zoom'
 
 import TwitterIcon from '@material-ui/icons/Twitter'
 
@@ -41,9 +44,14 @@ const AppBar = props => {
   const {
     updateUrl,
     url,
-    toggleDrawer,
     toggleScreenDialog,
     toggleHelpDialog,
+    switchViewMode,
+    viewMode,
+    screenDirection,
+    switchScreenDirection,
+    zoom,
+    onZoom,
   } = props
   const classes = useStyles()
   return (
@@ -55,6 +63,17 @@ const AppBar = props => {
           className={classes.logo}
         />
         <AddressBar initialValues={{ url }} onSubmit={updateUrl} />
+
+        <Box display="flex">
+          <ViewMode value={viewMode} onChange={switchViewMode} />
+          <ScreenDirection
+            value={screenDirection}
+            onChange={switchScreenDirection}
+          />
+        </Box>
+
+        <Zoom value={zoom} onChange={onZoom} />
+
         <div className={classes.grow} />
 
         <Button color="primary" href="https://ko-fi.com/skmail" target="_blank">

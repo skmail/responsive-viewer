@@ -218,7 +218,7 @@ export default props => {
         placeholder={'Search for screen'}
         fullWidth
       />
-      <Scrollbars style={{ height: 350 }}>
+      <Scrollbars style={{ height: '100%' }}>
         <div ref={rootRef} className={classes.screensRoot}>
           {hasSearch && (
             <Box display="flex" flexWrap="wrap">

@@ -1,7 +1,5 @@
 import React from 'react'
-import Heading from './Heading'
 import ToggleButton from './ToggleButton'
-import Box from '@material-ui/core/Box'
 import { makeStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -27,7 +25,7 @@ const ScreenDirection = props => {
   const directions = [
     {
       name: 'portrait',
-      label: 'Portrait',
+      label: 'Portrait screens',
       icon: (
         <svg
           className={classes.icon}
@@ -47,7 +45,7 @@ const ScreenDirection = props => {
     },
     {
       name: 'landscape',
-      label: 'Landscape',
+      label: 'Landscape screens',
       icon: (
         <svg
           className={classNames(classes.icon, classes.landscape)}
@@ -67,25 +65,22 @@ const ScreenDirection = props => {
     },
   ]
   return (
-    <div>
-      <Heading>Direction</Heading>
-      <Box display="flex" alignItems="center">
-        {directions.map(direction => (
-          <Tooltip title={direction.label} key={direction.name}>
-            <div>
-              <ToggleButton
-                key={direction.name}
-                onClick={() => onChange(direction.name)}
-                active={value === direction.name}
-                className={classes.button}
-              >
-                {direction.icon}
-              </ToggleButton>
-            </div>
-          </Tooltip>
-        ))}
-      </Box>
-    </div>
+    <>
+      {directions.map(direction => (
+        <Tooltip title={direction.label} key={direction.name}>
+          <div>
+            <ToggleButton
+              key={direction.name}
+              onClick={() => onChange(direction.name)}
+              active={value === direction.name}
+              className={classes.button}
+            >
+              {direction.icon}
+            </ToggleButton>
+          </div>
+        </Tooltip>
+      ))}
+    </>
   )
 }
 

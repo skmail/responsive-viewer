@@ -23,32 +23,19 @@ const start = tab => {
 
   let started = false
 
-  chrome.contentSettings.javascript.get({ primaryUrl: tab.url }, function(
-    details
-  ) {
-    console.log('weeord ', details)
-    const url = tab.url
-    const extractHostname = new RegExp('^(?:f|ht)tp(?:s)?://([^/]+)', 'im')
+  const extractHostname = new RegExp('^(?:f|ht)tp(?:s)?://([^/]+)', 'im')
 
-    const pattern = /^file:/.test(url)
-      ? url
-      : url.match(extractHostname)[0] + '/*'
-
-    console.log('pattern', pattern)
-
-    chrome.contentSettings.javascript.set(
-      { primaryPattern: pattern, setting: 'block' },
-      function(details) {
-        chrome.tabs.executeScript(tab.id, {
-          code: 'window.location.reload()',
-        })
-      }
-    )
-  })
+  const pattern = /^file:/.test(tab.url)
+    ? tab.url
+    : tab.url.match(extractHostname)[0] + '/*'
 
   chrome.contentSettings.javascript.set(
-    { primaryPattern: pattern, setting: 'allow' },
-    function(details) {}
+    { primaryPattern: pattern, setting: 'block' },
+    function(details) {
+      chrome.tabs.executeScript(tab.id, {
+        code: 'window.location.reload()',
+      })
+    }
   )
 
   const tabHostname = url.extractHostname(tab.url)
@@ -88,7 +75,13 @@ const start = tab => {
     if (details.frameId === 0) {
       if (started === false) {
         started = true
-        injectContents(tab)
+        chrome.contentSettings.javascript.set(
+          { primaryPattern: pattern, setting: 'allow' },
+          function(details) {
+            injectContents(tab)
+          }
+        )
+
         return
       }
       return
@@ -146,6 +139,12 @@ const start = tab => {
             image,
           })
         })
+        break
+
+      case 'WAIT':
+        setTimeout(() => {
+          sendResponse({})
+        }, request.time)
         break
 
       case 'SET_FRAME_ID':

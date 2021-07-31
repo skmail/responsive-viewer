@@ -29,8 +29,4 @@
   appRoot.id = 'RESPONSIVE-VIEWER-ROOT'
 
   document.body.appendChild(appRoot)
-
-  window.WebSocket.prototype.onmessage = () => {
-    console.log('what')
-  }
 })()

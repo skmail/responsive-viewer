@@ -61,7 +61,6 @@ const ScreenDialog = props => {
   const screenId = initialValues && initialValues.id
 
   const isNativeScreen = useMemo(() => {
-    return false
     return devices.find(screen => screen.id === screenId)
   }, [screenId])
   const isUpdate = Boolean(screenId)
