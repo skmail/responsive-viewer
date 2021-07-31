@@ -2,7 +2,7 @@
 
 ![Screenshot](https://raw.githubusercontent.com/skmail/responsive-viewer/master/screenshot.png)
 
-# manuall extension build
+# manual extension build
 
 `npm install` & `npm run build`
 
