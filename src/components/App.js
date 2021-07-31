@@ -60,6 +60,8 @@ function App(props) {
     inspectByMouse,
     toggleInspectByMouse,
     screenshot,
+    exportApp,
+    importApp,
   } = props
 
   useEffect(() => {
@@ -125,6 +127,8 @@ function App(props) {
         searchElement={searchElement}
         inspectByMouse={inspectByMouse}
         toggleInspectByMouse={toggleInspectByMouse}
+        exportApp={exportApp}
+        importApp={importApp}
       />
       <div className={classes.content}>
         <Screens

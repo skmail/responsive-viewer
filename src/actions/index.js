@@ -156,3 +156,14 @@ export const screenshot = (screen, type) => ({
     type,
   },
 })
+
+export const exportApp = () => ({
+  type: actionTypes.EXPORT_APP,
+})
+
+export const importApp = data => ({
+  type: actionTypes.IMPORT_APP,
+  payload: {
+    data,
+  },
+})

@@ -126,8 +126,8 @@ function* doInitialize() {
       }
     }
   }
-  const tabUrl = window.location.href
-  //const tabUrl = 'https://google.com'
+  //const tabUrl = window.location.href
+  const tabUrl = 'https://google.com'
 
   app = {
     ...state.app,
@@ -458,6 +458,36 @@ function* doBackgroundCommunications() {
   }
 }
 
+function* doExportApp() {
+  console.log('yoo')
+  const state = yield select()
+
+  const { url, versionedUrl, initialized, ...toSave } = state.app
+  const dataStr =
+    'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(toSave))
+  const downloadAnchorNode = document.createElement('a')
+  downloadAnchorNode.setAttribute('href', dataStr)
+  downloadAnchorNode.setAttribute('download', 'responsive-viewer.json')
+  document.body.appendChild(downloadAnchorNode) // required for firefox
+  downloadAnchorNode.click()
+  downloadAnchorNode.remove()
+}
+
+function* doImportApp(action) {
+  const state = yield select()
+  const newState = {
+    ...state.app,
+    ...action.payload.data,
+  }
+  yield call(saveState, newState)
+
+  yield call(platform.runtime.sendMessage, {
+    message: 'LOAD_STATE',
+    state: newState,
+  })
+
+  yield put(appSaved(newState))
+}
 export default function*() {
   yield takeEvery(actionTypes.SCROLL_TO_SCREEN, doScrollToScreen)
   yield takeEvery(actionTypes.SAVE_SCREEN, doScrollAfterScreenSaved)
@@ -472,5 +502,7 @@ export default function*() {
   yield takeLatest(actionTypes.SEARCH_ELEMENT, doSearchElement)
   yield takeLatest(actionTypes.TOGGLE_INSPECT_BY_MOUSE, doInspectByMouse)
   yield takeLatest(actionTypes.APP_SAVED, doTurnOffInspectByMouse)
+  yield takeLatest(actionTypes.EXPORT_APP, doExportApp)
+  yield takeLatest(actionTypes.IMPORT_APP, doImportApp)
   yield doSaveToState()
 }

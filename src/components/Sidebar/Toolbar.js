@@ -2,6 +2,7 @@ import React from 'react'
 import Box from '@material-ui/core/Box'
 import ElementSelector from './ElementSelector'
 import ToolbarButton from './ToolbarButton'
+import Export from './Export'
 
 const Toolbar = props => {
   const {
@@ -12,6 +13,8 @@ const Toolbar = props => {
     searchElement,
     inspectByMouse,
     toggleInspectByMouse,
+    exportApp,
+    importApp,
   } = props
 
   return (
@@ -71,7 +74,10 @@ const Toolbar = props => {
           />
         </svg>
       </ToolbarButton>
+
       <ElementSelector inspectByMouse={inspectByMouse} search={searchElement} />
+
+      <Export exportApp={exportApp} importApp={importApp} />
     </Box>
   )
 }

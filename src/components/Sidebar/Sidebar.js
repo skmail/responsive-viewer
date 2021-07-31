@@ -64,6 +64,8 @@ const Sidebar = props => {
     searchElement,
     inspectByMouse,
     toggleInspectByMouse,
+    exportApp,
+    importApp,
   } = props
 
   const open = true
@@ -100,6 +102,8 @@ const Sidebar = props => {
             searchElement={searchElement}
             inspectByMouse={inspectByMouse}
             toggleInspectByMouse={toggleInspectByMouse}
+            exportApp={exportApp}
+            importApp={importApp}
           />
 
           <Screens

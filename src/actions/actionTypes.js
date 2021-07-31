@@ -32,4 +32,7 @@ export default {
   APP_SAVED: 'APP_SAVED',
 
   SCREENSHOT: 'SCREENSHOT',
+
+  EXPORT_APP: 'EXPORT_APP',
+  IMPORT_APP: 'IMPORT_APP',
 }

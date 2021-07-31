@@ -168,6 +168,12 @@ export default (state = initialState, action) => {
       }
     }
 
+    case actionTypes.IMPORT_APP: {
+      return {
+        ...state,
+        ...action.payload.data,
+      }
+    }
     default:
       return state
   }

@@ -22,6 +22,8 @@ import {
   searchElement,
   toggleInspectByMouse,
   screenshot,
+  importApp,
+  exportApp,
 } from '../actions'
 import uuid from 'uuid'
 
@@ -74,6 +76,8 @@ const mapDispatchToProps = dispatch => ({
   searchElement: selector => dispatch(searchElement(selector)),
   toggleInspectByMouse: () => dispatch(toggleInspectByMouse()),
   screenshot: (screen, type) => dispatch(screenshot(screen, type)),
+  exportApp: () => dispatch(exportApp()),
+  importApp: data => dispatch(importApp(data)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)
