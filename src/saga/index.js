@@ -9,7 +9,7 @@ import {
   select,
   delay,
 } from 'redux-saga/effects'
-import { eventChannel, END } from 'redux-saga'
+import { eventChannel } from 'redux-saga'
 import {
   scrollToScreen,
   highlightScreen,

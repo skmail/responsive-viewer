@@ -6,6 +6,10 @@
 
   window.console = console
 
+  window.setTimeout = (callback, ms) => {
+    chrome.runtime.sendMessage({ message: 'WAIT', time: ms }, callback)
+  }
+
   for (const element of document.documentElement.children) {
     if (['head', 'body'].includes(element.tagName)) {
       element.parentNode.removeChild(element)
