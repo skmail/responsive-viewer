@@ -18,6 +18,8 @@ import {
   initialized,
   appSaved,
   toggleInspectByMouse,
+  refresh,
+  updateUrl,
 } from '../actions'
 import scrollIntoView from 'scroll-into-view'
 import { getDomId, getIframeId } from '../utils/screen'
@@ -99,7 +101,7 @@ function* doWatchAllAction() {
 }
 
 function* notifyAdvertisment(action) {
-  const advertismentIframe = document.getElementById('advertismentIframe')
+  const advertismentIframe = document.getElementById('bannerIframe')
   if (advertismentIframe) {
     yield advertismentIframe.contentWindow.postMessage(
       {
@@ -228,6 +230,10 @@ function* doIframeCommunications() {
 
       case '@APP/DELEGATE_EVENT':
         allowedToSend = state.app.syncClick
+        break
+
+      case '@APP/REFRESH':
+        yield put(refresh())
         break
 
       case '@APP/SCREENSHOT':
@@ -509,6 +515,11 @@ function* doImportApp(action) {
 
   yield put(appSaved(newState))
 }
+
+function* doRefresh() {
+  const state = yield select()
+  yield put(updateUrl(state.app.url))
+}
 export default function*() {
   yield takeEvery(actionTypes.SCROLL_TO_SCREEN, doScrollToScreen)
   yield takeEvery(actionTypes.SAVE_SCREEN, doScrollAfterScreenSaved)
@@ -525,5 +536,6 @@ export default function*() {
   yield takeLatest(actionTypes.APP_SAVED, doTurnOffInspectByMouse)
   yield takeLatest(actionTypes.EXPORT_APP, doExportApp)
   yield takeLatest(actionTypes.IMPORT_APP, doImportApp)
+  yield takeLatest(actionTypes.REFRESH, doRefresh)
   yield doWatchAllAction()
 }

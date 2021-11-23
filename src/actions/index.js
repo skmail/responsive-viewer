@@ -167,3 +167,7 @@ export const importApp = data => ({
     data,
   },
 })
+
+export const refresh = () => ({
+  type: actionTypes.REFRESH,
+})

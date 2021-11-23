@@ -29,6 +29,7 @@ const start = tab => {
     ? tab.url
     : tab.url.match(extractHostname)[0] + '/*'
 
+  console.log(chrome.contentSettings.javascript)
   chrome.contentSettings.javascript.set(
     { primaryPattern: pattern, setting: 'block' },
     function(details) {
@@ -56,6 +57,9 @@ const start = tab => {
     }
   }
 
+  const onWebNavigationError = details => {
+    chrome.contentSettings.javascript.clear({}, function(details) {})
+  }
   const onWebNavigationComplete = function(details) {
     if (tab.id !== details.tabId) {
       return
@@ -68,12 +72,9 @@ const start = tab => {
     if (details.frameId === 0) {
       if (started === false) {
         started = true
-        chrome.contentSettings.javascript.set(
-          { primaryPattern: pattern, setting: 'allow' },
-          function(details) {
-            injectContents(tab)
-          }
-        )
+        chrome.contentSettings.javascript.clear({}, function(details) {
+          injectContents(tab)
+        })
 
         return
       }
@@ -103,6 +104,8 @@ const start = tab => {
       chrome.webRequest.onBeforeRequest.removeListener(onBeforeRequest)
 
       chrome.runtime.onMessage.removeListener(onMessages)
+
+      chrome.webNavigation.onErrorOccurred.removeListener(onWebNavigationError)
     }
   }
 
@@ -244,6 +247,7 @@ const start = tab => {
     ['blocking']
   )
 
+  chrome.webNavigation.onErrorOccurred.addListener(onWebNavigationError)
   chrome.webNavigation.onCompleted.addListener(onWebNavigationComplete)
 
   chrome.webNavigation.onCommitted.addListener(onBeforeNavigate)

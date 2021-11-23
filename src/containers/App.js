@@ -24,6 +24,7 @@ import {
   screenshot,
   importApp,
   exportApp,
+  refresh,
 } from '../actions'
 import uuid from 'uuid'
 
@@ -78,6 +79,7 @@ const mapDispatchToProps = dispatch => ({
   screenshot: (screen, type) => dispatch(screenshot(screen, type)),
   exportApp: () => dispatch(exportApp()),
   importApp: data => dispatch(importApp(data)),
+  refresh: data => dispatch(refresh()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

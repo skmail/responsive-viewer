@@ -7,7 +7,7 @@ const Advertisement = props => {
         return
       }
 
-      const iframe = document.getElementById('advertismentIframe')
+      const iframe = document.getElementById('bannerIframe')
 
       const height = Math.min(190, message.data.height)
 
@@ -23,11 +23,11 @@ const Advertisement = props => {
   }, [])
   return (
     <iframe
-      title="Advertisment"
-      src="https://responsive-viewer-ads.netlify.app/"
+      title="Preview"
+      src="https://preview.responsiveviewer.org/"
       scrolling="no"
       frameBorder="no"
-      id="advertismentIframe"
+      id="bannerIframe"
     ></iframe>
   )
 }

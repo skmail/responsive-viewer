@@ -2,6 +2,7 @@ import onDomReady from './utils/onDomReady'
 import uuid from 'uuid'
 import './inject/utils'
 import scrollTo from './inject/scrollTo'
+import refresh from './inject/refresh'
 import syncClick, { simulateClick, triggerEvent } from './inject/syncClick'
 import {
   disableMouseInspector,
@@ -13,7 +14,7 @@ window.frameID = uuid.v4()
 
 onDomReady(() => {
   syncClick()
-
+  refresh()
   window.addEventListener('message', event => {
     if (!event.data || !String(event.data.message).startsWith('@APP')) {
       return

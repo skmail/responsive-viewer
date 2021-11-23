@@ -35,4 +35,5 @@ export default {
 
   EXPORT_APP: 'EXPORT_APP',
   IMPORT_APP: 'IMPORT_APP',
+  REFRESH: 'REFRESH',
 }
