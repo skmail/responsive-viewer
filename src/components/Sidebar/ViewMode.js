@@ -57,23 +57,21 @@ const ViewMode = props => {
       ),
     },
   ]
+
+  const mode = value === 'vertical' ? modes[1] : modes[0]
   return (
-    <>
-      {modes.map(mode => (
-        <Tooltip key={mode.name} title={mode.label}>
-          <div>
-            <ToggleButton
-              margin
-              onClick={() => onChange(mode.name)}
-              active={value === mode.name}
-              className={classes.button}
-            >
-              {mode.icon}
-            </ToggleButton>
-          </div>
-        </Tooltip>
-      ))}
-    </>
+    <Tooltip key={mode.name} title={mode.label}>
+      <div>
+        <ToggleButton
+          margin
+          onClick={() => onChange(mode.name)}
+          active={value === mode.name}
+          className={classes.button}
+        >
+          {mode.icon}
+        </ToggleButton>
+      </div>
+    </Tooltip>
   )
 }
 

@@ -64,22 +64,23 @@ const ScreenDirection = props => {
       ),
     },
   ]
+
+  const direction = value === 'landscape' ? directions[0] : directions[1]
+
   return (
     <>
-      {directions.map(direction => (
-        <Tooltip title={direction.label} key={direction.name}>
-          <div>
-            <ToggleButton
-              key={direction.name}
-              onClick={() => onChange(direction.name)}
-              active={value === direction.name}
-              className={classes.button}
-            >
-              {direction.icon}
-            </ToggleButton>
-          </div>
-        </Tooltip>
-      ))}
+      <Tooltip title={direction.label} key={direction.name}>
+        <div>
+          <ToggleButton
+            key={direction.name}
+            onClick={() => onChange(direction.name)}
+            active={value === direction.name}
+            className={classes.button}
+          >
+            {direction.icon}
+          </ToggleButton>
+        </div>
+      </Tooltip>
     </>
   )
 }

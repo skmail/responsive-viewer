@@ -1,9 +1,9 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import { Scrollbars } from 'react-custom-scrollbars'
 import NoUrlIcon from '@material-ui/icons/LinkOff'
 import NoScreensIcon from '@material-ui/icons/ViewModule'
 import Screen from './Screen'
+import Scrollbars from './Scrollbars'
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -4,6 +4,7 @@ import FormHelperText from '@material-ui/core/FormHelperText'
 import classNames from 'classnames'
 import { fade, makeStyles } from '@material-ui/core/styles'
 import Screenshot from './Actions/Screenshot'
+import Settings from './Actions/Settings'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,6 +48,7 @@ const Header = props => {
       </Box>
 
       <Box display={'flex'} alignItems={'center'}>
+        <Settings screenshot={screenshot} classes={classes} screen={screen} />
         <Screenshot screenshot={screenshot} classes={classes} screen={screen} />
       </Box>
     </Box>

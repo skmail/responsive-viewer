@@ -6,7 +6,6 @@ import RemoveRedEyeOutlinedIcon from '@material-ui/icons/RemoveRedEyeOutlined'
 import Box from '@material-ui/core/Box'
 
 import Heading from './Heading'
-import { Scrollbars } from 'react-custom-scrollbars'
 import InputBase from '@material-ui/core/InputBase'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
@@ -25,6 +24,7 @@ import {
   sortableKeyboardCoordinates,
   rectSortingStrategy,
 } from '@dnd-kit/sortable'
+import Scrollbars from '../Scrollbars'
 
 const useStyles = makeStyles(theme => {
   return {
@@ -218,7 +218,7 @@ export default props => {
         placeholder={'Search for screen'}
         fullWidth
       />
-      <Scrollbars style={{ height: '100%' }}>
+      <Scrollbars>
         <div ref={rootRef} className={classes.screensRoot}>
           {hasSearch && (
             <Box display="flex" flexWrap="wrap">
