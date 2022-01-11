@@ -28,7 +28,7 @@
     "redux-saga": "^1.1.3",
     "rewire": "^5.0.0",
     "scroll-into-view": "^1.9.7",
-    "url-parse": "^1.4.7",
+    "url-parse": "^1.5.2",
     "uuid": "^3.3.3",
     "validator": "^11.1.0"
   },
