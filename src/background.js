@@ -29,13 +29,19 @@ const start = tab => {
     ? tab.url
     : tab.url.match(extractHostname)[0] + '/*'
 
-  console.log(chrome.contentSettings.javascript)
-  chrome.contentSettings.javascript.set(
-    { primaryPattern: pattern, setting: 'block' },
-    function(details) {
-      chrome.tabs.executeScript(tab.id, {
-        code: 'window.location.reload()',
-      })
+  chrome.tabs.executeScript(
+    tab.id,
+    {
+      code: 'window.location.reload()',
+    },
+    result => {
+      if (result) {
+        console.log('Blocking js')
+        chrome.contentSettings.javascript.set({
+          primaryPattern: pattern,
+          setting: 'block',
+        })
+      }
     }
   )
 
