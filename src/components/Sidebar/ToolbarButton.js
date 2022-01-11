@@ -1,7 +1,7 @@
 import React from 'react'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
-import { makeStyles, fade } from '@material-ui/core/styles'
+import { makeStyles, alpha } from '@material-ui/core/styles'
 import classNames from 'classnames'
 
 const useStyles = makeStyles(theme => ({
@@ -14,7 +14,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.contrastText,
     background: theme.palette.primary.main,
     '&:hover': {
-      background: fade(theme.palette.primary.main, 0.8),
+      background: alpha(theme.palette.primary.main, 0.8),
     },
   },
 }))

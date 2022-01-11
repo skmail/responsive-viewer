@@ -90,7 +90,30 @@ export const toggleScreenDialog = (initialValues = {}) => ({
     initialValues,
   },
 })
+export const selectTabByIndex = index => ({
+  type: actionTypes.SELECT_TAB_BY_INDEX,
+  payload: {
+    index,
+  },
+})
 
+export const toggleTabScreen = (tabId, screenId, visibility) => ({
+  type: actionTypes.TOGGLE_TAB_SCREEN,
+  payload: {
+    tabId,
+    screenId,
+    visibility,
+  },
+})
+
+export const moveTabScreen = (name, fromIndex, toIndex) => ({
+  type: actionTypes.MOVE_TAB_SCREEN,
+  payload: {
+    name,
+    fromIndex,
+    toIndex,
+  },
+})
 export const toggleUserAgentDialog = (initialValues = {}) => ({
   type: actionTypes.TOGGLE_USER_AGENT_DIALOG,
   payload: {
@@ -170,4 +193,31 @@ export const importApp = data => ({
 
 export const refresh = () => ({
   type: actionTypes.REFRESH,
+})
+
+export const toggleTabDialog = tab => ({
+  type: actionTypes.TOGGLE_TAB_DIALOG,
+  payload: {
+    tab,
+  },
+})
+
+export const updateTab = (id, tab) => ({
+  type: actionTypes.UPDATE_TAB,
+  payload: {
+    id,
+    tab,
+  },
+})
+export const addTab = tab => ({
+  type: actionTypes.ADD_TAB,
+  payload: {
+    tab,
+  },
+})
+export const deleteTab = tabName => ({
+  type: actionTypes.DELETE_TAB,
+  payload: {
+    tabName,
+  },
 })

@@ -4,6 +4,8 @@ import NoUrlIcon from '@material-ui/icons/LinkOff'
 import NoScreensIcon from '@material-ui/icons/ViewModule'
 import Screen from './Screen'
 import Scrollbars from './Scrollbars'
+import { useSelector } from 'react-redux'
+import { getSelectedTab, getScreens, getScreensByTab } from '../selectors'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,8 +45,11 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Screens = props => {
-  const { screens, url, versionedUrl, screenDirection, screenshot } = props
+  const { url, versionedUrl, screenDirection, screenshot } = props
   const classes = useStyles(props)
+  const visibleScreens = useSelector(state => {
+    return getScreensByTab(state, getSelectedTab(state))
+  })
 
   if (url === '') {
     return (
@@ -54,8 +59,6 @@ const Screens = props => {
       </div>
     )
   }
-
-  const visibleScreens = screens.filter(screen => screen.visible)
 
   if (visibleScreens.length === 0) {
     return (

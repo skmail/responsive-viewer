@@ -11,3 +11,10 @@ export const url = value => {
 
 export const required = value =>
   value && String(value).trim() !== '' ? undefined : 'Required'
+
+export const uniqueTabs = (tabs, exclude = null) => tab => {
+  if (tabs.includes(tab) && exclude !== tab) {
+    return 'Tab name must be unique'
+  }
+  return
+}

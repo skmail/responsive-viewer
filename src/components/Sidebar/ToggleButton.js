@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, fade } from '@material-ui/core/styles'
+import { makeStyles, alpha } from '@material-ui/core/styles'
 import Button from '@material-ui/core/Button'
 import classNames from 'classnames'
 
@@ -10,7 +10,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(0.5),
   },
   activeButton: {
-    backgroundColor: fade(theme.palette.secondary.main, 0.1),
+    backgroundColor: alpha(theme.palette.secondary.main, 0.1),
   },
   margin: {
     '&:nth-child(odd)': {

@@ -2,7 +2,7 @@ import React from 'react'
 import Box from '@material-ui/core/Box'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import classNames from 'classnames'
-import { fade, makeStyles } from '@material-ui/core/styles'
+import { alpha, makeStyles } from '@material-ui/core/styles'
 import Screenshot from './Actions/Screenshot'
 import Settings from './Actions/Settings'
 
@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 300,
     fontSize: 12,
     borderRadius: 3,
-    color: fade(theme.palette.secondary.light, 0.6),
+    color: alpha(theme.palette.secondary.light, 0.6),
   },
   action: {
     color: theme.palette.secondary.light,

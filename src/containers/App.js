@@ -27,10 +27,12 @@ import {
   refresh,
 } from '../actions'
 import uuid from 'uuid'
+import { getSelectedTab, getScreensByTab } from '../selectors'
 
 const mapStateToProps = state => {
   return {
     // App States
+    activeScreens: getScreensByTab(state, getSelectedTab(state)),
     screens: state.app.screens,
     userAgents: state.app.userAgents,
     url: state.app.url,

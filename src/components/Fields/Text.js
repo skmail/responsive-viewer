@@ -11,6 +11,7 @@ const renderTextField = props => {
     validationError = true,
     ...custom
   } = props
+
   return (
     <TextField
       placeholder={placeholder}

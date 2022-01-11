@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, darken, fade } from '@material-ui/core/styles'
+import { makeStyles, darken, alpha } from '@material-ui/core/styles'
 import Popover from '@material-ui/core/Popover'
 import ToolbarButton from './ToolbarButton'
 import TextField from '../Fields/Text'
@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1),
   },
   textField: {
-    background: fade(theme.palette.common.white, 0.15),
+    background: alpha(theme.palette.common.white, 0.15),
     marginRight: theme.spacing(1),
   },
   textFieldInput: {

@@ -1,3 +1,4 @@
+import arrayMove from 'array-move'
 import actionTypes from '../actions/actionTypes'
 import devices from '../devices'
 import userAgents from '../userAgent'
@@ -14,6 +15,25 @@ const initialState = {
   syncScroll: true,
   syncClick: true,
   initialized: false,
+  tab: 'default',
+  tabs: [
+    {
+      name: 'default',
+      screens: [],
+    },
+    {
+      name: 'mobile',
+      screens: [],
+    },
+    {
+      name: 'tablet',
+      screens: [],
+    },
+    {
+      name: 'desktop',
+      screens: [],
+    },
+  ],
 }
 
 export default (state = initialState, action) => {
@@ -129,9 +149,27 @@ export default (state = initialState, action) => {
         }),
       }
 
-    case actionTypes.SAVE_USER_AGENT: {
-      // const foundUserAgent = state.userAgents.find(userAgent => userAgent.name === action.payload.userAgent.name)
+    case actionTypes.TOGGLE_TAB_SCREEN:
+      return {
+        ...state,
+        tabs: state.tabs.map(tab => {
+          if (tab.name === action.payload.tabId) {
+            let screens = [...tab.screens]
+            if (screens.includes(action.payload.screenId)) {
+              screens = screens.filter(id => id !== action.payload.screenId)
+            } else {
+              screens = [...screens, action.payload.screenId]
+            }
 
+            return {
+              ...tab,
+              screens,
+            }
+          }
+          return tab
+        }),
+      }
+    case actionTypes.SAVE_USER_AGENT: {
       return {
         ...state,
         userAgents: [...state.userAgents, action.payload.userAgent],
@@ -174,6 +212,63 @@ export default (state = initialState, action) => {
         ...action.payload.data,
       }
     }
+
+    case actionTypes.SELECT_TAB_BY_INDEX:
+      return {
+        ...state,
+        tab: state.tabs[action.payload.index].name,
+      }
+
+    case actionTypes.MOVE_TAB_SCREEN: {
+      return {
+        ...state,
+        tabs: state.tabs.map(tab => {
+          if (tab.name === action.payload.name) {
+            return {
+              ...tab,
+              screens: arrayMove(
+                tab.screens,
+                action.payload.fromIndex,
+                action.payload.toIndex
+              ),
+            }
+          }
+          return tab
+        }),
+      }
+    }
+
+    case actionTypes.UPDATE_TAB:
+      return {
+        ...state,
+        tabs: state.tabs.map(tab => {
+          if (tab.name === action.payload.name) {
+            return {
+              ...tab,
+              ...action.payload.tab,
+            }
+          }
+          return tab
+        }),
+      }
+
+    case actionTypes.ADD_TAB:
+      return {
+        ...state,
+        tabs: [
+          ...state.tabs,
+          {
+            ...action.payload.tab,
+            screens: [],
+          },
+        ],
+      }
+    case actionTypes.DELETE_TAB:
+      return {
+        ...state,
+        tab: 'default',
+        tabs: state.tabs.filter(tab => tab.name !== action.payload.tabName),
+      }
     default:
       return state
   }

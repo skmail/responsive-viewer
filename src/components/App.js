@@ -6,6 +6,8 @@ import Sidebar from './Sidebar'
 import ScreenDialog from './ScreenDialog'
 import UserAgentDialog from './UserAgentDialog'
 import HelpDialog from './HelpDialog'
+import Tabs from './Tabs'
+import TabDialog from './TabDialog'
 
 const useStyles = makeStyles(theme => {
   return {
@@ -23,6 +25,7 @@ const useStyles = makeStyles(theme => {
 
 function App(props) {
   const {
+    activeScreens,
     screens,
     updateScreen,
     updateUrl,
@@ -102,6 +105,7 @@ function App(props) {
   }
   return (
     <div className={classes.root}>
+      <TabDialog />
       <ScreenDialog
         onSubmit={saveScreen}
         userAgents={userAgents}
@@ -139,6 +143,7 @@ function App(props) {
         onZoom={onZoom}
       />
       <div className={classes.toolbar} />
+      <Tabs />
       <Sidebar
         screens={screens}
         updateScreen={updateScreen}
@@ -161,7 +166,7 @@ function App(props) {
         <Screens
           zoom={zoom}
           viewMode={viewMode}
-          screens={screens}
+          screens={activeScreens}
           screenDirection={screenDirection}
           url={url}
           versionedUrl={versionedUrl}

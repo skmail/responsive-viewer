@@ -4,6 +4,10 @@ const initialState = {
   initialized: false,
   drawerOpened: true,
   inspectByMouse: false,
+  tabDialog: {
+    open: false,
+    initialValues: {},
+  },
   screenDialog: {
     open: false,
     initialValues: {
@@ -77,6 +81,18 @@ export default (state = initialState, action) => {
           typeof action.payload.state !== 'undefined'
             ? action.payload.state
             : !state.inspectByMouse,
+      }
+
+    case actionTypes.TOGGLE_TAB_DIALOG:
+      return {
+        ...state,
+        tabDialog: {
+          open: !state.tabDialog.open,
+          initialValues: action.payload.tab
+            ? action.payload.tab
+            : initialState.tabDialog.initialValues,
+        },
+        // isTabDialogOpened: !state.isTabDialogOpened,
       }
     default:
       return state

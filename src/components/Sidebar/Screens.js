@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState } from 'react'
-import { makeStyles, darken, fade } from '@material-ui/core/styles'
+import { makeStyles, darken, alpha } from '@material-ui/core/styles'
 import IconButton from '@material-ui/core/IconButton'
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye'
 import RemoveRedEyeOutlinedIcon from '@material-ui/icons/RemoveRedEyeOutlined'
@@ -9,7 +9,7 @@ import Heading from './Heading'
 import InputBase from '@material-ui/core/InputBase'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-
+import { moveTabScreen, toggleTabScreen } from '../../actions'
 import {
   DndContext,
   closestCenter,
@@ -25,6 +25,9 @@ import {
   rectSortingStrategy,
 } from '@dnd-kit/sortable'
 import Scrollbars from '../Scrollbars'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { getScreens, getTab, getSelectedTab } from '../../selectors'
+import { updateVisibility as updateVisibilityAction } from '../../actions'
 
 const useStyles = makeStyles(theme => {
   return {
@@ -80,7 +83,7 @@ const useStyles = makeStyles(theme => {
       padding: theme.spacing(0, 1),
       borderRadius: 3,
       background: darken(theme.palette.background.default, 0.15),
-      color: fade(theme.palette.secondary.dark, 0.6),
+      color: alpha(theme.palette.secondary.dark, 0.6),
     },
     visibleButton: {
       opacity: 0,
@@ -167,15 +170,34 @@ const SortableItem = props => {
 export default props => {
   const rootRef = useRef()
 
-  const {
-    updateVisibility,
-    screens,
-    sortScreens,
-    onClick,
-    toggleScreenDialog,
-  } = props
+  const { sortScreens, onClick, toggleScreenDialog } = props
+
+  const selectedTab = useSelector(getSelectedTab)
+
+  const dispatch = useDispatch()
+
+  const screens = useSelector(state => {
+    if (selectedTab === 'default') {
+      return getScreens(state)
+    }
+
+    const tab = getTab(state, selectedTab)
+
+    return getScreens(state).map(screen => ({
+      ...screen,
+      visible: tab.screens.includes(screen.id),
+    }))
+  }, shallowEqual)
 
   const classes = useStyles()
+
+  const updateVisibility = (id, visibility) => {
+    if (selectedTab === 'default') {
+      dispatch(updateVisibilityAction(id, visibility))
+    } else {
+      dispatch(toggleTabScreen(selectedTab, id, visibility))
+    }
+  }
 
   const [searchKeyword, setSearchKeyword] = useState('')
 
@@ -186,7 +208,11 @@ export default props => {
     const oldIndex = visibleScreens.findIndex(screen => screen.id === active.id)
     const newIndex = visibleScreens.findIndex(screen => screen.id === over.id)
 
-    sortScreens(arrayMove(visibleScreens, oldIndex, newIndex))
+    if (selectedTab === 'default') {
+      sortScreens(arrayMove(visibleScreens, oldIndex, newIndex))
+    } else {
+      dispatch(moveTabScreen(selectedTab, oldIndex, newIndex))
+    }
   }
 
   const hasSearch = searchKeyword.trim('') !== ''

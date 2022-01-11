@@ -77,7 +77,7 @@ const AppBar = props => {
         <div className={classes.grow} />
 
         <Button color="primary" href="https://ko-fi.com/skmail" target="_blank">
-          Support me
+          Buy me a coffee
         </Button>
         <IconButton
           href="https://twitter.com/SolaimanKmail"
