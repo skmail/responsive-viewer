@@ -30,7 +30,7 @@
     "scroll-into-view": "^1.9.7",
     "url-parse": "^1.4.7",
     "uuid": "^3.3.3",
-    "validator": "^11.1.0"
+    "validator": "^13.7.0"
   },
   "scripts": {
     "start": "react-scripts start",
