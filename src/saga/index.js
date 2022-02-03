@@ -145,8 +145,7 @@ function* doInitialize() {
       }
     }
   }
-  // const tabUrl = window.location.href
-  const tabUrl = 'https://google.com'
+  const tabUrl = window.location.href
 
   app = {
     ...state.app,

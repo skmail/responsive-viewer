@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Responsive Viewer",
   "author": "Solaiman Kmail",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Show multiple screens once, Responsive design tester",
   "icons": {
     "128": "16.png"
