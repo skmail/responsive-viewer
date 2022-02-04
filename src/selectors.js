@@ -4,23 +4,20 @@ export const getSelectedTab = state => state.app.tab
 
 export const getTab = (state, tabId) =>
   getTabs(state).find(tab => tab.name === tabId)
+
 export const getScreens = state => state.app.screens
 
 export const getScreensByTab = (state, name) => {
-  if (name === 'default') {
-    return getScreens(state)
-  }
-  const tab = getTabs(state).find(tab => tab.name === name)
+  let screens = getScreens(state)
 
-  const screens = []
-
-  for (let screen of getScreens(state)) {
-    if (tab.screens.includes(screen.id)) {
-      screens.push({
-        ...screen,
-        visible: true,
-      })
-    }
+  if (name !== 'default') {
+    const tab = getTabs(state).find(tab => tab.name === name)
+    screens = tab.screens.map(id => ({
+      ...screens.find(screen => screen.id === id),
+      visible: true,
+    }))
+  } else {
+    screens = screens.filter(screen => screen.visible)
   }
 
   return screens

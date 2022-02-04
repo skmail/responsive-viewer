@@ -29,6 +29,7 @@ import { saveState, loadState, resetState } from '../utils/state'
 import { change as changeForm } from 'redux-form'
 import actionTypes from '../actions/actionTypes'
 import { extractHostname, slugify } from '../utils/url'
+import { getScreensByTab, getSelectedTab } from '../selectors'
 const wait = ms =>
   new Promise(resolve =>
     platform.runtime.sendMessage({ message: 'WAIT', time: ms }, () => resolve())
@@ -251,7 +252,7 @@ function* doIframeCommunications() {
     }
 
     if (allowedToSend) {
-      sendMessageToScreens(state.app.screens, data)
+      sendMessageToScreens(getScreensByTab(state, getSelectedTab(state)), data)
     }
   }
 }
@@ -267,7 +268,7 @@ function* doSearchElement(action) {
   const { selector } = payload
   const state = yield select()
 
-  sendMessageToScreens(state.app.screens, {
+  sendMessageToScreens(getScreensByTab(state, getSelectedTab(state)), {
     message: '@APP/SCROLL_TO_ELEMENT',
     path: selector,
   })
@@ -277,11 +278,11 @@ function* doInspectByMouse() {
   const state = yield select()
 
   if (state.layout.inspectByMouse) {
-    sendMessageToScreens(state.app.screens, {
+    sendMessageToScreens(getScreensByTab(state, getSelectedTab(state)), {
       message: '@APP/ENABLE_MOUSE_INSPECTOR',
     })
   } else {
-    sendMessageToScreens(state.app.screens, {
+    sendMessageToScreens(getScreensByTab(state, getSelectedTab(state)), {
       message: '@APP/DISABLE_MOUSE_INSPECTOR',
     })
   }

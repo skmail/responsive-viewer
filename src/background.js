@@ -91,6 +91,7 @@ const start = tab => {
       return
     }
 
+    console.log('INJECT TO', details.url)
     chrome.tabs.executeScript(details.tabId, {
       file: 'syncedEvents.js',
       frameId: details.frameId,

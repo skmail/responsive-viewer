@@ -174,20 +174,89 @@ export default props => {
 
   const selectedTab = useSelector(getSelectedTab)
 
+  const [searchKeyword, setSearchKeyword] = useState('')
+
   const dispatch = useDispatch()
 
-  const screens = useSelector(state => {
-    if (selectedTab === 'default') {
-      return getScreens(state)
-    }
+  const hasSearch = searchKeyword.trim('') !== ''
 
-    const tab = getTab(state, selectedTab)
+  const { visibleScreens, invisibleScreens, searchResults } = useSelector(
+    state => {
+      let screens = getScreens(state)
 
-    return getScreens(state).map(screen => ({
-      ...screen,
-      visible: tab.screens.includes(screen.id),
-    }))
-  }, shallowEqual)
+      const tab = getTab(state, selectedTab)
+
+      let visibleScreens = []
+      let invisibleScreens = []
+
+      if (tab.name === 'default') {
+        const result = screens.reduce(
+          (acc, screen) => {
+            if (screen.visible) {
+              acc.visibleScreens.push(screen)
+            } else {
+              acc.invisibleScreens.push(screen)
+            }
+
+            return acc
+          },
+          {
+            visibleScreens: [],
+            invisibleScreens: [],
+          }
+        )
+
+        visibleScreens = result.visibleScreens
+        invisibleScreens = result.invisibleScreens
+      } else {
+        const result = screens.reduce(
+          (acc, screen) => {
+            if (tab.screens.includes(screen.id)) {
+              acc.visibleScreens.set(screen.id, {
+                ...screen,
+                visible: true,
+              })
+            } else {
+              acc.invisibleScreens.push({
+                ...screen,
+                visible: false,
+              })
+            }
+            return acc
+          },
+          {
+            visibleScreens: new Map(),
+            invisibleScreens: [],
+          }
+        )
+
+        visibleScreens = tab.screens.map(id => result.visibleScreens.get(id))
+
+        invisibleScreens = result.invisibleScreens
+      }
+
+      let searchResults = []
+
+      screens = [...visibleScreens, ...invisibleScreens]
+
+      if (hasSearch) {
+        searchResults = screens.filter(screen => {
+          const size = `${screen.width}${screen.height}`
+          return (
+            screen.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+            size.includes(searchKeyword.toLowerCase())
+          )
+        })
+      }
+
+      return {
+        visibleScreens,
+        invisibleScreens,
+        searchResults,
+      }
+    },
+    shallowEqual
+  )
 
   const classes = useStyles()
 
@@ -198,11 +267,6 @@ export default props => {
       dispatch(toggleTabScreen(selectedTab, id, visibility))
     }
   }
-
-  const [searchKeyword, setSearchKeyword] = useState('')
-
-  const visibleScreens = screens.filter(screen => screen.visible)
-  const invisibleScreens = screens.filter(screen => !screen.visible)
 
   const onSortEnd = ({ active, over }) => {
     const oldIndex = visibleScreens.findIndex(screen => screen.id === active.id)
@@ -215,17 +279,7 @@ export default props => {
     }
   }
 
-  const hasSearch = searchKeyword.trim('') !== ''
-
   const onSearchChange = e => setSearchKeyword(e.target.value)
-
-  const searchResults = screens.filter(screen => {
-    const size = `${screen.width}${screen.height}`
-    return (
-      screen.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      size.includes(searchKeyword.toLowerCase())
-    )
-  })
 
   const sensors = useSensors(
     useSensor(PointerSensor),

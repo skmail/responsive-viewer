@@ -27,45 +27,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const TabLabel = ({ tab, isSelected }) => {
-  const ref = useRef()
-  const dispatch = useDispatch()
-  return (
-    <span ref={ref}>
-      {tab.name}
-
-      {tab.name !== 'default' && (
-        <Popper
-          placement="right"
-          id={`${tab.name}-popper`}
-          modifiers={[
-            {
-              name: 'offset',
-              options: {
-                offset: [5, 0],
-              },
-            },
-          ]}
-          open={isSelected}
-          anchorEl={ref.current}
-        >
-          <IconButton
-            defaultComponent="div"
-            onClick={e => {
-              e.preventDefault()
-              e.stopPropagation()
-              dispatch(toggleTabDialog(tab))
-            }}
-            size="small"
-          >
-            <InfoIcon fontSize="small" />
-          </IconButton>
-        </Popper>
-      )}
-    </span>
-  )
-}
-
 const Tabs = () => {
   const tabs = useSelector(getTabs)
   const value = useSelector(getSelectedTabIndex)
@@ -94,7 +55,14 @@ const Tabs = () => {
             wrapped={false}
             classes={{ root: classes.tab }}
             fullWidth={false}
-            label={<TabLabel tab={tab} isSelected={index === value} />}
+            onDoubleClick={e => {
+              if (tab.name !== 'default') {
+                e.preventDefault()
+                e.stopPropagation()
+                dispatch(toggleTabDialog(tab))
+              }
+            }}
+            label={tab.name}
             value={index}
             key={tab.name}
           />

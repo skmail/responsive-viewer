@@ -7,13 +7,14 @@ import Scrollbars from './Scrollbars'
 import { useSelector } from 'react-redux'
 import { getSelectedTab, getScreens, getScreensByTab } from '../selectors'
 
+const tabsHeight = 32
 const useStyles = makeStyles(theme => ({
   root: {
-    minHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
+    minHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight + tabsHeight}px)`,
     [theme.breakpoints.up('sm')]: {
-      minHeight: `calc(100vh - ${
-        theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight
-      }px)`,
+      minHeight: `calc(100vh - ${theme.mixins.toolbar[
+        theme.breakpoints.up('sm')
+      ].minHeight + tabsHeight}px)`,
     },
   },
   content: props => ({
@@ -26,11 +27,11 @@ const useStyles = makeStyles(theme => ({
     '-webkit-font-smoothing': 'antialiased',
   }),
   emptyState: {
-    minHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight}px)`,
+    minHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight + tabsHeight}px)`,
     [theme.breakpoints.up('sm')]: {
-      minHeight: `calc(100vh - ${
-        theme.mixins.toolbar[theme.breakpoints.up('sm')].minHeight
-      }px)`,
+      minHeight: `calc(100vh - ${theme.mixins.toolbar[
+        theme.breakpoints.up('sm')
+      ].minHeight + tabsHeight}px)`,
     },
     display: 'flex',
     alignItems: 'center',
