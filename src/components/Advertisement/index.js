@@ -23,6 +23,8 @@ const Advertisement = props => {
   }, [])
   return (
     <iframe
+      width={20}
+      height={20}
       title="Preview"
       src="https://preview.responsiveviewer.org/"
       scrolling="no"

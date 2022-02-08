@@ -1,15 +1,10 @@
 import $ from 'jquery'
 export default data => {
-  $('body').css({
-    'pointer-events': 'none',
-  })
-
   window.top.postMessage(
     {
+      ...data,
       message: '@APP/SCREENSHOT',
       frameId: window.frameID,
-      screen: data.screen,
-      type: data.type,
       height: Math.max(
         document.body.scrollHeight,
         document.documentElement.scrollHeight,
@@ -32,8 +27,4 @@ export default data => {
   )
 }
 
-export const screenshotDone = data => {
-  $('body').css({
-    'pointer-events': 'inherit',
-  })
-}
+export const screenshotDone = data => {}

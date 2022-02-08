@@ -28,7 +28,7 @@ const HelpDialog = props => {
 
   const onAppReset = () => {
     appReset()
-    setIsAppResetOpened(true)
+    setIsAppResetOpened(false)
     onClose()
   }
 

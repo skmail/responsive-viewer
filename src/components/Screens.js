@@ -5,18 +5,10 @@ import NoScreensIcon from '@material-ui/icons/ViewModule'
 import Screen from './Screen'
 import Scrollbars from './Scrollbars'
 import { useSelector } from 'react-redux'
-import { getSelectedTab, getScreens, getScreensByTab } from '../selectors'
+import { getSelectedTab, getScreensByTab } from '../selectors'
 
-const tabsHeight = 32
 const useStyles = makeStyles(theme => ({
-  root: {
-    minHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight + tabsHeight}px)`,
-    [theme.breakpoints.up('sm')]: {
-      minHeight: `calc(100vh - ${theme.mixins.toolbar[
-        theme.breakpoints.up('sm')
-      ].minHeight + tabsHeight}px)`,
-    },
-  },
+  root: {},
   content: props => ({
     display: 'flex',
     width: `calc( (100vw - ${theme.drawerWidth}px) / ${props.zoom})`,
@@ -25,14 +17,10 @@ const useStyles = makeStyles(theme => ({
     transformOrigin: '0 0',
     backfaceVisibility: 'hidden',
     '-webkit-font-smoothing': 'antialiased',
+    position: 'relative',
   }),
   emptyState: {
-    minHeight: `calc(100vh - ${theme.mixins.toolbar.minHeight + tabsHeight}px)`,
-    [theme.breakpoints.up('sm')]: {
-      minHeight: `calc(100vh - ${theme.mixins.toolbar[
-        theme.breakpoints.up('sm')
-      ].minHeight + tabsHeight}px)`,
-    },
+    minHeight: `100%`,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -51,6 +39,10 @@ const Screens = props => {
   const visibleScreens = useSelector(state => {
     return getScreensByTab(state, getSelectedTab(state))
   })
+
+  const isTakingScreenShot = useSelector(
+    state => state.layout.isTakingScreenShot
+  )
 
   if (url === '') {
     return (
@@ -71,7 +63,11 @@ const Screens = props => {
   }
 
   return (
-    <Scrollbars className={classes.root}>
+    <Scrollbars
+      autoHide={isTakingScreenShot}
+      id="screens-wrapper"
+      className={classes.root}
+    >
       <div className={classes.content} id={'screens'}>
         {visibleScreens.map(screen => (
           <Screen

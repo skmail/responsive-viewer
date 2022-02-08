@@ -70,7 +70,7 @@ const TabDialogInternal = ({ initialValues, handleSubmit, invalid, reset }) => {
 
   const uniqueTabs = useMemo(() => {
     return validation.uniqueTabs(tabs, tabName)
-  }, [tabName])
+  }, [tabName, tabs])
 
   return (
     <Dialog id={id} open={true} onClose={handleClose}>

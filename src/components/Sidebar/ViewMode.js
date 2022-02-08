@@ -1,7 +1,6 @@
 import React from 'react'
 import ToggleButton from './ToggleButton'
 import { makeStyles } from '@material-ui/core/styles'
-import Tooltip from '@material-ui/core/Tooltip'
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -60,18 +59,15 @@ const ViewMode = props => {
 
   const mode = value === 'vertical' ? modes[1] : modes[0]
   return (
-    <Tooltip key={mode.name} title={mode.label}>
-      <div>
-        <ToggleButton
-          margin
-          onClick={() => onChange(mode.name)}
-          active={value === mode.name}
-          className={classes.button}
-        >
-          {mode.icon}
-        </ToggleButton>
-      </div>
-    </Tooltip>
+    <ToggleButton
+      title={mode.label}
+      margin
+      onClick={() => onChange(mode.name)}
+      active={value === mode.name}
+      className={classes.button}
+    >
+      {mode.icon}
+    </ToggleButton>
   )
 }
 

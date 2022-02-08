@@ -4,7 +4,7 @@ const devices = [
     name: 'iPhone XR, XS Max',
     width: 414,
     height: 896,
-    visible: true,
+    visible: false,
     userAgent: 'iPhone',
   },
   {
@@ -12,7 +12,7 @@ const devices = [
     name: 'iPhone XS, X',
     width: 375,
     height: 812,
-    visible: true,
+    visible: false,
     userAgent: 'iPhone',
   },
   {
@@ -36,7 +36,7 @@ const devices = [
     name: 'Galaxy S9 Plus, S8 Plus',
     width: 412,
     height: 846,
-    visible: true,
+    visible: false,
     userAgent: 'Samsung Phone',
   },
   {
@@ -44,7 +44,7 @@ const devices = [
     name: 'Galaxy S9, Note 8, S8',
     width: 360,
     height: 740,
-    visible: true,
+    visible: false,
     userAgent: 'Samsung Phone',
   },
   {
@@ -52,7 +52,7 @@ const devices = [
     name: 'Pixel 3, 3 XL',
     width: 393,
     height: 786,
-    visible: true,
+    visible: false,
     userAgent: 'Google Pixel',
   },
   {
@@ -60,14 +60,14 @@ const devices = [
     name: 'Medium Screen',
     width: 1024,
     height: 800,
-    visible: true,
+    visible: false,
     userAgent: 'Google Chrome',
   },
   {
     id: '757b4eb8-9530-4169-9ec5-0231d7cf2be2',
     name: 'Large Screen',
-    width: 1280,
-    height: 800,
+    width: 688,
+    height: 1031,
     visible: true,
     userAgent: 'Google Chrome',
   },

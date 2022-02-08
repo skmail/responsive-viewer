@@ -5,9 +5,11 @@ import classNames from 'classnames'
 
 const useStyles = makeStyles(theme => ({
   button: {
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
     fontSize: 12,
     marginTop: theme.spacing(0.5),
+    minWidth: 40,
   },
   activeButton: {
     backgroundColor: alpha(theme.palette.secondary.main, 0.1),

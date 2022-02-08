@@ -180,6 +180,29 @@ export const screenshot = (screen, type) => ({
   },
 })
 
+export const screenshotDone = screen => ({
+  type: actionTypes.SCREENSHOT_DONE,
+  payload: {
+    screen,
+  },
+})
+export const screenshotStarted = payload => ({
+  type: actionTypes.SCREENSHOT_STARTED,
+  payload,
+})
+
+export const screenshotAll = type => ({
+  type: actionTypes.SCREENSHOT_ALL,
+  payload: {
+    type,
+  },
+})
+
+export const screenshotAllDone = () => ({
+  type: actionTypes.SCREENSHOT_ALL_DONE,
+  payload: {},
+})
+
 export const exportApp = () => ({
   type: actionTypes.EXPORT_APP,
 })

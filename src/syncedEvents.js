@@ -3,6 +3,7 @@ import uuid from 'uuid'
 import './inject/utils'
 import scrollTo from './inject/scrollTo'
 import refresh from './inject/refresh'
+import dimensions from './inject/dimensions'
 import syncClick, { simulateClick, triggerEvent } from './inject/syncClick'
 import {
   disableMouseInspector,
@@ -47,7 +48,13 @@ onDomReady(() => {
 
       case '@APP/SCREENSHOT':
         screenshot(event.data)
+
         break
+
+      case '@APP/DIMENSIONS':
+        dimensions(event.data)
+        break
+
       case '@APP/SCREENSHOT_DONE':
         screenshotDone(event.data)
         break

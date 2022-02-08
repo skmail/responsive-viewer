@@ -8,18 +8,21 @@ import UserAgentDialog from './UserAgentDialog'
 import HelpDialog from './HelpDialog'
 import Tabs from './Tabs'
 import TabDialog from './TabDialog'
+import Draw from './Draw'
 
 const useStyles = makeStyles(theme => {
   return {
     root: {
       overflow: 'hidden',
-      transform: 'translate3d(0,0,0)',
+      height: '100vh',
+      display: 'flex',
     },
-    toolbar: theme.mixins.toolbar,
-    content: props => ({
-      width: `calc(100% - ${props.drawerOpened ? theme.drawerWidth : 0}px)`,
-      marginLeft: props.drawerOpened ? theme.drawerWidth : 0,
-    }),
+    content: {
+      display: 'flex',
+      flexDirection: 'column',
+      flex: 1,
+      overflow: 'hidden',
+    },
   }
 })
 
@@ -128,22 +131,6 @@ function App(props) {
         {...helpDialog}
       />
 
-      <AppBar
-        url={url}
-        updateUrl={updateUrl}
-        toggleDrawer={toggleDrawer}
-        userAgents={userAgents}
-        toggleScreenDialog={toggleScreenDialog}
-        toggleHelpDialog={toggleHelpDialog}
-        viewMode={viewMode}
-        switchViewMode={switchViewMode}
-        switchScreenDirection={switchScreenDirection}
-        screenDirection={screenDirection}
-        zoom={zoom}
-        onZoom={onZoom}
-      />
-      <div className={classes.toolbar} />
-      <Tabs />
       <Sidebar
         screens={screens}
         updateScreen={updateScreen}
@@ -162,7 +149,24 @@ function App(props) {
         exportApp={exportApp}
         importApp={importApp}
       />
+
+      <Draw />
       <div className={classes.content}>
+        <AppBar
+          url={url}
+          updateUrl={updateUrl}
+          toggleDrawer={toggleDrawer}
+          userAgents={userAgents}
+          toggleScreenDialog={toggleScreenDialog}
+          toggleHelpDialog={toggleHelpDialog}
+          viewMode={viewMode}
+          switchViewMode={switchViewMode}
+          switchScreenDirection={switchScreenDirection}
+          screenDirection={screenDirection}
+          zoom={zoom}
+          onZoom={onZoom}
+        />
+        <Tabs />
         <Screens
           zoom={zoom}
           viewMode={viewMode}

@@ -36,7 +36,6 @@ const start = tab => {
     },
     result => {
       if (result) {
-        console.log('Blocking js')
         chrome.contentSettings.javascript.set({
           primaryPattern: pattern,
           setting: 'block',
@@ -91,7 +90,6 @@ const start = tab => {
       return
     }
 
-    console.log('INJECT TO', details.url)
     chrome.tabs.executeScript(details.tabId, {
       file: 'syncedEvents.js',
       frameId: details.frameId,
@@ -138,6 +136,7 @@ const start = tab => {
 
       case 'CAPTURE_SCREEN':
         chrome.tabs.captureVisibleTab(null, {}, function(image) {
+          console.log('captured')
           sendResponse({
             image,
           })

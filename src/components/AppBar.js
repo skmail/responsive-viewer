@@ -15,13 +15,14 @@ import Zoom from './Sidebar/Zoom'
 
 import TwitterIcon from '@material-ui/icons/Twitter'
 
+import Screenshot from './AppBar/Screenshot'
 const useStyles = makeStyles(theme => ({
   grow: {
     flexGrow: 1,
   },
   root: {
     zIndex: theme.zIndex.drawer + 1,
-    width: `calc(100vw - ${theme.drawerWidth}px)`,
+    width: '100%',
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -54,8 +55,9 @@ const AppBar = props => {
     onZoom,
   } = props
   const classes = useStyles()
+
   return (
-    <MuiAppBar color="default" className={classes.root}>
+    <MuiAppBar position="static" color="default" className={classes.root}>
       <Toolbar className={classes.toolbar}>
         <img
           src="https://responsive-viewer-ads.netlify.app/logo.png"
@@ -70,6 +72,8 @@ const AppBar = props => {
             value={screenDirection}
             onChange={switchScreenDirection}
           />
+
+          <Screenshot />
         </Box>
 
         <Zoom value={zoom} onChange={onZoom} />

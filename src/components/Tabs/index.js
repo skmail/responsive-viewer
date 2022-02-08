@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import MuiTabs from '@material-ui/core/Tabs'
 import { useSelector } from 'react-redux'
 import { getSelectedTabIndex, getTabs } from '../../selectors'
@@ -7,14 +7,9 @@ import AddIcon from '@material-ui/icons/Add'
 import { useDispatch } from 'react-redux'
 import { selectTabByIndex, toggleTabDialog } from '../../actions'
 import MuiTab from '@material-ui/core/Tab'
-import Popper from '@material-ui/core/Popper'
-import InfoIcon from '@material-ui/icons/InfoOutlined'
-import { IconButton } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: `calc( (100vw - ${theme.drawerWidth}px))`,
-    marginLeft: theme.drawerWidth,
     background: alpha(theme.palette.grey['900'], 0.5),
     minHeight: 'auto',
   },

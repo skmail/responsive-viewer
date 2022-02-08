@@ -4,6 +4,8 @@ const initialState = {
   initialized: false,
   drawerOpened: true,
   inspectByMouse: false,
+  isTakingScreenShot: false,
+  screenshot: null,
   tabDialog: {
     open: false,
     initialValues: {},
@@ -94,6 +96,26 @@ export default (state = initialState, action) => {
         },
         // isTabDialogOpened: !state.isTabDialogOpened,
       }
+
+    case actionTypes.SCREENSHOT:
+      return {
+        ...state,
+        isTakingScreenShot: true,
+      }
+
+    case actionTypes.SCREENSHOT_STARTED:
+      return {
+        ...state,
+        screenshot: action.payload,
+      }
+
+    case actionTypes.SCREENSHOT_DONE:
+      return {
+        ...state,
+        isTakingScreenShot: false,
+        // screenshot: null,
+      }
+
     default:
       return state
   }

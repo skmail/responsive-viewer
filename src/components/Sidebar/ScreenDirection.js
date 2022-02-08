@@ -2,7 +2,6 @@ import React from 'react'
 import ToggleButton from './ToggleButton'
 import { makeStyles } from '@material-ui/core/styles'
 import classNames from 'classnames'
-import Tooltip from '@material-ui/core/Tooltip'
 
 const useStyles = makeStyles(theme => ({
   icon: {
@@ -68,20 +67,14 @@ const ScreenDirection = props => {
   const direction = value === 'landscape' ? directions[0] : directions[1]
 
   return (
-    <>
-      <Tooltip title={direction.label} key={direction.name}>
-        <div>
-          <ToggleButton
-            key={direction.name}
-            onClick={() => onChange(direction.name)}
-            active={value === direction.name}
-            className={classes.button}
-          >
-            {direction.icon}
-          </ToggleButton>
-        </div>
-      </Tooltip>
-    </>
+    <ToggleButton
+      title={direction.label}
+      onClick={() => onChange(direction.name)}
+      active={value === direction.name}
+      className={classes.button}
+    >
+      {direction.icon}
+    </ToggleButton>
   )
 }
 

@@ -11,7 +11,7 @@ const useStyles = makeStyles(theme => ({
     width: theme.drawerWidth,
     flexShrink: 0,
     position: 'relative',
-    zIndex: 99999,
+    zIndex: 1,
   },
   drawerPaper: {
     width: theme.drawerWidth,
@@ -76,6 +76,7 @@ const Sidebar = props => {
 
   return (
     <Drawer
+      position="static"
       variant="permanent"
       className={classNames(classes.drawer, {
         [classes.drawerOpen]: open,

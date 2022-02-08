@@ -1,5 +1,5 @@
 import platform from '../platform'
-
+import { saveAs } from 'file-saver'
 import {
   takeLatest,
   takeEvery,
@@ -21,38 +21,23 @@ import {
   refresh,
   updateUrl,
 } from '../actions'
-import scrollIntoView from 'scroll-into-view'
-import { getDomId, getIframeId } from '../utils/screen'
+import screenshot from './screenshot'
+import { getDomId } from '../utils/screen'
 import { waitFor } from '../utils/saga'
 import { NAME as APP_NAME, SCREEN_DIALOG_FORM_NAME } from '../constants'
 import { saveState, loadState, resetState } from '../utils/state'
 import { change as changeForm } from 'redux-form'
 import actionTypes from '../actions/actionTypes'
-import { extractHostname, slugify } from '../utils/url'
 import { getScreensByTab, getSelectedTab } from '../selectors'
+import { iframeChannel } from './utils/iframeChannel'
+import { sendMessageToScreens } from './utils/sendMessageToScreens'
+import { scrollToElement } from './utils/scrollToElement'
+
 const wait = ms =>
   new Promise(resolve =>
     platform.runtime.sendMessage({ message: 'WAIT', time: ms }, () => resolve())
   )
 
-const scrollTo = (element, align = {}) =>
-  new Promise(resolve => {
-    scrollIntoView(
-      element,
-      {
-        align: {
-          top: 0,
-          left: 0,
-          topOffset: 0,
-          leftOffset: 0,
-          ...align,
-        },
-      },
-      () => {
-        resolve()
-      }
-    )
-  })
 const doScrollToScreen = function*({ payload }) {
   const { id } = payload
 
@@ -60,7 +45,7 @@ const doScrollToScreen = function*({ payload }) {
 
   const element = document.getElementById(iframeId)
 
-  yield scrollTo(element)
+  yield scrollToElement(element)
 
   yield put(highlightScreen(id))
 
@@ -146,7 +131,8 @@ function* doInitialize() {
       }
     }
   }
-  const tabUrl = window.location.href
+  // const tabUrl = window.location.href
+  const tabUrl = 'http://localhost:3000/'
 
   app = {
     ...state.app,
@@ -173,42 +159,12 @@ function* doFillUserAgentInScreenDialog({ payload }) {
   yield put(changeForm(SCREEN_DIALOG_FORM_NAME, 'userAgent', userAgent.name))
 }
 
-const sendMessageToScreens = (screens, message) => {
-  screens = screens.filter(screen => screen.visible)
-  let counter = 0
-
-  while (counter < screens.length) {
-    const screen = screens[counter]
-    const iframeId = getIframeId(screen.id)
-    const element = document.getElementById(iframeId)
-
-    element.contentWindow.postMessage(
-      {
-        screen,
-        ...message,
-      },
-      '*'
-    )
-    counter++
-  }
-}
-
 function* doIframeCommunications() {
-  const waitIframeMessage = eventChannel(emitter => {
-    window.addEventListener('message', event => {
-      if (!event.data || !String(event.data.message).startsWith('@APP/')) {
-        return
-      }
-      emitter(event.data)
-    })
-
-    return () => {}
-  })
-
   while (true) {
-    const data = yield take(waitIframeMessage)
+    const data = yield take(iframeChannel())
 
     const state = yield select()
+
     let allowedToSend = false
 
     yield put({
@@ -234,17 +190,6 @@ function* doIframeCommunications() {
 
       case '@APP/REFRESH':
         yield put(refresh())
-        break
-
-      case '@APP/SCREENSHOT':
-        allowedToSend = false
-
-        yield call(captureScreen, {
-          type: 'CAPTURE_SCREEN',
-          payload: {
-            ...data,
-          },
-        })
         break
 
       default:
@@ -292,173 +237,6 @@ function* doTurnOffInspectByMouse() {
   yield put(toggleInspectByMouse(false))
 }
 
-function doScreenshot(action) {
-  const { payload } = action
-  const { screen, type } = payload
-
-  sendMessageToScreens([screen], {
-    message: '@APP/SCREENSHOT',
-    type,
-  })
-}
-
-function* captureScreen(action) {
-  const state = yield select()
-
-  const { payload } = action
-
-  const { screen, height: fullIframeHeight, type } = payload
-
-  const screenHeight =
-    state.app.screenDirection === 'landscape' ? screen.width : screen.height
-  const screenWidth =
-    state.app.screenDirection === 'landscape' ? screen.height : screen.width
-
-  const iframeHeight = type === 'full' ? fullIframeHeight : screenHeight
-
-  const height = iframeHeight + iframeHeight * (state.app.zoom - 1)
-
-  const iframeElement = document.getElementById(getIframeId(screen.id))
-
-  iframeElement.style.height = `${iframeHeight}px`
-
-  const screenElement = document.getElementById(getDomId(screen.id))
-
-  const parent = document.getElementById('screens').parentElement
-
-  const parentBoundingBox = parent.getBoundingClientRect()
-  const screenElementBoundingBox = screenElement.getBoundingClientRect()
-
-  const parentBox = {
-    x: parentBoundingBox.x,
-    y: parentBoundingBox.y,
-    width: parentBoundingBox.width,
-    height: parentBoundingBox.height,
-  }
-
-  const oldScreenPosition = {
-    y: screenElementBoundingBox.y - parentBox.y,
-    x: screenElementBoundingBox.x - parentBox.x,
-  }
-
-  const parentHeight = window.innerHeight - parentBox.y
-
-  const canvas = document.createElement('canvas')
-
-  canvas.width = screenWidth + screenWidth * (state.app.zoom - 1)
-
-  canvas.height = height
-
-  const ctx = canvas.getContext('2d')
-
-  ctx.scale(1 / window.devicePixelRatio, 1 / window.devicePixelRatio)
-
-  const scale = value => value * window.devicePixelRatio
-
-  ctx.fillStyle = 'blue'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-  const download = (uri, name) => {
-    const link = document.createElement('a')
-    link.innerText = 'Download'
-    document.body.appendChild(link)
-    link.download = `${name}.png`
-    link.href = URL.createObjectURL(uri)
-    link.click()
-    document.body.removeChild(link)
-  }
-
-  const captureChannel = () =>
-    new Promise(accept => {
-      platform.runtime.sendMessage({ message: 'CAPTURE_SCREEN' }, function(
-        response
-      ) {
-        if (!response.image) {
-          accept(false)
-          return
-        }
-
-        const image = new Image()
-        image.onload = function() {
-          accept(image)
-        }
-        image.onerror = function() {
-          accept(false)
-        }
-
-        image.src = response.image
-      })
-    })
-
-  const scrollsArray = String(height / parentHeight).split('.')
-
-  let scrollTimes = (() => {
-    if (scrollsArray[0] === '0') {
-      return [0]
-    }
-    const array = []
-    for (let i = 0; i < scrollsArray[0]; i++) {
-      array.push(i)
-    }
-
-    if (scrollsArray.length === 2) {
-      array.push(parseFloat(`${array[array.length - 1]}.${scrollsArray[1]}`))
-    }
-
-    return array
-  })()
-
-  let scrolls = 0
-
-  while (scrolls < scrollTimes.length) {
-    yield scrollTo(iframeElement, {
-      topOffset: -parentHeight * scrollTimes[scrolls],
-    })
-
-    const image = yield captureChannel()
-
-    if (image) {
-      const iframeBox = iframeElement.getBoundingClientRect()
-
-      ctx.drawImage(
-        image,
-        scale(iframeBox.x),
-        scale(parentBox.y),
-        image.width,
-        image.height,
-        0,
-        scale(parentHeight * scrollTimes[scrolls]),
-        image.width,
-        image.height
-      )
-    }
-
-    scrolls++
-  }
-
-  iframeElement.style.height = `${screenHeight}px`
-
-  yield scrollTo(screenElement, {
-    topOffset: oldScreenPosition.y,
-    leftOffset: oldScreenPosition.x,
-  })
-
-  canvas.toBlob(blob => {
-    download(
-      blob,
-      slugify(
-        `${extractHostname(state.app.url)}-${
-          screen.name
-        }-${screenWidth}x${screenHeight}`
-      )
-    )
-  })
-
-  sendMessageToScreens([screen], {
-    message: '@APP/SCREENSHOT_DONE',
-  })
-}
-
 function* doBackgroundCommunications() {
   try {
     const waitForBackgroundMessages = eventChannel(emitter => {
@@ -486,18 +264,14 @@ function* doBackgroundCommunications() {
 }
 
 function* doExportApp() {
-  console.log('yoo')
   const state = yield select()
 
   const { url, versionedUrl, initialized, ...toSave } = state.app
+
   const dataStr =
     'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(toSave))
-  const downloadAnchorNode = document.createElement('a')
-  downloadAnchorNode.setAttribute('href', dataStr)
-  downloadAnchorNode.setAttribute('download', 'responsive-viewer.json')
-  document.body.appendChild(downloadAnchorNode) // required for firefox
-  downloadAnchorNode.click()
-  downloadAnchorNode.remove()
+
+  saveAs(dataStr, 'responsive-viewer.json')
 }
 
 function* doImportApp(action) {
@@ -529,13 +303,13 @@ export default function*() {
   yield takeLatest(actionTypes.INITIALIZED, doBackgroundCommunications)
   yield takeLatest(actionTypes.APP_RESET, doAppReset)
 
-  yield takeLatest(actionTypes.SCREENSHOT, doScreenshot)
-
   yield takeLatest(actionTypes.SEARCH_ELEMENT, doSearchElement)
   yield takeLatest(actionTypes.TOGGLE_INSPECT_BY_MOUSE, doInspectByMouse)
   yield takeLatest(actionTypes.APP_SAVED, doTurnOffInspectByMouse)
   yield takeLatest(actionTypes.EXPORT_APP, doExportApp)
   yield takeLatest(actionTypes.IMPORT_APP, doImportApp)
   yield takeLatest(actionTypes.REFRESH, doRefresh)
+
+  yield fork(screenshot)
   yield doWatchAllAction()
 }
