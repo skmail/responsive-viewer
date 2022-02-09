@@ -1,34 +1,39 @@
-import React from 'react'
-import Slider from '@material-ui/core/Slider'
-import IconButton from '@material-ui/core/IconButton'
-import ZoomInIcon from '@material-ui/icons/ZoomIn'
-import ZoomOutIcon from '@material-ui/icons/ZoomOut'
-import Box from '@material-ui/core/Box'
-import { makeStyles } from '@material-ui/core/styles'
+import React, { ReactElement } from 'react'
+import MuiSlider from '@mui/material/Slider'
+import IconButton from '@mui/material/IconButton'
+import ZoomInIcon from '@mui/icons-material/ZoomIn'
+import ZoomOutIcon from '@mui/icons-material/ZoomOut'
+import Tooltip from '@mui/material/Tooltip'
+import Box from '@mui/material/Box'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { selectZoom, updateZoom } from '../../reducers/app'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    margin: theme.spacing(2, 0),
-    width: 250,
-  },
-  slider: {
-    margin: theme.spacing(0, 1, 0, 1),
-  },
-  sliderMarkLabel: {
-    fontSize: 11,
-  },
-  zoomButton: {
-    fontSize: 18,
-    padding: theme.spacing(0.5),
-    color: theme.palette.secondary.main,
+import { styled } from '@mui/material/styles'
+
+const Slider = styled(MuiSlider)(({ theme }) => ({
+  width: 200,
+  '& .MuiSlider-markLabel': {
+    fontSize: 12,
   },
 }))
 
 function zoomText(value: number) {
   return `${parseInt(String(value * 100))}%`
+}
+
+function ValueLabelComponent({
+  children,
+  value,
+}: {
+  children: ReactElement
+  value: number
+}) {
+  return (
+    <Tooltip placement="bottom" title={value}>
+      {children}
+    </Tooltip>
+  )
 }
 
 const Zoom = () => {
@@ -39,7 +44,6 @@ const Zoom = () => {
     dispatch(updateZoom(value))
   }
 
-  const classes = useStyles()
   const maxZoom = 2
   const minZoom = 0.1
   const zoomStep = 0.1
@@ -51,23 +55,18 @@ const Zoom = () => {
   const zoomOut = () => onChange(value - zoomStep)
 
   return (
-    <Box className={classes.root} display={'flex'} alignItems={'flex-start'}>
-      <IconButton
-        classes={{ root: classes.zoomButton }}
-        disabled={canZoomOut}
-        onClick={zoomOut}
-      >
-        <ZoomOutIcon fontSize={'inherit'} />
+    <Box display={'flex'} alignItems={'center'}>
+      <IconButton disabled={canZoomOut} onClick={zoomOut}>
+        <ZoomOutIcon />
       </IconButton>
       <Slider
-        classes={{
-          root: classes.slider,
-          markLabel: classes.sliderMarkLabel,
-        }}
         value={value}
         onChange={(event, value) =>
           onChange(Array.isArray(value) ? value[0] : value)
         }
+        components={{
+          ValueLabel: ValueLabelComponent,
+        }}
         getAriaValueText={zoomText}
         valueLabelFormat={zoomText}
         step={zoomStep}
@@ -77,24 +76,17 @@ const Zoom = () => {
         marks={[
           {
             value: 1,
-            label: '100%',
           },
           {
             value: 0.5,
-            label: '50%',
           },
           {
             value: 1.5,
-            label: '150%',
           },
         ]}
       />
-      <IconButton
-        classes={{ root: classes.zoomButton }}
-        disabled={canZoomIn}
-        onClick={zoomIn}
-      >
-        <ZoomInIcon fontSize={'inherit'} />
+      <IconButton disabled={canZoomIn} onClick={zoomIn}>
+        <ZoomInIcon />
       </IconButton>
     </Box>
   )

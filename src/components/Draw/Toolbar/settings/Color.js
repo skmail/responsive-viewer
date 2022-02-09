@@ -1,12 +1,12 @@
 import React from 'react'
-import Input from '@material-ui/core/Input'
+import Input from '@mui/material/Input'
 import {
   Saturation,
   ColorWrap,
   Hue,
   Alpha,
 } from 'react-color/lib/components/common'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@mui/material/styles'
 const width = 170
 const useStyles = makeStyles(theme => ({
   root: {

@@ -1,6 +1,6 @@
 import React, { useState, MouseEvent } from 'react'
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import ToggleButton from '../ToggleButton'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { exportApp, importApp } from '../../reducers/app'

@@ -1,32 +1,12 @@
 import React, { useState, MouseEvent } from 'react'
-import { makeStyles, darken, alpha } from '@material-ui/core/styles'
-import Popover from '@material-ui/core/Popover'
+import Popover from '@mui/material/Popover'
 import ToggleButton from '../ToggleButton'
-import TextField from '@material-ui/core/TextField'
-import Box from '@material-ui/core/Box'
-import IconButton from '@material-ui/core/IconButton'
+import TextField from '@mui/material/TextField'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { searchElement } from '../../reducers/layout'
-
-const useStyles = makeStyles(theme => ({
-  typography: {
-    padding: theme.spacing(2),
-  },
-  paper: {
-    background: darken(theme.palette.background.default, 0.15),
-    marginLeft: theme.spacing(1),
-    padding: theme.spacing(1),
-  },
-  textField: {
-    background: alpha(theme.palette.common.white, 0.15),
-    marginRight: theme.spacing(1),
-  },
-  textFieldInput: {
-    padding: theme.spacing(1),
-  },
-  active: {},
-}))
 
 const ElementInspect = () => {
   const dispatch = useAppDispatch()
@@ -42,7 +22,6 @@ const ElementInspect = () => {
     },
   })
 
-  const classes = useStyles()
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
   const handleClick = (event: MouseEvent) => {
@@ -72,6 +51,7 @@ const ElementInspect = () => {
       />
     </svg>
   )
+
   return (
     <div>
       <ToggleButton title="Elements Search" active={open} onClick={handleClick}>
@@ -82,7 +62,6 @@ const ElementInspect = () => {
         open={open}
         anchorEl={anchorEl}
         onClose={handleClose}
-        classes={{ paper: classes.paper }}
         anchorOrigin={{
           vertical: 'center',
           horizontal: 'right',
@@ -95,23 +74,22 @@ const ElementInspect = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" alignItems="center">
             <TextField
+              size="small"
               variant="outlined"
               color="primary"
               placeholder="#app"
-              classes={{
-                root: classes.textField,
-              }}
-              inputProps={{
-                className: classes.textFieldInput,
-              }}
               {...register('selector', {
                 required: true,
               })}
+              InputProps={{
+                endAdornment: (
+                  <IconButton type="submit" disabled={!isValid}>
+                    {searchIcon}
+                  </IconButton>
+                ),
+              }}
               autoFocus
             />
-            <IconButton type="submit" disabled={!isValid}>
-              {searchIcon}
-            </IconButton>
           </Box>
         </form>
       </Popover>

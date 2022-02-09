@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import Box, { BoxProps } from '@mui/material/Box'
+import LinearProgress from '@mui/material/LinearProgress'
 import { getIframeId } from '../../utils/screen'
-import classNames from 'classnames'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import {
   selectScreenById,
@@ -10,45 +9,51 @@ import {
   selectUrl,
 } from '../../reducers/app'
 import { selectHighlightedScreen } from '../../reducers/layout'
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    position: 'relative',
-    transition: 'all ease 0.5s',
-  },
-  highlighted: {
-    boxShadow: `0 0 0 4px ${theme.palette.primary.main}`,
-    transform: 'scale(1.02)',
-    transition: 'all ease 0.5s',
-  },
-  iframe: {
-    backgroundColor: '#fff',
-    border: 'none',
-    borderRadius: 2,
-    display: 'block',
-  },
-  progress: {
-    position: 'absolute',
-    top: 0,
-    width: '100%',
-  },
-}))
-
+import { styled } from '@mui/material/styles'
+import { shallowEqual } from 'react-redux'
 interface Props {
   id: string
 }
 
+interface RootProps extends BoxProps {
+  isHighlighted: boolean
+}
+const Root = styled(({ isHighlighted, ...rest }: RootProps) => (
+  <Box {...rest} />
+))<RootProps>(({ theme, isHighlighted }) => ({
+  position: 'relative',
+  transition: 'all ease 0.5s',
+  boxShadow: isHighlighted
+    ? `0 0 0 4px ${theme.palette.primary.main}`
+    : undefined,
+  transform: isHighlighted ? 'scale(1.02)' : undefined,
+}))
+
+const IframeElement = styled('iframe')(() => ({
+  backgroundColor: '#fff',
+  border: 'none',
+  borderRadius: 2,
+  display: 'block',
+}))
+
+const Progress = styled(LinearProgress)(() => ({
+  position: 'absolute',
+  top: 0,
+  width: '100%',
+}))
+
 const Iframe = ({ id }: Props) => {
   const screenDirection = useAppSelector(selectScreenDirection)
   const url = useAppSelector(selectUrl)
-  const screen = useAppSelector(state => selectScreenById(state, id))
+  const screen = useAppSelector(
+    state => selectScreenById(state, id),
+    shallowEqual
+  )
   const isHighlighted = useAppSelector(
     state => selectHighlightedScreen(state) === id
   )
   const [isLoading, setIsLoading] = useState(true)
   const [scrolling, setScrolling] = useState(true)
-
-  const classes = useStyles()
 
   const onLoad = () => {
     setIsLoading(false)
@@ -88,25 +93,15 @@ const Iframe = ({ id }: Props) => {
 
   const width = screenDirection === 'landscape' ? screen.height : screen.width
   const height = screenDirection === 'landscape' ? screen.width : screen.height
-
+  console.log(url)
   return (
-    <div
-      className={classNames(
-        classes.root,
-        isHighlighted ? classes.highlighted : null
-      )}
-    >
-      {isLoading && (
-        <div className={classes.progress}>
-          <LinearProgress color="secondary" />
-        </div>
-      )}
+    <Root isHighlighted={isHighlighted}>
+      {isLoading && <Progress color="primary" />}
 
-      <iframe
+      <IframeElement
         scrolling={scrolling ? 'auto' : 'no'}
         id={getIframeId(screen.id)}
         onLoad={onLoad}
-        className={classes.iframe}
         sandbox="allow-scripts allow-forms allow-same-origin allow-presentation allow-orientation-lock allow-modals allow-popups-to-escape-sandbox allow-pointer-lock "
         title={`${screen.name} - ${width}x${height}`}
         style={{
@@ -115,7 +110,7 @@ const Iframe = ({ id }: Props) => {
         }}
         src={url}
       />
-    </div>
+    </Root>
   )
 }
 

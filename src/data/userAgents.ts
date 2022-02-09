@@ -1,4 +1,6 @@
-export default [
+import { UserAgent } from '../types'
+
+const userAgents: UserAgent[] = [
   {
     name: 'Google Chrome',
     value:
@@ -35,3 +37,5 @@ export default [
       'Mozilla/5.0 (Linux; Android 7.1.1; Pixel Build/NOF27B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.132 Mobile Safari/537.36',
   },
 ]
+
+export default userAgents

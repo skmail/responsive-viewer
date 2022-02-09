@@ -1,6 +1,6 @@
 import React from 'react'
-import SettingsIcon from '@material-ui/icons/Settings'
-import IconButton from '@material-ui/core/IconButton'
+import SettingsIcon from '@mui/icons-material/Settings'
+import IconButton from '@mui/material/IconButton'
 import { useAppDispatch } from '../../../hooks/useAppDispatch'
 import { toggleScreenDialog } from '../../../reducers/layout'
 import { Device } from '../../../types'
@@ -16,7 +16,13 @@ const Settings = ({ screen }: Props) => {
   }
 
   return (
-    <IconButton size={'small'} onClick={onClick}>
+    <IconButton
+      sx={{
+        color: 'GrayText',
+      }}
+      size={'small'}
+      onClick={onClick}
+    >
       <SettingsIcon fontSize={'small'} />
     </IconButton>
   )

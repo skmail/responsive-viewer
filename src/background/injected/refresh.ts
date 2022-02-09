@@ -1,5 +1,8 @@
 const refresh = () => {
   window.addEventListener('keydown', e => {
+    if (!window.top) {
+      return
+    }
     let isF5 = false
     let isR = false
 

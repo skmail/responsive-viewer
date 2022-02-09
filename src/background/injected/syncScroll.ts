@@ -1,8 +1,16 @@
-import { cloneEvent } from './utils'
-import getDomPath from '../utils/domPath'
+import getDomPath from '../../utils/domPath'
+
+declare global {
+  interface Window {
+    userScroll: boolean
+  }
+  interface Document {
+    onmousewheel: () => void
+  }
+}
 
 window.userScroll = false
-function mouseEvent(e) {
+function mouseEvent() {
   window.userScroll = true
 }
 
@@ -12,14 +20,11 @@ function disableScrollEvent() {
 
 // https://stackoverflow.com/questions/7035896/detect-whether-scroll-event-was-created-by-user
 document.addEventListener('keydown', e => {
+  const scrollKeys = ['Space', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown']
+  const withCtrlScrollKeys = ['Home', 'End']
   if (
-    e.which === 33 || // page up
-    e.which === 34 || // page dn
-    e.which === 32 || // spacebar
-    e.which === 38 || // up
-    e.which === 40 || // down
-    (e.ctrlKey && e.which === 36) || // ctrl + home
-    (e.ctrlKey && e.which === 35) // ctrl + end
+    scrollKeys.includes(e.code) ||
+    (e.ctrlKey && withCtrlScrollKeys.includes(e.code))
   ) {
     window.userScroll = true
   }
@@ -34,6 +39,9 @@ document.onmousewheel = mouseEvent
 window.addEventListener(
   'scroll',
   e => {
+    if (!window.top || !e.target) {
+      return
+    }
     if (window.userScroll === false) {
       return
     }
@@ -43,8 +51,7 @@ window.addEventListener(
         frameId: window.frameID,
         scrollTop: document.documentElement.scrollTop,
         scrollLeft: document.documentElement.scrollLeft,
-        path: getDomPath(e.target),
-        event: cloneEvent(e),
+        path: getDomPath(e.target as HTMLElement),
       },
       '*'
     )
@@ -52,7 +59,7 @@ window.addEventListener(
   false
 )
 
-export default data => {
+export default (data: { scrollTop: number; scrollLeft: number }) => {
   window.userScroll = false
   window.scrollTo({
     top: data.scrollTop,

@@ -1,8 +1,6 @@
 import React from 'react'
-import MuiTabs from '@material-ui/core/Tabs'
-import { makeStyles, darken } from '@material-ui/core/styles'
-import AddIcon from '@material-ui/icons/Add'
-import MuiTab from '@material-ui/core/Tab'
+import MuiTabs from '@mui/material/Tabs'
+import MuiTab from '@mui/material/Tab'
 import {
   selectSelectedTabIndex,
   selectTabByIndex,
@@ -11,26 +9,23 @@ import {
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { toggleTabDialog } from '../../reducers/layout'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
+import { styled, darken } from '@mui/material/styles'
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    background: darken(theme.palette.secondary.dark, 0.7),
-    minHeight: 'auto',
-  },
-  tab: {
-    fontSize: theme.typography.pxToRem(11),
-    fontWeight: 'bold',
-    padding: theme.spacing(0.5, 2),
-    minWidth: 'auto',
-    minHeight: 'auto',
-  },
+const StyledTabs = styled(MuiTabs)(({ theme }) => ({
+  height: 30,
+  minHeight: 'auto',
+  background: darken(theme.palette.background.paper, 0.4),
 }))
-
+const StyledTab = styled(MuiTab)(({ theme }) => ({
+  height: 30,
+  minHeight: 'auto',
+  fontSize: 11,
+  fontWeight: 'bold',
+}))
 const Tabs = () => {
   const tabs = useAppSelector(selectTabs)
   const value = useAppSelector(selectSelectedTabIndex)
 
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   const handleChange = (e: any, index: number) => {
@@ -43,17 +38,13 @@ const Tabs = () => {
 
   return (
     <div>
-      <MuiTabs
-        className={classes.root}
+      <StyledTabs
         value={value}
         onChange={handleChange}
         aria-label="Screen tabs"
       >
         {tabs.map((tab, index) => (
-          <MuiTab
-            wrapped={false}
-            classes={{ root: classes.tab }}
-            fullWidth={false}
+          <StyledTab
             onDoubleClick={e => {
               if (tab.name !== 'default') {
                 e.preventDefault()
@@ -67,13 +58,8 @@ const Tabs = () => {
           />
         ))}
 
-        <MuiTab
-          icon={<AddIcon />}
-          classes={{ root: classes.tab }}
-          fullWidth={false}
-          value={-1}
-        />
-      </MuiTabs>
+        <StyledTab label={'add'} value={-1} />
+      </StyledTabs>
     </div>
   )
 }

@@ -1,12 +1,12 @@
 //https://gist.github.com/karlgroves/7544592
-function getDomPath(el) {
+function getDomPath(el: HTMLElement) {
   var stack = []
 
-  while (el.parentNode != null) {
+  while (el.parentElement != null) {
     var sibCount = 0
     var sibIndex = 0
-    for (var i = 0; i < el.parentNode.childNodes.length; i++) {
-      var sib = el.parentNode.childNodes[i]
+    for (var i = 0; i < el.parentElement.childNodes.length; i++) {
+      var sib = el.parentElement.childNodes[i]
       if (sib.nodeName === el.nodeName) {
         if (sib === el) {
           sibIndex = sibCount
@@ -21,10 +21,12 @@ function getDomPath(el) {
     } else {
       stack.unshift(el.nodeName.toLowerCase())
     }
-    el = el.parentNode
+    el = el.parentElement
   }
 
   return stack.slice(1) // removes the html element
 }
 
-export default element => getDomPath(element).join(' > ')
+export default function domPath(element: HTMLElement) {
+  return getDomPath(element).join(' > ')
+}

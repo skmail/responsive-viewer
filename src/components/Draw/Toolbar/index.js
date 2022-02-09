@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, darken } from '@material-ui/core/styles'
+import { makeStyles, darken } from '@mui/material/styles'
 import ToolbarButton from './ToolbarButton'
 import ColorPopover from './settings/ColorPopover'
 import Stroke from './settings/Stroke'

@@ -6,7 +6,7 @@ import { saveAs } from 'file-saver'
 function* doExportApp() {
   const state: State = yield select(selectApp)
 
-  const { url, versionedUrl, ...toSave } = state
+  const { url, ...toSave } = state
 
   const dataStr =
     'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(toSave))

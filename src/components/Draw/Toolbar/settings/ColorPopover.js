@@ -1,8 +1,8 @@
 import React from 'react'
-import Popover from '@material-ui/core/Popover'
-import Button from '@material-ui/core/Button'
+import Popover from '@mui/material/Popover'
+import Button from '@mui/material/Button'
 import Color from './Color'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@mui/material/styles'
 const width = 170
 const useStyles = makeStyles(theme => ({
   root: {

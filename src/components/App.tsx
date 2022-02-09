@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import AppBar from './AppBar'
 import Screens from './Screens'
-import { makeStyles } from '@material-ui/core/styles'
 import Sidebar from './Sidebar'
 import ScreenDialog from './ScreenDialog'
 import UserAgentDialog from './UserAgentDialog'
@@ -13,26 +12,8 @@ import { initialize } from '../reducers/app'
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { useAppSelector } from '../hooks/useAppSelector'
 import { selectIsAppReady } from '../reducers/layout'
-const useStyles = makeStyles(theme => {
-  return {
-    root: {
-      overflow: 'hidden',
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    inner: {
-      display: 'flex',
-      flex: 1,
-    },
-    content: {
-      display: 'flex',
-      flexDirection: 'column',
-      flex: 1,
-      overflow: 'hidden',
-    },
-  }
-})
+
+import Box from '@mui/material/Box'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -69,14 +50,12 @@ function App() {
   //   }
   // }, [refresh])
 
-  const classes = useStyles()
-
   if (!initialized) {
     return <div>Loading ...</div>
   }
 
   return (
-    <div className={classes.root}>
+    <Box overflow="hidden" height="100vh" display="flex" flexDirection="column">
       <TabDialog />
       <ScreenDialog />
       <UserAgentDialog />
@@ -86,15 +65,15 @@ function App() {
       <AppBar />
       {/* <Draw /> */}
 
-      <div className={classes.inner}>
+      <Box display="flex" overflow="hidden" flex={1}>
         <Sidebar />
-        <div className={classes.content}>
+        <Box flex={1}>
           <Tabs />
 
           <Screens />
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 

@@ -1,9 +1,9 @@
 import React from 'react'
 
-import Popover from '@material-ui/core/Popover'
-import Button from '@material-ui/core/Button'
-import BaseSlider from '@material-ui/core/Slider'
-import { makeStyles } from '@material-ui/core/styles'
+import Popover from '@mui/material/Popover'
+import Button from '@mui/material/Button'
+import BaseSlider from '@mui/material/Slider'
+import { makeStyles } from '@mui/material/styles'
 import Color from './Color'
 import { applyStrokeDashArray } from '../../utils/stroke'
 const width = 350

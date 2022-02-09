@@ -1,11 +1,14 @@
-import queryString from 'query-string'
-import devices from './devices'
+///<reference types="chrome"/>
+import { State } from '../reducers/app'
 
-import * as url from './utils/url'
+import * as url from '../utils/url'
 
-const frames = {}
+const frames = new Map()
 
-const injectContents = tab => {
+const injectContents = (tab: chrome.tabs.Tab) => {
+  if (!tab.id) {
+    return
+  }
   chrome.tabs.executeScript(tab.id, {
     file: 'init.js',
   })
@@ -18,16 +21,19 @@ const injectContents = tab => {
     file: 'static/js/main.js',
   })
 }
-const start = tab => {
-  let state = {}
+const start = (tab: chrome.tabs.Tab) => {
+  let state: State
 
   let started = false
 
+  if (!tab.id || !tab.url) {
+    return
+  }
   const extractHostname = new RegExp('^(?:f|ht)tp(?:s)?://([^/]+)', 'im')
 
   const pattern = /^file:/.test(tab.url)
     ? tab.url
-    : tab.url.match(extractHostname)[0] + '/*'
+    : tab.url.match(extractHostname)?.[0] + '/*'
 
   chrome.tabs.executeScript(
     tab.id,
@@ -46,9 +52,11 @@ const start = tab => {
 
   const tabHostname = url.extractHostname(tab.url)
 
-  const onHeadersReceived = function(details) {
+  const onHeadersReceived = function(
+    details: chrome.webRequest.WebResponseHeadersDetails
+  ) {
     return {
-      responseHeaders: details.responseHeaders.filter(header => {
+      responseHeaders: details.responseHeaders?.filter(header => {
         const name = header.name.toLowerCase()
 
         return (
@@ -62,10 +70,13 @@ const start = tab => {
     }
   }
 
-  const onWebNavigationError = details => {
-    chrome.contentSettings.javascript.clear({}, function(details) {})
+  const onWebNavigationError = () => {
+    chrome.contentSettings.javascript.clear({})
   }
-  const onWebNavigationComplete = function(details) {
+
+  const onWebNavigationComplete = function(
+    details: chrome.webNavigation.WebNavigationFramedCallbackDetails
+  ) {
     if (tab.id !== details.tabId) {
       return
     }
@@ -77,10 +88,7 @@ const start = tab => {
     if (details.frameId === 0) {
       if (started === false) {
         started = true
-        chrome.contentSettings.javascript.clear({}, function(details) {
-          injectContents(tab)
-        })
-
+        chrome.contentSettings.javascript.clear({}, () => injectContents(tab))
         return
       }
       return
@@ -97,7 +105,9 @@ const start = tab => {
     })
   }
 
-  const onBeforeNavigate = function(details) {
+  const onBeforeNavigate = function(
+    details: chrome.webNavigation.WebNavigationTransitionCallbackDetails
+  ) {
     if (details.frameId === 0 && started === true) {
       chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived)
       chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders)
@@ -114,7 +124,9 @@ const start = tab => {
     }
   }
 
-  const onBeforeRequest = details => {
+  const onBeforeRequest = (
+    details: chrome.webRequest.WebRequestBodyDetails
+  ) => {
     if (details.frameId === 0) {
       return {
         cancel: true,
@@ -122,12 +134,19 @@ const start = tab => {
     }
   }
 
-  const onMessages = function(request, sender, sendResponse) {
+  const onMessages = function(
+    message: any,
+    sender: chrome.runtime.MessageSender,
+    sendResponse: (response?: any) => void
+  ) {
+    if (!sender.tab || !tab.id) {
+      return
+    }
     if (sender.tab.id !== tab.id) {
       return
     }
 
-    switch (request.message) {
+    switch (message.message) {
       case 'GET_TAB_URL':
         sendResponse({
           tabUrl: tab.url,
@@ -135,8 +154,7 @@ const start = tab => {
         break
 
       case 'CAPTURE_SCREEN':
-        chrome.tabs.captureVisibleTab(null, {}, function(image) {
-          console.log('captured')
+        chrome.tabs.captureVisibleTab(function(image) {
           sendResponse({
             image,
           })
@@ -146,11 +164,11 @@ const start = tab => {
       case 'WAIT':
         setTimeout(() => {
           sendResponse({})
-        }, request.time)
+        }, message.time)
         break
 
       case 'SET_FRAME_ID':
-        frames[sender.frameId] = request.frameId
+        frames.set(sender.frameId, message.frameId)
 
         chrome.tabs.sendMessage(
           tab.id,
@@ -158,7 +176,7 @@ const start = tab => {
             message: 'SET_FRAME',
             screenId: sender.frameId,
             tabId: tab.id,
-            chromeFrameId: request.frameId,
+            chromeFrameId: message.frameId,
           },
           () => {}
         )
@@ -166,7 +184,7 @@ const start = tab => {
         break
 
       case 'LOAD_STATE':
-        state = request.state
+        state = message.state
         break
       default:
         // do nothing.
@@ -177,21 +195,10 @@ const start = tab => {
     return true
   }
 
-  const onBeforeSendHeaders = function(details) {
-    if (details.tabId !== tab.id || tab.frameId === 0) {
-      return {
-        requestHeaders: details.requestHeaders,
-      }
-    }
-
-    if (!frames[details.frameId]) {
-      const parsed = queryString.parseUrl(details.url)
-      if (parsed && parsed.query && parsed.query._RSSID_) {
-        frames[details.frameId] = parsed.query._RSSID_
-      }
-    }
-
-    const screenId = frames[details.frameId]
+  const onBeforeSendHeaders = function(
+    details: chrome.webRequest.WebRequestHeadersDetails
+  ) {
+    const screenId = frames.get(details.frameId)
 
     const screen = state.screens.find(screen => screen.id === screenId)
 
@@ -203,7 +210,7 @@ const start = tab => {
 
     let userAgent = screen.userAgent
 
-    const userAgents = state && state.userAgents ? state.userAgents : devices
+    const userAgents = state.userAgents
 
     const value = userAgents.find(agent => agent.name === userAgent)
 
@@ -211,11 +218,11 @@ const start = tab => {
       userAgent = value.value
     }
 
-    details.requestHeaders = details.requestHeaders.filter(
+    details.requestHeaders = details.requestHeaders?.filter(
       header => header.name !== 'User-Agent'
     )
 
-    details.requestHeaders.push({
+    details.requestHeaders?.push({
       name: 'User-Agent',
       value: userAgent,
     })
@@ -266,6 +273,7 @@ const start = tab => {
     ['blocking', 'requestHeaders']
   )
 }
+
 chrome.browserAction.onClicked.addListener(tab => {
   start(tab)
 })

@@ -1,22 +1,23 @@
-import onDomReady from './utils/onDomReady'
+import onDomReady from '../../utils/onDomReady'
 import uuid from 'uuid'
-import './inject/utils'
-import scrollTo from './inject/scrollTo'
-import refresh from './inject/refresh'
-import dimensions from './inject/dimensions'
-import syncClick, { simulateClick, triggerEvent } from './inject/syncClick'
+import './utils'
+import syncScroll from './syncScroll'
+import refresh from './refresh'
+import dimensions from './dimensions'
+import syncClick, { simulateClick, triggerEvent } from './syncClick'
+
 import {
   disableMouseInspector,
   enableMouseInspector,
   scrollToElement,
-} from './inject/scrollToElement'
-import screenshot, { screenshotDone } from './inject/screenshot'
+} from './scrollToElement'
+
 window.frameID = uuid.v4()
 
 onDomReady(() => {
   syncClick()
   refresh()
-  window.addEventListener('message', event => {
+  window.addEventListener('message', (event: any) => {
     if (!event.data || !String(event.data.message).startsWith('@APP')) {
       return
     }
@@ -27,7 +28,7 @@ onDomReady(() => {
 
     switch (event.data.message) {
       case '@APP/FRAME_SCROLL':
-        scrollTo(event.data)
+        syncScroll(event.data)
         break
 
       case '@APP/CLICK':
@@ -39,24 +40,15 @@ onDomReady(() => {
         break
 
       case '@APP/ENABLE_MOUSE_INSPECTOR':
-        enableMouseInspector(event.data)
+        enableMouseInspector()
         break
 
       case '@APP/DISABLE_MOUSE_INSPECTOR':
-        disableMouseInspector(event.data)
-        break
-
-      case '@APP/SCREENSHOT':
-        screenshot(event.data)
-
+        disableMouseInspector()
         break
 
       case '@APP/DIMENSIONS':
         dimensions(event.data)
-        break
-
-      case '@APP/SCREENSHOT_DONE':
-        screenshotDone(event.data)
         break
 
       case '@APP/DELEGATE_EVENT':

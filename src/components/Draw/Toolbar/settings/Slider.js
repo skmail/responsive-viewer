@@ -1,10 +1,10 @@
 import React from 'react'
 
-import Popover from '@material-ui/core/Popover'
-import Button from '@material-ui/core/Button'
-import BaseSlider from '@material-ui/core/Slider'
+import Popover from '@mui/material/Popover'
+import Button from '@mui/material/Button'
+import BaseSlider from '@mui/material/Slider'
 
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@mui/material/styles'
 const width = 200
 const useStyles = makeStyles(theme => ({
   root: {

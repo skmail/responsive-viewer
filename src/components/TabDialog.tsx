@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogActions from '@material-ui/core/DialogActions'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
 import { shallowEqual } from 'react-redux'
 import { useAppSelector } from '../hooks/useAppSelector'
 import { useAppDispatch } from '../hooks/useAppDispatch'
@@ -14,28 +13,6 @@ import { toggleTabDialog, selectTabDialog } from '../reducers/layout'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import * as validation from '../utils/validation'
 import { errorMessage } from '../utils/errorMessage'
-
-const useStyles = makeStyles(theme => ({
-  body: {
-    width: 350,
-    borderRadius: 4,
-  },
-  widthInput: {
-    marginRight: theme.spacing(2),
-  },
-  delete: {
-    marginRight: 'auto',
-    backgroundColor: theme.palette.error.main,
-    color: theme.palette.error.contrastText,
-    '&:hover': {
-      backgroundColor: theme.palette.error.light,
-    },
-    '&:active': {
-      backgroundColor: theme.palette.error.dark,
-    },
-  },
-  dialogAction: {},
-}))
 
 const TabDialogForm = ({
   values,
@@ -46,7 +23,7 @@ const TabDialogForm = ({
 }) => {
   const id = 'screen-dialog'
   const [isDeleteDialogOpened, setIsDeleteDialogOpened] = useState(false)
-  const classes = useStyles()
+
   const tabName = String(values.name || '')
 
   const dispatch = useAppDispatch()
@@ -100,12 +77,12 @@ const TabDialogForm = ({
   const invalid = false
 
   return (
-    <Dialog id={id} open={true} onClose={handleClose}>
-      <DialogTitle>
-        {isUpdate ? `Update ${tabName} tab` : 'Add new tab'}
-      </DialogTitle>
-      <DialogContent>
-        <form onSubmit={handleSubmit(onSubmit)} className={classes.body}>
+    <Dialog maxWidth={'xs'} fullWidth id={id} open={true} onClose={handleClose}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle>
+          {isUpdate ? `Update ${tabName} tab` : 'Add new tab'}
+        </DialogTitle>
+        <DialogContent>
           <TextField
             autoComplete={'off'}
             fullWidth
@@ -122,47 +99,48 @@ const TabDialogForm = ({
               },
             })}
           />
+        </DialogContent>
 
-          <DialogActions classes={{ root: classes.dialogAction }}>
-            {isUpdate && (
-              <React.Fragment>
-                <Dialog open={isDeleteDialogOpened}>
-                  <DialogTitle>Confirm tab deletion?</DialogTitle>
-                  <DialogActions>
-                    <Button
-                      variant={'contained'}
-                      onClick={onDelete}
-                      color={'primary'}
-                    >
-                      Confirm
-                    </Button>
-                    <Button onClick={() => setIsDeleteDialogOpened(false)}>
-                      Cancel
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+        <DialogActions>
+          {isUpdate && (
+            <React.Fragment>
+              <Dialog open={isDeleteDialogOpened}>
+                <DialogTitle>Confirm tab deletion?</DialogTitle>
+                <DialogActions>
+                  <Button
+                    variant={'contained'}
+                    onClick={onDelete}
+                    color={'primary'}
+                  >
+                    Confirm
+                  </Button>
+                  <Button onClick={() => setIsDeleteDialogOpened(false)}>
+                    Cancel
+                  </Button>
+                </DialogActions>
+              </Dialog>
 
-                <Button
-                  onClick={() => setIsDeleteDialogOpened(true)}
-                  variant={'contained'}
-                  className={classes.delete}
-                >
-                  Delete
-                </Button>
-              </React.Fragment>
-            )}
-            <Button
-              disabled={invalid}
-              variant={'contained'}
-              color={'primary'}
-              type={'submit'}
-            >
-              {isUpdate ? 'Update' : 'Add Tab'}
-            </Button>
-            <Button onClick={handleClose}>Cancel</Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
+              <Button
+                onClick={() => setIsDeleteDialogOpened(true)}
+                variant={'contained'}
+                color="error"
+                sx={{ marginRight: 'auto' }}
+              >
+                Delete
+              </Button>
+            </React.Fragment>
+          )}
+          <Button
+            disabled={invalid}
+            variant={'contained'}
+            color={'primary'}
+            type={'submit'}
+          >
+            {isUpdate ? 'Update' : 'Add Tab'}
+          </Button>
+          <Button onClick={handleClose}>Cancel</Button>
+        </DialogActions>
+      </form>
     </Dialog>
   )
 }

@@ -1,12 +1,16 @@
 import { isExtension } from './url'
 
+interface Detail {
+  tabId: string
+  frameId: string
+}
 export default {
-  frames: {},
+  frames: {} as { [key: string]: Detail },
 
-  makeFrameId(tabId, frameId) {
+  makeFrameId(tabId: string, frameId: string) {
     return `${tabId}-${frameId}`
   },
-  set(details) {
+  set(details: Detail) {
     this.frames[this.makeFrameId(details.tabId, details.frameId)] = details
   },
 
@@ -14,11 +18,11 @@ export default {
     return this.frames
   },
 
-  get(tabId, frameId) {
+  get(tabId: string, frameId: string) {
     return this.frames[this.makeFrameId(tabId, frameId)]
   },
 
-  has(tabId, frameId) {
+  has(tabId: string, frameId: string) {
     const id = this.makeFrameId(tabId, frameId)
     return this.frames.hasOwnProperty(id) && this.frames[id] !== null
   },

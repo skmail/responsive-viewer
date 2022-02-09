@@ -1,7 +1,6 @@
 import arrayMove from 'array-move'
-import devices from '../devices'
-import userAgents from '../userAgent'
-import { generateVersionedUrl } from '../utils/screen'
+import devices from '../data/devices'
+import userAgents from '../data/userAgents'
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import {
   Device,
@@ -18,7 +17,6 @@ export interface State {
   screenDirection: ScreenDirection
   userAgents: UserAgent[]
   url: string
-  versionedUrl: string
   zoom: number
   viewMode: ViewMode
   syncScroll: boolean
@@ -30,7 +28,6 @@ const initialState: State = {
   screens: devices,
   userAgents,
   url: '',
-  versionedUrl: '',
   viewMode: ViewMode.vertical,
   zoom: 1,
   screenDirection: ScreenDirection.portrait,
@@ -40,7 +37,14 @@ const initialState: State = {
   tabs: [
     {
       name: 'default',
-      screens: [],
+      screens: [
+        'ad6154e2-cebb-4e72-9adb-fdef4f7686ca',
+        '02b0f88c-5d8f-4a28-b461-1d9fee1ecfba',
+        // '46d80c57-3792-46d2-822d-3069414339bc',
+        // '8ce37d37-0bd3-4dce-9440-0eafeb4f2450',
+        // '1169e6f9-63d8-464a-96cb-127bc5f97119',
+        // '390040ea-de20-4652-843e-6a6dafe0e900',
+      ],
     },
     {
       name: 'mobile',
@@ -70,7 +74,6 @@ export const slice = createSlice({
     },
     updateUrl(state, action: PayloadAction<string>) {
       state.url = action.payload
-      state.versionedUrl = generateVersionedUrl(action.payload)
       state.screens = state.screens.map(screen => ({
         ...screen,
         timestamp: Date.now(),
@@ -182,7 +185,6 @@ export const slice = createSlice({
       return {
         ...initialState,
         url: state.url,
-        versionedUrl: state.versionedUrl,
       }
     },
     toggleSyncScroll(state) {

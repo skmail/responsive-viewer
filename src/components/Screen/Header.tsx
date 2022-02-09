@@ -1,56 +1,37 @@
 import React from 'react'
-import Box from '@material-ui/core/Box'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import classNames from 'classnames'
-import { alpha, makeStyles } from '@material-ui/core/styles'
+import Box from '@mui/material/Box'
 import Screenshot from './Actions/Screenshot'
 import Settings from './Actions/Settings'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { selectScreenById, selectScreenDirection } from '../../reducers/app'
+import { styled, darken } from '@mui/material/styles'
+import Stack from '@mui/material/Stack'
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    marginBottom: 2,
-  },
-  title: {
-    margin: 0,
-    fontWeight: 700,
-  },
-  size: {
-    margin: 0,
-    marginLeft: theme.spacing(1),
-    fontWeight: 300,
-    fontSize: 12,
-    borderRadius: 3,
-    color: alpha(theme.palette.secondary.light, 0.6),
-  },
-  action: {
-    color: theme.palette.secondary.light,
-  },
+const ScreenName = styled('span')(({ theme }) => ({
+  fontSize: 12,
+  fontWeight: 'bold',
+  color: theme.palette.text.secondary,
 }))
-
+const ScreenSize = styled('span')(({ theme }) => ({
+  fontSize: 12,
+  color: darken(theme.palette.text.secondary, 0.3),
+}))
 interface Props {
   id: string
 }
 const Header = ({ id }: Props) => {
-  const classes = useStyles()
   const screen = useAppSelector(state => selectScreenById(state, id))
   const screenDirection = useAppSelector(selectScreenDirection)
   return (
-    <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems={'center'}
-      className={classes.root}
-    >
-      <Box display={'flex'} alignItems={'center'}>
-        <FormHelperText className={classes.title}>{screen.name}</FormHelperText>
-        <FormHelperText className={classNames(classes.size)}>
+    <Box display="flex" justifyContent="space-between" alignItems={'center'}>
+      <Stack direction="row" spacing={2} alignItems={'center'}>
+        <ScreenName>{screen.name}</ScreenName>
+        <ScreenSize>
           {screenDirection === 'landscape'
             ? `${screen.height}x${screen.width}`
             : `${screen.width}x${screen.height}`}
-        </FormHelperText>
-      </Box>
+        </ScreenSize>
+      </Stack>
 
       <Box display={'flex'} alignItems={'center'}>
         <Settings screen={screen} />

@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogActions from '@material-ui/core/DialogActions'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
+import TextField from '@mui/material/TextField'
+import Button from '@mui/material/Button'
 import { useAppSelector } from '../hooks/useAppSelector'
 import {
   selectUserAgentDialog,
@@ -18,16 +17,7 @@ import * as validation from '../utils/validation'
 import { errorMessage } from '../utils/errorMessage'
 import { useAppDispatch } from '../hooks/useAppDispatch'
 
-const useStyles = makeStyles(() => ({
-  body: {
-    width: 350,
-    borderRadius: 4,
-  },
-}))
-
 const UserAgentDialog = () => {
-  const classes = useStyles()
-
   const userAgentDialog = useAppSelector(selectUserAgentDialog)
   const dispatch = useAppDispatch()
 
@@ -64,9 +54,10 @@ const UserAgentDialog = () => {
   return (
     <div>
       <Dialog id={id} open={userAgentDialog.open} onClose={handleClose}>
-        <DialogTitle>Add new user agent</DialogTitle>
-        <DialogContent>
-          <div className={classes.body}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogTitle>Add new user agent</DialogTitle>
+
+          <DialogContent>
             <TextField
               autoComplete={'off'}
               fullWidth
@@ -102,21 +93,15 @@ const UserAgentDialog = () => {
                 required: true,
               })}
             />
+          </DialogContent>
 
-            <DialogActions>
-              <Button
-                onClick={handleSubmit(onSubmit)}
-                disabled={false}
-                variant={'contained'}
-                color={'primary'}
-                type={'submit'}
-              >
-                Add User agent
-              </Button>
-              <Button onClick={handleClose}>Cancel</Button>
-            </DialogActions>
-          </div>
-        </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button disabled={false} variant={'contained'} color={'primary'}>
+              Add User agent
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </div>
   )

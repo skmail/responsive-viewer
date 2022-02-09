@@ -1,105 +1,92 @@
 import React from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import MuiAppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
-import Box from '@material-ui/core/Box'
-import Button from '@material-ui/core/Button'
+import MuiAppBar from '@mui/material/AppBar'
+import Button from '@mui/material/Button'
+import Stack from '@mui/material/Stack'
 import AddressBar from './AddressBar'
-import IconButton from '@material-ui/core/IconButton'
-import AddIcon from '@material-ui/icons/Add'
-import HelpIcon from '@material-ui/icons/Help'
-import Zoom from '../Sidebar/Zoom'
-import TwitterIcon from '@material-ui/icons/Twitter'
-
+import IconButton from '@mui/material/IconButton'
+import AddIcon from '@mui/icons-material/Add'
+import HelpIcon from '@mui/icons-material/Help'
+import Zoom from './Zoom'
+import TwitterIcon from '@mui/icons-material/Twitter'
 import Screenshot from './Screenshot'
 import ViewMode from './ViewMode'
 import ScreenDirection from './ScreenDirection'
-
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { toggleHelpDialog, toggleScreenDialog } from '../../reducers/layout'
+import { styled } from '@mui/material/styles'
 
-const useStyles = makeStyles(theme => ({
-  grow: {
-    flexGrow: 1,
-  },
-  root: {
-    zIndex: theme.zIndex.drawer + 1,
-    width: '100%',
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
-    },
-  },
-  logo: {
-    height: 40,
-  },
-  toolbar: {
-    alignItems: 'center',
-  },
+const Logo = styled('img')(() => ({
+  width: 40,
+  height: 'auto',
+  flexShrink: 0,
+  objectFit: 'contain',
 }))
 
 const AppBar = () => {
-  const classes = useStyles()
   const dispatch = useAppDispatch()
 
   return (
-    <MuiAppBar position="static" color="default" className={classes.root}>
-      <Toolbar className={classes.toolbar}>
-        <img
-          src="https://responsive-viewer-ads.netlify.app/logo.png"
-          alt="Responsive Viewer"
-          className={classes.logo}
-        />
-        <AddressBar />
-        <Box display="flex">
+    <MuiAppBar position="static" color="default">
+      <Stack
+        spacing={2}
+        direction="row"
+        justifyContent="space-between"
+        sx={{
+          padding: 1,
+        }}
+      >
+        <Stack spacing={2} direction="row">
+          <Logo src="/logo.png" alt="Responsive Viewer" />
+          <AddressBar />
+        </Stack>
+        <Stack spacing={2} direction="row">
           <ViewMode />
           <ScreenDirection />
           <Screenshot />
-        </Box>
-        <Zoom />
+          <Zoom />
+        </Stack>
 
-        <div className={classes.grow} />
+        <Stack spacing={1} direction="row">
+          <Button
+            color="primary"
+            href="https://ko-fi.com/skmail"
+            target="_blank"
+          >
+            Buy me a coffee
+          </Button>
 
-        <Button color="primary" href="https://ko-fi.com/skmail" target="_blank">
-          Buy me a coffee
-        </Button>
+          <IconButton
+            href="https://twitter.com/SolaimanKmail"
+            target="_blank"
+            edge="end"
+            aria-label="Follow me on twitter"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <TwitterIcon />
+          </IconButton>
 
-        <IconButton
-          href="https://twitter.com/SolaimanKmail"
-          target="_blank"
-          edge="end"
-          aria-label="Follow me on twitter"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <TwitterIcon />
-        </IconButton>
+          <IconButton
+            onClick={() => dispatch(toggleHelpDialog())}
+            edge="end"
+            aria-label="Add Screen"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <HelpIcon />
+          </IconButton>
 
-        <IconButton
-          onClick={() => dispatch(toggleHelpDialog())}
-          edge="end"
-          aria-label="Add Screen"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <HelpIcon />
-        </IconButton>
-
-        <IconButton
-          onClick={() => dispatch(toggleScreenDialog())}
-          edge="end"
-          aria-label="Add Screen"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AddIcon />
-        </IconButton>
-      </Toolbar>
+          <IconButton
+            onClick={() => dispatch(toggleScreenDialog())}
+            edge="end"
+            aria-label="Add Screen"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <AddIcon />
+          </IconButton>
+        </Stack>
+      </Stack>
     </MuiAppBar>
   )
 }

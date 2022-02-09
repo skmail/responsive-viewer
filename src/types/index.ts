@@ -1,8 +1,3 @@
-// @ts-ignore
-export { Platform } from './platform'
-// @ts-ignore
-export { Theme } from './theme'
-
 export enum ViewMode {
   vertical = 'vertical',
   horizontal = 'horizontal',

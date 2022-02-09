@@ -1,29 +1,23 @@
-import React, { useMemo } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
+import React, { useMemo, memo } from 'react'
 import { getDomId } from '../../utils/screen'
 import Iframe from './Iframe'
 import Header from './Header'
+import { styled } from '@mui/material/styles'
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(2),
-  },
+const Root = styled('div')(({ theme }) => ({
+  padding: theme.spacing(2),
 }))
-
 interface Props {
   id: string
 }
 const Screen = ({ id }: Props) => {
-  const classes = useStyles()
-
   const domId = useMemo(() => getDomId(id), [id])
-
   return (
-    <div id={domId} className={classes.root}>
+    <Root id={domId} key={id}>
       <Header id={id} />
       <Iframe id={id} />
-    </div>
+    </Root>
   )
 }
 
-export default Screen
+export default memo(Screen)

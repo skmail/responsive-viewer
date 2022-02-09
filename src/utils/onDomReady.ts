@@ -1,4 +1,4 @@
-const onDomReady = callback => {
+const onDomReady = (callback: () => void) => {
   if (document && document.getElementsByTagName('body')[0]) {
     callback()
     return

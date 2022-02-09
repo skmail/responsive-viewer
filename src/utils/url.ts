@@ -1,21 +1,15 @@
-import parse from 'url-parse'
 import platform from '../platform'
 
-const clean = url => String(url).replace(/^\/|\/$/g, '')
+const clean = (url: string) => String(url).replace(/^\/|\/$/g, '')
 
-export const isLocal = url =>
+export const isLocal = (url: string) =>
   String(url).startsWith('chrome://') ||
   String(url).startsWith('chrome-extension://')
 
-export const isExtension = url => {
+export const isExtension = (url: string) => {
   return (
     Boolean(url) && clean(url).startsWith(clean(platform.runtime.getURL('/')))
   )
-}
-
-export const origins = url => {
-  const hostname = parse(url).hostname
-  return [`https://${hostname}`, `http://${hostname}`]
 }
 
 /**
@@ -24,7 +18,7 @@ export const origins = url => {
  * @param url
  * @returns {string}
  */
-export const extractHostname = url => {
+export const extractHostname = (url: string) => {
   let hostname
   //find & remove protocol (http, ftp, etc.) and get hostname
 
@@ -42,7 +36,7 @@ export const extractHostname = url => {
   return hostname
 }
 
-export const slugify = str => {
+export const slugify = (str: string) => {
   str = str.replace(/^\s+|\s+$/g, '') // trim
 
   // remove accents, swap ñ for n, etc

@@ -1,9 +1,11 @@
-import $ from 'jquery'
-export default data => {
+export default (data = {}) => {
+  if (!window.top) {
+    return
+  }
   window.top.postMessage(
     {
       ...data,
-      message: '@APP/SCREENSHOT',
+      message: '@APP/DIMENSIONS',
       frameId: window.frameID,
       height: Math.max(
         document.body.scrollHeight,
@@ -22,9 +24,6 @@ export default data => {
         document.documentElement.clientWidth
       ),
     },
-
     '*'
   )
 }
-
-export const screenshotDone = data => {}

@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogActions from '@material-ui/core/DialogActions'
-import TextField from '@material-ui/core/TextField'
-import Box from '@material-ui/core/Box'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import Button from '@material-ui/core/Button'
-import AddIcon from '@material-ui/icons/Add'
-import IconButton from '@material-ui/core/IconButton'
-import MenuItem from '@material-ui/core/MenuItem'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
+import TextField from '@mui/material/TextField'
+import Box from '@mui/material/Box'
+import InputAdornment from '@mui/material/InputAdornment'
+import Button from '@mui/material/Button'
+import AddIcon from '@mui/icons-material/Add'
+import IconButton from '@mui/material/IconButton'
+import MenuItem from '@mui/material/MenuItem'
+import Stack from '@mui/material/Stack'
 
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { useAppSelector } from '../hooks/useAppSelector'
@@ -28,33 +28,10 @@ import {
   selectUserAgents,
 } from '../reducers/app'
 import { useAppDispatch } from '../hooks/useAppDispatch'
-
-const useStyles = makeStyles(theme => ({
-  body: {
-    width: 350,
-    borderRadius: 4,
-  },
-  widthInput: {
-    marginRight: theme.spacing(2),
-  },
-  delete: {
-    marginRight: 'auto',
-    backgroundColor: theme.palette.error.main,
-    color: theme.palette.error.contrastText,
-    '&:hover': {
-      backgroundColor: theme.palette.error.light,
-    },
-    '&:active': {
-      backgroundColor: theme.palette.error.dark,
-    },
-  },
-  dialogAction: {},
-}))
+import { shallowEqual } from 'react-redux'
 
 const ScreenDialog = () => {
   const [isDeleteDialogOpened, setIsDeleteDialogOpened] = useState(false)
-
-  const classes = useStyles()
 
   const screenDialog = useAppSelector(selectScreenDialog)
   const userAgents = useAppSelector(selectUserAgents)
@@ -74,7 +51,10 @@ const ScreenDialog = () => {
 
   const screenId = screenDialog.values.id
 
-  const screen = useAppSelector(state => selectScreenById(state, screenId))
+  const screen = useAppSelector(
+    state => selectScreenById(state, screenId),
+    shallowEqual
+  )
 
   const isUpdate = !!screen
 
@@ -110,149 +90,149 @@ const ScreenDialog = () => {
 
   return (
     <Dialog id={id} open={screenDialog.open} onClose={handleClose}>
-      <DialogTitle>{isUpdate ? 'Update Screen' : 'Add new screen'}</DialogTitle>
-      <DialogContent>
-        <form onSubmit={handleSubmit(onSubmit)} className={classes.body}>
-          <TextField
-            autoComplete={'off'}
-            fullWidth
-            margin="dense"
-            variant="outlined"
-            label="Screen name"
-            color="secondary"
-            error={!!errors.name}
-            helperText={!!errors.name && errorMessage(errors.name)}
-            {...register('name', {
-              required: true,
-            })}
-          />
-
-          <Box display="flex">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DialogTitle>
+          {isUpdate ? 'Update Screen' : 'Add new screen'}
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} direction="column">
             <TextField
               autoComplete={'off'}
-              margin="dense"
+              fullWidth
               variant="outlined"
-              label="Width"
+              label="Screen name"
               color="secondary"
-              className={classes.widthInput}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">px</InputAdornment>
-                ),
-              }}
-              type={'number'}
-              {...register('width', {
+              error={!!errors.name}
+              helperText={!!errors.name && errorMessage(errors.name)}
+              {...register('name', {
                 required: true,
               })}
-              error={!!errors.width}
-              helperText={!!errors.width && errorMessage(errors.width)}
             />
 
-            <TextField
-              autoComplete={'off'}
-              variant="outlined"
-              label="Height"
-              margin="dense"
-              color="secondary"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">px</InputAdornment>
-                ),
-              }}
-              type={'number'}
-              {...register('height', {
-                required: true,
-              })}
-              error={!!errors.height}
-              helperText={!!errors.height && errorMessage(errors.height)}
-            />
-          </Box>
+            <Stack spacing={2} direction="row">
+              <TextField
+                autoComplete={'off'}
+                variant="outlined"
+                label="Width"
+                color="secondary"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+                type={'number'}
+                {...register('width', {
+                  required: true,
+                })}
+                error={!!errors.width}
+                helperText={!!errors.width && errorMessage(errors.width)}
+              />
 
-          <Box display={'flex'} alignItems={'center'}>
-            <Controller
-              name="userAgent"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => {
-                return (
-                  <TextField
-                    margin="dense"
-                    label="User Agent"
-                    fullWidth
-                    variant={'outlined'}
-                    select
-                    {...field}
-                    error={!!errors.userAgent}
-                    helperText={
-                      !!errors.userAgent && errorMessage(errors.userAgent)
-                    }
-                    InputProps={{
-                      endAdornment: (
-                        <IconButton
-                          color="inherit"
-                          aria-label="toggle user agent dialog"
-                          onClick={() => dispatch(toggleUserAgentDialog())}
-                          edge="start"
-                        >
-                          <AddIcon />
-                        </IconButton>
-                      ),
-                    }}
-                  >
-                    {userAgents.map(userAgent => (
-                      <MenuItem key={userAgent.name} value={userAgent.name}>
-                        {userAgent.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                )
-              }}
-            />
-          </Box>
+              <TextField
+                autoComplete={'off'}
+                variant="outlined"
+                label="Height"
+                color="secondary"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">px</InputAdornment>
+                  ),
+                }}
+                type={'number'}
+                {...register('height', {
+                  required: true,
+                })}
+                error={!!errors.height}
+                helperText={!!errors.height && errorMessage(errors.height)}
+              />
+            </Stack>
 
-          <DialogActions classes={{ root: classes.dialogAction }}>
-            {isUpdate && (
-              <React.Fragment>
-                <Dialog open={isDeleteDialogOpened}>
-                  <DialogTitle>Confirm screen deletion?</DialogTitle>
-                  <DialogActions>
-                    <Button
-                      variant={'contained'}
-                      onClick={onScreenDelete}
-                      color={'primary'}
+            <Box display={'flex'} alignItems={'center'}>
+              <Controller
+                name="userAgent"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => {
+                  return (
+                    <TextField
+                      label="User Agent"
+                      fullWidth
+                      variant={'outlined'}
+                      select
+                      {...field}
+                      error={!!errors.userAgent}
+                      helperText={
+                        !!errors.userAgent && errorMessage(errors.userAgent)
+                      }
+                      InputProps={{
+                        endAdornment: (
+                          <IconButton
+                            color="inherit"
+                            aria-label="toggle user agent dialog"
+                            onClick={() => dispatch(toggleUserAgentDialog())}
+                            edge="start"
+                          >
+                            <AddIcon />
+                          </IconButton>
+                        ),
+                      }}
                     >
-                      Confirm
-                    </Button>
-                    <Button onClick={() => setIsDeleteDialogOpened(false)}>
-                      Cancel
-                    </Button>
-                  </DialogActions>
-                </Dialog>
+                      {userAgents.map(userAgent => (
+                        <MenuItem key={userAgent.name} value={userAgent.name}>
+                          {userAgent.name}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )
+                }}
+              />
+            </Box>
+          </Stack>
+        </DialogContent>
 
-                {!isUpdate && (
+        <DialogActions>
+          {isUpdate && (
+            <React.Fragment>
+              <Dialog open={isDeleteDialogOpened}>
+                <DialogTitle>Confirm screen deletion?</DialogTitle>
+                <DialogActions>
                   <Button
-                    onClick={() => setIsDeleteDialogOpened(true)}
                     variant={'contained'}
-                    className={classes.delete}
+                    onClick={onScreenDelete}
+                    color={'primary'}
                   >
-                    Delete
+                    Confirm
                   </Button>
-                )}
-              </React.Fragment>
-            )}
+                  <Button onClick={() => setIsDeleteDialogOpened(false)}>
+                    Cancel
+                  </Button>
+                </DialogActions>
+              </Dialog>
 
-            <Button
-              disabled={false}
-              variant={'contained'}
-              color={'primary'}
-              type={'submit'}
-            >
-              {isUpdate ? 'Update' : 'Add Screen'}
-            </Button>
-            <Button onClick={handleClose}>Cancel</Button>
-          </DialogActions>
-        </form>
-      </DialogContent>
+              <Button
+                sx={{
+                  marginRight: 'auto',
+                }}
+                onClick={() => setIsDeleteDialogOpened(true)}
+                color={'error'}
+                variant={'contained'}
+              >
+                Delete
+              </Button>
+            </React.Fragment>
+          )}
+
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button
+            disabled={false}
+            variant={'contained'}
+            color={'primary'}
+            type={'submit'}
+          >
+            {isUpdate ? 'Update' : 'Add Screen'}
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   )
 }

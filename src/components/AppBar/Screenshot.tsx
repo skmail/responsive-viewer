@@ -1,11 +1,11 @@
 import React, { MouseEvent, useState } from 'react'
-import CameraIcon from '@material-ui/icons/CameraAlt'
-import MenuItem from '@material-ui/core/MenuItem'
-import Menu from '@material-ui/core/Menu'
+import CameraIcon from '@mui/icons-material/CameraAlt'
+import MenuItem from '@mui/material/MenuItem'
+import Menu from '@mui/material/Menu'
 import ToggleButton from '../ToggleButton'
-import { screenshotAll } from '../../actions'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { ScreenshotType } from '../../types'
+import { screenshot } from '../../reducers/layout'
 
 const Screenshot = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
@@ -17,7 +17,7 @@ const Screenshot = () => {
   const dispatch = useAppDispatch()
 
   const handleMenuItemClick = (type: ScreenshotType) => {
-    dispatch(screenshotAll(type))
+    dispatch(screenshot({ screens: [], type }))
     setAnchorEl(null)
   }
 

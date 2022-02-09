@@ -1,4 +1,4 @@
-import { Theme as MuiTheme } from '@material-ui/core/styles'
+import { Theme as MuiTheme } from '@mui/material/styles'
 export interface Theme extends MuiTheme {
   drawerWidth: number
 }

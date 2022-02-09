@@ -1,34 +1,22 @@
 import React, { useMemo } from 'react'
 import ToggleButton from '../ToggleButton'
-import { makeStyles } from '@material-ui/core/styles'
-import classNames from 'classnames'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import {
   selectScreenDirection,
   switchScreenDirection,
 } from '../../reducers/app'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
-
 import { ScreenDirection as ScreenDirectionEnum } from '../../types'
-const useStyles = makeStyles(theme => ({
-  icon: {
-    width: 24,
-    height: 24,
-  },
-  button: {
-    marginRight: theme.spacing(1),
-    width: 40,
-    minWidth: 'auto',
-  },
-  landscape: {
-    transform: 'rotate(90deg)',
-  },
+import { styled } from '@mui/material/styles'
+
+const Icon = styled('svg')(({ theme }) => ({
+  width: theme.spacing(3),
+  height: theme.spacing(3),
 }))
+
 const ScreenDirection = () => {
   const dispatch = useAppDispatch()
   const screenDirection = useAppSelector(selectScreenDirection)
-
-  const classes = useStyles()
 
   const directions = useMemo(
     () => [
@@ -36,8 +24,7 @@ const ScreenDirection = () => {
         name: ScreenDirectionEnum.portrait,
         label: 'Portrait screens',
         icon: (
-          <svg
-            className={classes.icon}
+          <Icon
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -49,31 +36,31 @@ const ScreenDirection = () => {
               strokeWidth={2}
               d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
             />
-          </svg>
+          </Icon>
         ),
       },
       {
         name: ScreenDirectionEnum.landscape,
         label: 'Landscape screens',
         icon: (
-          <svg
-            className={classNames(classes.icon, classes.landscape)}
+          <Icon
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
+              d="M18 12v-.01.01Zm3 4V8a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2Z"
+              stroke="currentColor"
+              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
             />
-          </svg>
+          </Icon>
         ),
       },
     ],
-    [classes.icon, classes.landscape]
+    []
   )
 
   const direction =
@@ -86,7 +73,6 @@ const ScreenDirection = () => {
       title={direction.label}
       onClick={() => dispatch(switchScreenDirection(direction.name))}
       active={screenDirection === direction.name}
-      className={classes.button}
     >
       {direction.icon}
     </ToggleButton>

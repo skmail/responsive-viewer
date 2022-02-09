@@ -22,7 +22,6 @@ function* doInitialize(): unknown {
     initialized({
       ...state,
       url: tabUrl || state.url,
-      versionedUrl: tabUrl || state.url,
     })
   )
 }

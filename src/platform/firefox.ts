@@ -1,13 +1,22 @@
 // @ts-nocheck
 
-import { Platform } from '../types'
+import { Platform } from '../types/platform'
 
 const platform: Platform = {
   storage: {
     local: {
-      get: (...args) => window.browser.storage.local.get(...args),
-      set: items => window.browser.storage.local.set(items),
-      remove: keys => window.browser.storage.local.remove(keys),
+      get: key =>
+        new Promise(resolve => {
+          window.browser.storage.local.get(key, resolve)
+        }),
+      set: items =>
+        new Promise(resolve =>
+          window.browser.storage.local.set(items, resolve)
+        ),
+      remove: keys =>
+        new Promise(resolve => {
+          window.browser.storage.local.remove(keys, resolve)
+        }),
     },
   },
   runtime: {

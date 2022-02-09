@@ -1,9 +1,9 @@
 import React, { useState, MouseEvent } from 'react'
-import CameraIcon from '@material-ui/icons/CameraAlt'
-import IconButton from '@material-ui/core/IconButton'
+import CameraIcon from '@mui/icons-material/CameraAlt'
+import IconButton from '@mui/material/IconButton'
 
-import MenuItem from '@material-ui/core/MenuItem'
-import Menu from '@material-ui/core/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import Menu from '@mui/material/Menu'
 import { ScreenshotType } from '../../../types'
 import { useAppDispatch } from '../../../hooks/useAppDispatch'
 import { screenshot } from '../../../reducers/layout'
@@ -36,7 +36,13 @@ const Screenshot = ({ id }: Props) => {
 
   return (
     <React.Fragment>
-      <IconButton size={'small'} onClick={onClick}>
+      <IconButton
+        sx={{
+          color: 'GrayText',
+        }}
+        size={'small'}
+        onClick={onClick}
+      >
         <CameraIcon fontSize={'small'} />
       </IconButton>
       {!!anchorEl && (

@@ -5,14 +5,13 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { makeStyles, darken, alpha } from '@material-ui/core/styles'
-import IconButton from '@material-ui/core/IconButton'
-import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye'
-import RemoveRedEyeOutlinedIcon from '@material-ui/icons/RemoveRedEyeOutlined'
-import Box from '@material-ui/core/Box'
+import IconButton from '@mui/material/IconButton'
+import Typography from '@mui/material/Typography'
+import Remove from '@mui/icons-material/Remove'
+import Add from '@mui/icons-material/Add'
+import Box from '@mui/material/Box'
 
-import Heading from './Heading'
-import InputBase from '@material-ui/core/InputBase'
+import TextField from '@mui/material/TextField'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import {
@@ -42,88 +41,95 @@ import { useAppSelector } from '../../hooks/useAppSelector'
 import { Device } from '../../types'
 import { scrollToScreen, toggleScreenDialog } from '../../reducers/layout'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
+import { styled, darken } from '@mui/material/styles'
 
-const useStyles = makeStyles(theme => {
-  return {
-    screensRoot: {
-      height: 200,
-    },
-    text: {
-      lineHeight: 1,
-    },
+const ScreensList = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0.5),
+}))
+const SearchField = styled(TextField)(({ theme }) => ({
+  background: darken(theme.palette.background.paper, 0.8),
+  borderRadius: 5,
+  border: 'none',
+  '& .MuiInputBase-input': {
+    fontSize: 12,
+    padding: theme.spacing(0.5, 1),
+    borderColor: 'transparent',
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: 'transparent',
+  },
+}))
 
-    visibilityIconInactive: {
-      opacity: 0.5,
-    },
-    screenRow: {
-      margin: theme.spacing(0.5),
-      width: 60,
-      height: 60,
-      background: theme.palette.grey['900'],
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      justifyContent: 'center',
-      borderRadius: theme.shape.borderRadius,
-      lineHeight: 1,
-      padding: theme.spacing(0.5),
-      color: theme.palette.secondary.main,
-      '&:hover': {
-        color: theme.palette.primary.main,
-        cursor: 'pointer',
-        '& $visibleButton': {
-          opacity: 1,
-        },
-      },
+const Heading = styled(Typography)(({ theme }) => ({
+  fontSize: 12,
+  fontWeight: 'bold',
+  color: darken(theme.palette.text.secondary, 0.1),
+  textTransform: 'uppercase',
+  marginBottom: theme.spacing(0.5),
+  padding: theme.spacing(0, 1),
+}))
 
-      position: 'relative',
+const ScreenItem = styled('div')(({ theme }) => ({
+  width: 60,
+  height: 60,
+  background: darken(theme.palette.background.paper, 0.8),
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  borderRadius: theme.shape.borderRadius,
+  lineHeight: 1,
+  color: theme.palette.text.secondary,
+  fontSize: 11,
+  padding: theme.spacing(0.5),
+  margin: theme.spacing(0.5),
+  userSelect: 'none',
+  '&:hover': {
+    color: theme.palette.text.primary,
+    cursor: 'pointer',
+    boxShadow: ` 0 0 0 3px ${darken(theme.palette.text.primary, 0.8)}`,
+    '& .MuiButtonBase-root': {
+      opacity: 1,
+      transform: 'scale(1)',
+      zIndex: 15,
     },
-    screenSize: {
-      fontSize: 11,
-      marginTop: theme.spacing(0.6),
-    },
-    screenRowActions: {
-      marginRight: theme.spacing(1),
-    },
-    screenName: {
-      width: 40,
-      height: 40,
-      fontSize: 12,
-      overflow: 'hidden',
-    },
-    searchInput: {
-      height: 25,
-      fontSize: 13,
-      margin: theme.spacing(1, 0),
-      padding: theme.spacing(0, 1),
-      borderRadius: 3,
-      background: darken(theme.palette.background.default, 0.15),
-      color: alpha(theme.palette.secondary.dark, 0.6),
-    },
-    visibleButton: {
-      opacity: 0,
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      marginTop: theme.spacing(-1),
-      marginRight: theme.spacing(-1),
-    },
-  }
-})
+  },
+
+  position: 'relative',
+}))
+
+const ScreenSizeText = styled('div')(({ theme }) => ({
+  color: darken(theme.palette.text.secondary, 0.2),
+}))
+
+const VisibilityButton = styled(IconButton)(({ theme }) => ({
+  opacity: 0,
+  transform: 'scale(0)',
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  marginTop: theme.spacing(-1),
+  marginRight: theme.spacing(-1),
+  background: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
+  padding: 0,
+  transition: 'all 0.1s ease',
+  '&:hover': {
+    transform: 'scale(1.2) !important',
+    background: theme.palette.primary.main,
+  },
+}))
 
 const Item = forwardRef(
   (
     {
       screen,
       sortIndex,
-      classes,
       disableSort = false,
       tab,
       ...rest
     }: {
       screen: Device
       sortIndex: number
-      classes: any
       disableSort: boolean
       tab: string
     },
@@ -132,16 +138,14 @@ const Item = forwardRef(
     const dispatch = useAppDispatch()
 
     return (
-      <div
+      <ScreenItem
         onDoubleClick={() => dispatch(toggleScreenDialog(screen))}
         onClick={() => dispatch(scrollToScreen(screen.id))}
-        className={classes.screenRow}
         ref={ref}
         {...rest}
       >
-        <IconButton
+        <VisibilityButton
           color="primary"
-          className={classes.visibleButton}
           onClick={() =>
             dispatch(
               toggleTabScreen({
@@ -152,20 +156,15 @@ const Item = forwardRef(
           }
           size="small"
         >
-          {!screen.visible && (
-            <RemoveRedEyeOutlinedIcon
-              className={classes.visibilityIconInactive}
-              fontSize="inherit"
-            />
-          )}
-          {screen.visible && <RemoveRedEyeIcon fontSize="inherit" />}
-        </IconButton>
+          {!screen.visible && <Add fontSize="inherit" />}
+          {screen.visible && <Remove fontSize="inherit" />}
+        </VisibilityButton>
 
-        <div className={classes.screenName}>{screen.name}</div>
-        <div className={classes.screenSize}>
+        <div>{screen.name}</div>
+        <ScreenSizeText>
           {screen.width}x{screen.height}
-        </div>
-      </div>
+        </ScreenSizeText>
+      </ScreenItem>
     )
   }
 )
@@ -268,8 +267,6 @@ export default () => {
     shallowEqual
   )
 
-  const classes = useStyles()
-
   const onSortEnd = ({ active, over }: DragEndEvent) => {
     if (!over) {
       return
@@ -298,17 +295,20 @@ export default () => {
   )
 
   return (
-    <React.Fragment>
+    <>
       <Heading>Screens</Heading>
-      <InputBase
-        value={searchKeyword}
-        onChange={onSearchChange}
-        className={classes.searchInput}
-        placeholder={'Search for screen'}
-        fullWidth
-      />
+      <Box sx={{ paddingRight: 1, paddingLeft: 1 }}>
+        <SearchField
+          value={searchKeyword}
+          onChange={onSearchChange}
+          placeholder={'Search for screen'}
+          fullWidth
+          size="small"
+        />
+      </Box>
+
       <Scrollbars>
-        <div ref={rootRef} className={classes.screensRoot}>
+        <ScreensList ref={rootRef}>
           {hasSearch && (
             <Box display="flex" flexWrap="wrap">
               {searchResults.map(screen => (
@@ -316,7 +316,6 @@ export default () => {
                   key={screen.id}
                   screen={screen}
                   disableSort={true}
-                  classes={classes}
                   tab={selectedTab}
                   sortIndex={0}
                 />
@@ -340,7 +339,6 @@ export default () => {
                       key={screen.id}
                       id={screen.id}
                       sortIndex={index}
-                      classes={classes}
                       screen={screen}
                       tab={selectedTab}
                     />
@@ -361,7 +359,6 @@ export default () => {
                 <Item
                   key={screen.id}
                   tab={selectedTab}
-                  classes={classes}
                   screen={screen}
                   sortIndex={0}
                   disableSort={true}
@@ -369,8 +366,8 @@ export default () => {
               ))}
             </Box>
           )}
-        </div>
+        </ScreensList>
       </Scrollbars>
-    </React.Fragment>
+    </>
   )
 }

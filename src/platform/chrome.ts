@@ -1,13 +1,20 @@
 ///<reference types="chrome"/>
 
-import { Platform } from '../types'
+import { Platform } from '../types/platform'
 
 const platform: Platform = {
   storage: {
     local: {
-      get: (...args) => window.chrome.storage.local.get(...args),
-      set: items => window.chrome.storage.local.set(items),
-      remove: keys => window.chrome.storage.local.remove(keys),
+      get: key =>
+        new Promise(resolve => {
+          window.chrome.storage.local.get(key, resolve)
+        }),
+      set: items =>
+        new Promise(resolve => window.chrome.storage.local.set(items, resolve)),
+      remove: keys =>
+        new Promise(resolve => {
+          window.chrome.storage.local.remove(keys, resolve)
+        }),
     },
   },
   runtime: {

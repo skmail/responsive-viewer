@@ -6,7 +6,6 @@ import { iframeChannel } from './utils/iframeChannel'
 import { sendMessageToScreens } from './utils/sendMessageToScreens'
 import { scrollToElement } from './utils/scrollToElement'
 import { getIframeId } from '../utils/screen'
-import { screenshotStarted } from '../actions'
 import { buildScreenshotScrolls } from './utils/buildScreenshotScrolls'
 import { screenCaptureRequest } from './utils/screenCaptureRequest'
 import { screenshot, screenshotDone } from '../reducers/layout'
@@ -148,14 +147,6 @@ function* captureScreen(
   ctx.fillStyle = 'blue'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-  yield put(
-    screenshotStarted({
-      width: parentBox.width,
-      height: parentBox.height,
-      x: parentBox.x,
-      y: parentBox.y,
-    })
-  )
   const scrolls = buildScreenshotScrolls(
     {
       width: screenWidth * zoom,

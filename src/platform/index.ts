@@ -1,4 +1,4 @@
-import { Platform } from '../types'
+import { Platform } from '../types/platform'
 import chrome from './chrome'
 import firefox from './firefox'
 import local from './local'

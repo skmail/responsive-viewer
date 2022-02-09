@@ -1,30 +1,17 @@
 import React, { useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogActions from '@material-ui/core/DialogActions'
-import Button from '@material-ui/core/Button'
-import Chip from '@material-ui/core/Chip'
+import Dialog from '@mui/material/Dialog'
+import DialogContent from '@mui/material/DialogContent'
+import DialogContentText from '@mui/material/DialogContentText'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogActions from '@mui/material/DialogActions'
+import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
 import { useAppSelector } from '../hooks/useAppSelector'
 import { selectHelpDialog, toggleHelpDialog } from '../reducers/layout'
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { appReset } from '../reducers/app'
 
-const useStyles = makeStyles(theme => ({
-  body: {
-    width: 350,
-    borderRadius: 4,
-  },
-  dialogActions: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-}))
-
 const HelpDialog = () => {
-  const classes = useStyles()
   const [isAppResetOpened, setIsAppResetOpened] = useState(false)
 
   const helpDialog = useAppSelector(selectHelpDialog)
@@ -46,7 +33,7 @@ const HelpDialog = () => {
       <Dialog id={id} open={helpDialog.open} onClose={onClose}>
         <DialogTitle>Help!</DialogTitle>
         <DialogContent>
-          <div className={classes.body}>
+          <div>
             <DialogContentText>
               Edit Screen by <Chip size="small" label={'double click'} /> on the
               screen name from sidebar.
@@ -57,7 +44,7 @@ const HelpDialog = () => {
               disable iframe scroll.
             </DialogContentText>
 
-            <DialogActions className={classes.dialogActions}>
+            <DialogActions>
               <Button onClick={() => setIsAppResetOpened(true)}>
                 App Reset
               </Button>
