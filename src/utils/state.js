@@ -5,11 +5,11 @@ export const loadState = async () => {
   try {
     const state = await storage.get(STORAGE_KEY)
     if (!state) {
-      throw new Error('state not saved')
+      return {}
     }
     return state
   } catch (e) {
-    return undefined
+    return {}
   }
 }
 

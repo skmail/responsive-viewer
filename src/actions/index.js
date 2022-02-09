@@ -224,23 +224,3 @@ export const toggleTabDialog = tab => ({
     tab,
   },
 })
-
-export const updateTab = (id, tab) => ({
-  type: actionTypes.UPDATE_TAB,
-  payload: {
-    id,
-    tab,
-  },
-})
-export const addTab = tab => ({
-  type: actionTypes.ADD_TAB,
-  payload: {
-    tab,
-  },
-})
-export const deleteTab = tabName => ({
-  type: actionTypes.DELETE_TAB,
-  payload: {
-    tabName,
-  },
-})
