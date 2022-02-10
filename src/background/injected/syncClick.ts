@@ -53,18 +53,29 @@ const onInput = (e: Event) => {
     '*'
   )
 }
-export default () => {
+export default function syncClick() {
   document.addEventListener('mousedown', onMouseDown)
 
   document.addEventListener('input', onInput)
 }
 
-export const simulateClick = (data: { path: string }) => {
-  const element = document.querySelector(data.path)
+const getWrappingSvg = (element: HTMLElement): HTMLElement | null => {
+  if (element.tagName === 'svg') {
+    return element
+  }
 
+  if (element !== document.body && element.parentElement) {
+    return getWrappingSvg(element.parentElement)
+  }
+  return null
+}
+export const simulateClick = (data: { path: string }) => {
+  let element = document.querySelector(data.path) as HTMLElement
   if (!element) {
     return
   }
+
+  element = getWrappingSvg(element) || element
 
   const evt = new MouseEvent('click', {
     bubbles: true,

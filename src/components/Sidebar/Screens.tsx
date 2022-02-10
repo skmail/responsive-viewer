@@ -193,7 +193,7 @@ const SortableItem = (props: any) => {
   )
 }
 
-export default () => {
+export default function Screens() {
   const rootRef = useRef<HTMLDivElement>(null)
 
   const selectedTab = useSelector(selectSelectedTab)

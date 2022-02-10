@@ -1,6 +1,5 @@
 import onDomReady from '../../utils/onDomReady'
 import uuid from 'uuid'
-import './utils'
 import syncScroll from './syncScroll'
 import refresh from './refresh'
 import dimensions from './dimensions'
@@ -13,19 +12,20 @@ import {
 } from './scrollToElement'
 
 window.frameID = uuid.v4()
-
 onDomReady(() => {
   syncClick()
   refresh()
   window.addEventListener('message', (event: any) => {
+    console.log('MESSAGE', event)
     if (!event.data || !String(event.data.message).startsWith('@APP')) {
       return
     }
-
+    console.log(event.data.frameId, window.frameID)
     if (event.data.frameId === window.frameID) {
       return
     }
 
+    console.log('got something')
     switch (event.data.message) {
       case '@APP/FRAME_SCROLL':
         syncScroll(event.data)

@@ -10,8 +10,8 @@ function* doInitialize(): unknown {
     ...(yield call(loadState)),
   }
 
-  // const tabUrl = window.location.href
-  const tabUrl = 'http://localhost:3000/'
+  const tabUrl = window.location.href
+  // const tabUrl = 'http://localhost:3000/'
 
   yield call(platform.runtime.sendMessage, {
     message: 'LOAD_STATE',
@@ -26,6 +26,6 @@ function* doInitialize(): unknown {
   )
 }
 
-export default function*() {
+export default function* rootSaga() {
   yield takeLatest(initialize.toString(), doInitialize)
 }

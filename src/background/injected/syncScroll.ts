@@ -59,7 +59,10 @@ window.addEventListener(
   false
 )
 
-export default (data: { scrollTop: number; scrollLeft: number }) => {
+export default function syncScroll(data: {
+  scrollTop: number
+  scrollLeft: number
+}) {
   window.userScroll = false
   window.scrollTo({
     top: data.scrollTop,

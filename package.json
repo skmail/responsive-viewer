@@ -25,29 +25,25 @@
     "react-hook-form": "^7.26.1",
     "react-konva": "^17.0.2-5",
     "react-redux": "^7.2.6",
-    "react-scripts": "^3.0.1",
+    "react-scripts": "^5.0.0",
     "redux": "^4.1.2",
     "redux-saga": "^1.1.3",
     "rewire": "^6.0.0",
     "scroll-into-view": "^1.9.7",
+    "source-map-explorer": "^2.5.2",
     "use-image": "^1.0.8",
     "uuid": "^3.3.3",
     "validator": "^13.7.0",
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "REACT_APP_PLATFORM=CHROME INLINE_RUNTIME_CHUNK=false node ./build-non-split.js && npm run build:browser",
-    "build:chrome": "cross-env REACT_APP_PLATFORM=CHROME && npm run build:browser",
-    "build:firefox": "cross-env REACT_APP_PLATFORM=FIREFOX && npm run build:browser",
-    "build:browser": "cross-env REACT_APP_PLATFORM=CHROME npm run build:background && npm run build:inject && npm run build:manifest && npm run build:init",
-    "build:background": "cross-env REACT_APP_PLATFORM=CHROME webpack --mode production ./src/background/index.ts --output ./build/background.js",
-    "build:inject": "cross-env REACT_APP_PLATFORM=CHROME webpack --mode production ./src/background/inject.ts --output ./build/inject.js",
-    "build:init": "cross-env REACT_APP_PLATFORM=CHROME webpack --mode production ./src/background/init.ts --output ./build/init.js",
+    "start": "REACT_APP_PLATFORM=CHROME node ./scripts/start.js",
+    "build": "REACT_APP_PLATFORM=CHROME node ./scripts/build.js",
     "build:manifest": "cp ./public/manifest.json ./build/manifest.json",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "pretty": "prettier --check 'src/**/*.ts' --write"
+    "pretty": "prettier --check 'src/**/*.ts' --write",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -75,7 +71,8 @@
     "@types/uuid": "^8.3.4",
     "@types/validator": "^13.7.1",
     "cross-env": "^6.0.3",
-    "typescript": "^4.5.5"
+    "typescript": "^4.5.5",
+    "webpack-cli": "^4.9.2"
   },
   "husky": {
     "hooks": {

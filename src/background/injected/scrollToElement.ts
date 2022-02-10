@@ -197,11 +197,7 @@ export const enableMouseInspector = () => {
 
   document.addEventListener('mouseleave', clearInspector)
 
-  // document.addEventListener(
-  //   'click',
-  //   getInspectedElementByMouseSelector(),
-  //   inspectByMouseClick
-  // )
+  document.addEventListener('click', inspectByMouseClick)
 }
 
 export const disableMouseInspector = () => {
@@ -210,4 +206,6 @@ export const disableMouseInspector = () => {
   document.removeEventListener('mousemove', inspectByMouseMove)
 
   document.removeEventListener('mouseleave', clearInspector)
+
+  document.removeEventListener('click', inspectByMouseClick)
 }

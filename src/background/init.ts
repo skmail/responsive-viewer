@@ -29,4 +29,4 @@ const init = () => {
 
 init()
 
-export default {}
+export default init

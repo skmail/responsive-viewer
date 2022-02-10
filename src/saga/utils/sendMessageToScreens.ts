@@ -7,11 +7,7 @@ export const sendMessageToScreens = (
   delay = 0
 ) => {
   const send = () => {
-    screens = screens.filter(screen => screen.visible)
-    let counter = 0
-
-    while (counter < screens.length) {
-      const screen = screens[counter]
+    for (let screen of screens) {
       const iframeId = getIframeId(screen.id)
       const element = document.getElementById(iframeId) as HTMLIFrameElement
 
@@ -26,7 +22,6 @@ export const sendMessageToScreens = (
         },
         '*'
       )
-      counter++
     }
   }
 

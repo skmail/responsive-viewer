@@ -223,6 +223,6 @@ function* captureScreen(
   return blob
 }
 
-export default function*() {
+export default function* rootSaga() {
   yield takeLatest(screenshot.toString(), doScreenshot)
 }

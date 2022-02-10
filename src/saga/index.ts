@@ -13,7 +13,7 @@ import screenScroll from './screenScroll'
 import searchElement from './searchElement'
 import fillUserAgent from './fillUserAgent'
 
-export default function*() {
+export default function* rootSaga() {
   yield fork(autoSave)
   yield fork(backgroundCommunications)
   yield fork(appExport)

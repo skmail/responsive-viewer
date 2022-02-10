@@ -10,7 +10,7 @@ const injectContents = (tab: chrome.tabs.Tab) => {
     return
   }
   chrome.tabs.executeScript(tab.id, {
-    file: 'init.js',
+    file: 'static/js/init.js',
   })
 
   chrome.tabs.insertCSS(tab.id, {
@@ -99,7 +99,7 @@ const start = (tab: chrome.tabs.Tab) => {
     }
 
     chrome.tabs.executeScript(details.tabId, {
-      file: 'syncedEvents.js',
+      file: 'static/js/inject.js',
       frameId: details.frameId,
       runAt: 'document_start',
     })
@@ -146,6 +146,7 @@ const start = (tab: chrome.tabs.Tab) => {
       return
     }
 
+    console.log('x MESSAGE', message)
     switch (message.message) {
       case 'GET_TAB_URL':
         sendResponse({

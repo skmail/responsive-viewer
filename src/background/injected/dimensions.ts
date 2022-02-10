@@ -1,4 +1,4 @@
-export default (data = {}) => {
+export default function dimensions(data = {}) {
   if (!window.top) {
     return
   }
