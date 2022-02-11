@@ -4,6 +4,7 @@ import { State } from '../reducers/app'
 import * as url from '../utils/url'
 
 const frames = new Map()
+const screens = new Map()
 
 const injectContents = (tab: chrome.tabs.Tab) => {
   if (!tab.id) {
@@ -11,10 +12,6 @@ const injectContents = (tab: chrome.tabs.Tab) => {
   }
   chrome.tabs.executeScript(tab.id, {
     file: 'static/js/init.js',
-  })
-
-  chrome.tabs.insertCSS(tab.id, {
-    file: 'static/css/main.css',
   })
 
   chrome.tabs.executeScript(tab.id, {
@@ -121,6 +118,19 @@ const start = (tab: chrome.tabs.Tab) => {
       chrome.runtime.onMessage.removeListener(onMessages)
 
       chrome.webNavigation.onErrorOccurred.removeListener(onWebNavigationError)
+    } else if (details.frameId !== 0) {
+      const screenId = screens.get(frames.get(details.frameId))
+
+      if (screenId) {
+        chrome.tabs.sendMessage(
+          details.tabId,
+          {
+            message: 'FRAME_REFRESHED',
+            screenId,
+          },
+          () => {}
+        )
+      }
     }
   }
 
@@ -139,14 +149,10 @@ const start = (tab: chrome.tabs.Tab) => {
     sender: chrome.runtime.MessageSender,
     sendResponse: (response?: any) => void
   ) {
-    if (!sender.tab || !tab.id) {
-      return
-    }
-    if (sender.tab.id !== tab.id) {
+    if (!sender.tab || !tab.id || sender.tab.id !== tab.id) {
       return
     }
 
-    console.log('x MESSAGE', message)
     switch (message.message) {
       case 'GET_TAB_URL':
         sendResponse({
@@ -170,22 +176,13 @@ const start = (tab: chrome.tabs.Tab) => {
 
       case 'SET_FRAME_ID':
         frames.set(sender.frameId, message.frameId)
-
-        chrome.tabs.sendMessage(
-          tab.id,
-          {
-            message: 'SET_FRAME',
-            screenId: sender.frameId,
-            tabId: tab.id,
-            chromeFrameId: message.frameId,
-          },
-          () => {}
-        )
-
         break
 
       case 'LOAD_STATE':
         state = message.state
+        break
+      case 'SCREEN_IDENTIFIED':
+        screens.set(message.frameId, message.screenId)
         break
       default:
         // do nothing.

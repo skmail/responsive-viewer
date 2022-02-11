@@ -1,7 +1,9 @@
 import getDomPath from '../../utils/domPath'
+import findElement from '../../utils/findElement'
+import { sendMessage } from './sendMessage'
 
-const onMouseDown = (e: MouseEvent) => {
-  if (!e.isTrusted || !window.top) {
+const onClick = (e: MouseEvent) => {
+  if (!e.isTrusted) {
     return true
   }
   const target = e.target as HTMLElement
@@ -12,28 +14,13 @@ const onMouseDown = (e: MouseEvent) => {
 
   const path = getDomPath(target)
 
-  const onUp = (event: MouseEvent) => {
-    if (!window.top) {
-      return
-    }
-    if (event.target === target) {
-      window.top.postMessage(
-        {
-          message: '@APP/CLICK',
-          frameId: window.frameID,
-          path,
-        },
-        '*'
-      )
-    }
-    document.removeEventListener('mouseup', onUp)
-  }
-
-  document.addEventListener('mouseup', onUp)
+  sendMessage('@APP/CLICK', {
+    path,
+  })
 }
 
 const onInput = (e: Event) => {
-  if (!e.isTrusted || !window.top) {
+  if (!e.isTrusted) {
     return
   }
 
@@ -42,40 +29,26 @@ const onInput = (e: Event) => {
   if (!target) {
     return
   }
+
   const path = getDomPath(target)
-  window.top.postMessage(
-    {
-      message: '@APP/DELEGATE_EVENT',
-      frameId: window.frameID,
-      path,
-      value: target.value,
-    },
-    '*'
-  )
+
+  sendMessage('@APP/DELEGATE_EVENT', {
+    path,
+    value: target.value,
+  })
 }
+
 export default function syncClick() {
-  document.addEventListener('mousedown', onMouseDown)
+  document.addEventListener('click', onClick)
 
   document.addEventListener('input', onInput)
 }
 
-const getWrappingSvg = (element: HTMLElement): HTMLElement | null => {
-  if (element.tagName === 'svg') {
-    return element
-  }
-
-  if (element !== document.body && element.parentElement) {
-    return getWrappingSvg(element.parentElement)
-  }
-  return null
-}
-export const simulateClick = (data: { path: string }) => {
-  let element = document.querySelector(data.path) as HTMLElement
+export const triggerClickEvent = ({ path }: { path: string }) => {
+  let element = findElement(path) as HTMLElement
   if (!element) {
     return
   }
-
-  element = getWrappingSvg(element) || element
 
   const evt = new MouseEvent('click', {
     bubbles: true,
@@ -85,8 +58,14 @@ export const simulateClick = (data: { path: string }) => {
   element.dispatchEvent(evt)
 }
 
-export const triggerEvent = (data: { path: string; value: any }) => {
-  const element = document.querySelector(data.path) as HTMLInputElement
+export const triggerInputEvent = ({
+  path,
+  value,
+}: {
+  path: string
+  value: string
+}) => {
+  const element = findElement(path) as HTMLInputElement
 
   if (!element) {
     return
@@ -98,5 +77,5 @@ export const triggerEvent = (data: { path: string; value: any }) => {
     view: window,
   })
   element.dispatchEvent(evt)
-  element.value = data.value
+  element.value = value
 }

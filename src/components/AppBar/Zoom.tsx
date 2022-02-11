@@ -16,6 +16,9 @@ const Slider = styled(MuiSlider)(({ theme }) => ({
   '& .MuiSlider-markLabel': {
     fontSize: 12,
   },
+  [theme.breakpoints.down('lg')]: {
+    display: 'none',
+  },
 }))
 
 function zoomText(value: number) {

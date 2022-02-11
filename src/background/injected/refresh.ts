@@ -1,31 +1,14 @@
-const refresh = () => {
-  window.addEventListener('keydown', e => {
-    if (!window.top) {
-      return
-    }
-    let isF5 = false
-    let isR = false
+import { onRefresh as onRefresh_ } from '../../utils/onRefresh'
+import { sendMessage } from './sendMessage'
 
-    const code = e.code
-    if (code === 'F5') {
-      isF5 = true
-    }
+export const onRefresh = () => {
+  onRefresh_(() => {
+    sendMessage('@APP/REFRESH')
 
-    if (code === 'KeyR') {
-      isR = true
-    }
-
-    if (isF5 || ((e.ctrlKey || e.metaKey) && isR)) {
-      e.preventDefault()
-
-      window.top.postMessage(
-        {
-          message: '@APP/REFRESH',
-        },
-        '*'
-      )
-    }
+    window.location.reload()
   })
 }
 
-export default refresh
+export const refresh = () => {
+  window.location.reload()
+}

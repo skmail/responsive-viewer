@@ -9,6 +9,7 @@ import * as validation from '../../utils/validation'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { selectUrl, updateUrl } from '../../reducers/app'
+import { refresh } from '../../reducers/layout'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { styled, alpha } from '@mui/material/styles'
 
@@ -18,6 +19,9 @@ const Form = styled('form')(({ theme }) => ({
   position: 'relative',
   height: 40,
   width: 350,
+  [theme.breakpoints.down('md')]: {
+    width: 250,
+  },
 }))
 
 const InputRightElement = styled(LinkIcon)(({ theme }) => ({
@@ -67,7 +71,11 @@ const AddressBar = () => {
   useEffect(() => setValue('url', url), [url, setValue])
 
   const onSubmit: SubmitHandler<any> = values => {
-    dispatch(updateUrl(values.url))
+    if (values.url === url) {
+      dispatch(refresh())
+    } else {
+      dispatch(updateUrl(values.url))
+    }
   }
 
   return (

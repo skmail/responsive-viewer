@@ -11,6 +11,7 @@ import {
 import { selectHighlightedScreen } from '../../reducers/layout'
 import { styled } from '@mui/material/styles'
 import { shallowEqual } from 'react-redux'
+import { selectIsScreenLoading } from '../../reducers/runtime'
 interface Props {
   id: string
 }
@@ -52,16 +53,10 @@ const Iframe = ({ id }: Props) => {
   const isHighlighted = useAppSelector(
     state => selectHighlightedScreen(state) === id
   )
-  const [isLoading, setIsLoading] = useState(true)
+
+  const isLoading = useAppSelector(state => selectIsScreenLoading(state, id))
+
   const [scrolling, setScrolling] = useState(true)
-
-  const onLoad = () => {
-    setIsLoading(false)
-  }
-
-  useEffect(() => {
-    setIsLoading(true)
-  }, [url])
 
   useEffect(() => {
     let isShift = false
@@ -93,15 +88,13 @@ const Iframe = ({ id }: Props) => {
 
   const width = screenDirection === 'landscape' ? screen.height : screen.width
   const height = screenDirection === 'landscape' ? screen.width : screen.height
-  console.log(url)
+
   return (
     <Root isHighlighted={isHighlighted}>
       {isLoading && <Progress color="primary" />}
-
       <IframeElement
         scrolling={scrolling ? 'auto' : 'no'}
         id={getIframeId(screen.id)}
-        onLoad={onLoad}
         sandbox="allow-scripts allow-forms allow-same-origin allow-presentation allow-orientation-lock allow-modals allow-popups-to-escape-sandbox allow-pointer-lock "
         title={`${screen.name} - ${width}x${height}`}
         style={{

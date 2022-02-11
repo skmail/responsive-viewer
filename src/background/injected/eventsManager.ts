@@ -1,42 +1,56 @@
 import onDomReady from '../../utils/onDomReady'
 import uuid from 'uuid'
 import syncScroll from './syncScroll'
-import refresh from './refresh'
+import { onRefresh, refresh } from './refresh'
 import dimensions from './dimensions'
-import syncClick, { simulateClick, triggerEvent } from './syncClick'
-
+import syncClick, { triggerClickEvent, triggerInputEvent } from './syncClick'
 import {
+  clearInspector,
   disableMouseInspector,
   enableMouseInspector,
-  scrollToElement,
-} from './scrollToElement'
+  inspectByEvent,
+} from './inspectElement'
+import { sendMessage } from './sendMessage'
+import { onMessage } from './onMessage'
 
 window.frameID = uuid.v4()
+
 onDomReady(() => {
   syncClick()
-  refresh()
-  window.addEventListener('message', (event: any) => {
-    console.log('MESSAGE', event)
-    if (!event.data || !String(event.data.message).startsWith('@APP')) {
-      return
-    }
-    console.log(event.data.frameId, window.frameID)
-    if (event.data.frameId === window.frameID) {
+  onRefresh()
+
+  sendMessage('@APP/READY')
+
+  onMessage(data => {
+    if (!data || !String(data.message).startsWith('@APP')) {
       return
     }
 
-    console.log('got something')
-    switch (event.data.message) {
+    if (data.frameId === window.frameID) {
+      return
+    }
+
+    switch (data.message) {
+      case '@APP/WHO_ARE_YOU':
+        if (window.frameID === data.fromFrameId) {
+          sendMessage('@APP/IDENTIFIED', data)
+        }
+        break
       case '@APP/FRAME_SCROLL':
-        syncScroll(event.data)
+        syncScroll(data)
         break
 
       case '@APP/CLICK':
-        simulateClick(event.data)
+        triggerClickEvent(data)
         break
 
-      case '@APP/SCROLL_TO_ELEMENT':
-        scrollToElement(event.data)
+      case '@APP/INSPECT_ELEMENT':
+        inspectByEvent(data)
+        break
+
+      case '@APP/FINISH_INSPECT_ELEMENT':
+      case '@APP/CLEAR_INSPECT_ELEMENT':
+        clearInspector()
         break
 
       case '@APP/ENABLE_MOUSE_INSPECTOR':
@@ -48,12 +62,17 @@ onDomReady(() => {
         break
 
       case '@APP/DIMENSIONS':
-        dimensions(event.data)
+        dimensions(data)
         break
 
       case '@APP/DELEGATE_EVENT':
-        triggerEvent(event.data)
+        triggerInputEvent(data)
         break
+
+      case '@APP/REFRESH':
+        refresh()
+        break
+
       default:
         break
     }

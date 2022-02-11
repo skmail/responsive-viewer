@@ -1,4 +1,3 @@
-import React from 'react'
 import MuiAppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
@@ -6,16 +5,16 @@ import AddressBar from './AddressBar'
 import IconButton from '@mui/material/IconButton'
 import AddIcon from '@mui/icons-material/Add'
 import HelpIcon from '@mui/icons-material/Help'
-import Zoom from './Zoom'
 import TwitterIcon from '@mui/icons-material/Twitter'
-import Screenshot from './Screenshot'
-import ViewMode from './ViewMode'
-import ScreenDirection from './ScreenDirection'
+import GitHubIcon from '@mui/icons-material/GitHub'
+
+import AppLogo from '../AppLogo'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { toggleHelpDialog, toggleScreenDialog } from '../../reducers/layout'
 import { styled } from '@mui/material/styles'
+import Tools from './Tools'
 
-const Logo = styled('img')(() => ({
+const Logo = styled(AppLogo)(() => ({
   width: 40,
   height: 'auto',
   flexShrink: 0,
@@ -36,15 +35,11 @@ const AppBar = () => {
         }}
       >
         <Stack spacing={2} direction="row">
-          <Logo src="/logo.png" alt="Responsive Viewer" />
+          <Logo />
           <AddressBar />
         </Stack>
-        <Stack spacing={2} direction="row">
-          <ViewMode />
-          <ScreenDirection />
-          <Screenshot />
-          <Zoom />
-        </Stack>
+
+        <Tools />
 
         <Stack spacing={1} direction="row">
           <Button
@@ -64,6 +59,16 @@ const AppBar = () => {
             color="inherit"
           >
             <TwitterIcon />
+          </IconButton>
+          <IconButton
+            href="https://github.com/skmail/responsive-viewer"
+            target="_blank"
+            edge="end"
+            aria-label="Star on github"
+            aria-haspopup="true"
+            color="inherit"
+          >
+            <GitHubIcon />
           </IconButton>
 
           <IconButton

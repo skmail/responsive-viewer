@@ -1,4 +1,5 @@
 import getDomPath from '../../utils/domPath'
+import { sendMessage } from './sendMessage'
 
 declare global {
   interface Window {
@@ -39,22 +40,17 @@ document.onmousewheel = mouseEvent
 window.addEventListener(
   'scroll',
   e => {
-    if (!window.top || !e.target) {
+    if (!e.target) {
       return
     }
     if (window.userScroll === false) {
       return
     }
-    window.top.postMessage(
-      {
-        message: '@APP/FRAME_SCROLL',
-        frameId: window.frameID,
-        scrollTop: document.documentElement.scrollTop,
-        scrollLeft: document.documentElement.scrollLeft,
-        path: getDomPath(e.target as HTMLElement),
-      },
-      '*'
-    )
+    sendMessage('@APP/FRAME_SCROLL', {
+      scrollTop: document.documentElement.scrollTop,
+      scrollLeft: document.documentElement.scrollLeft,
+      path: getDomPath(e.target as HTMLElement),
+    })
   },
   false
 )

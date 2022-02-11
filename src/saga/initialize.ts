@@ -1,4 +1,4 @@
-import { call, put, select, takeLatest } from 'redux-saga/effects'
+import { call, delay, put, select, takeLatest } from 'redux-saga/effects'
 import platform from '../platform'
 import { initialize, initialized, selectApp, State } from '../reducers/app'
 
@@ -17,6 +17,8 @@ function* doInitialize(): unknown {
     message: 'LOAD_STATE',
     state: state,
   })
+
+  yield delay(1500)
 
   yield put(
     initialized({

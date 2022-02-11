@@ -18,12 +18,16 @@ export default function Export() {
     setAnchorEl(null)
   }
 
+  const open = Boolean(anchorEl)
+  const id = open ? 'export-import-menu' : undefined
+
   return (
     <div>
       <ToggleButton
         title="Export/Import"
         aria-haspopup="true"
         onClick={handleClick}
+        aria-describedby={id}
       >
         <svg
           style={{
@@ -42,13 +46,8 @@ export default function Export() {
           />
         </svg>
       </ToggleButton>
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
+
+      <Menu id={id} anchorEl={anchorEl} open={open} onClose={handleClose}>
         <MenuItem
           onClick={() => {
             dispatch(exportApp())

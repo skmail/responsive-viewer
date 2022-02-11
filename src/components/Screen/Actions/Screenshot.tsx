@@ -6,11 +6,12 @@ import MenuItem from '@mui/material/MenuItem'
 import Menu from '@mui/material/Menu'
 import { ScreenshotType } from '../../../types'
 import { useAppDispatch } from '../../../hooks/useAppDispatch'
-import { screenshot } from '../../../reducers/layout'
+import { screenshot } from '../../../reducers/screenshots'
 
 interface Props {
   id: string
 }
+
 const Screenshot = ({ id }: Props) => {
   const dispatch = useAppDispatch()
 
@@ -45,29 +46,27 @@ const Screenshot = ({ id }: Props) => {
       >
         <CameraIcon fontSize={'small'} />
       </IconButton>
-      {!!anchorEl && (
-        <Menu
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-        >
-          <MenuItem onClick={() => handleMenuItemClick(ScreenshotType.partial)}>
-            Capture visible page
-          </MenuItem>
-          <MenuItem onClick={() => handleMenuItemClick(ScreenshotType.full)}>
-            Capture entire page
-          </MenuItem>
-        </Menu>
-      )}
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <MenuItem onClick={() => handleMenuItemClick(ScreenshotType.partial)}>
+          Capture visible page
+        </MenuItem>
+        <MenuItem onClick={() => handleMenuItemClick(ScreenshotType.full)}>
+          Capture entire page
+        </MenuItem>
+      </Menu>
     </React.Fragment>
   )
 }

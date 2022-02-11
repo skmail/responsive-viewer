@@ -14,6 +14,9 @@ import { useAppSelector } from '../hooks/useAppSelector'
 import { selectIsAppReady } from '../reducers/layout'
 
 import Box from '@mui/material/Box'
+import LoadingScreen from './LoadingScreen'
+import Notifications from './Notifications'
+import ScreenshotBlocker from './ScreenshotBlocker'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -23,39 +26,13 @@ function App() {
     dispatch(initialize())
   }, [dispatch])
 
-  // useEffect(() => {
-  //   const onRefresh = e => {
-  //     let isF5 = false
-  //     let isR = false
-
-  //     const code = e.code
-  //     if (code === 'F5') {
-  //       isF5 = true
-  //     }
-
-  //     if (code === 'KeyR') {
-  //       isR = true
-  //     }
-
-  //     if (isF5 || ((e.ctrlKey || e.metaKey) && isR)) {
-  //       e.preventDefault()
-  //       refresh()
-  //     }
-  //   }
-
-  //   window.addEventListener('keydown', onRefresh)
-
-  //   return () => {
-  //     window.removeEventListener('keydown', onRefresh)
-  //   }
-  // }, [refresh])
-
   if (!initialized) {
-    return <div>Loading ...</div>
+    return <LoadingScreen />
   }
 
   return (
     <Box overflow="hidden" height="100vh" display="flex" flexDirection="column">
+      <Notifications />
       <TabDialog />
       <ScreenDialog />
       <UserAgentDialog />
@@ -67,12 +44,14 @@ function App() {
 
       <Box display="flex" overflow="hidden" flex={1}>
         <Sidebar />
-        <Box flex={1}>
+        <Box flex={1} display="flex" flexDirection={'column'}>
           <Tabs />
 
           <Screens />
         </Box>
       </Box>
+
+      <ScreenshotBlocker />
     </Box>
   )
 }

@@ -1,8 +1,9 @@
 import { eventChannel } from 'redux-saga'
-import { take, takeLatest } from 'redux-saga/effects'
+import { put, take, takeLatest } from 'redux-saga/effects'
 import platform from '../platform'
 import { initialized } from '../reducers/app'
-function* doBackgroundCommunications() {
+import { screenIsLoading } from '../reducers/runtime'
+function* doBackgroundCommunications(): unknown {
   try {
     const waitForBackgroundMessages = eventChannel(emitter => {
       platform.runtime.onMessage.addListener(function(
@@ -21,7 +22,15 @@ function* doBackgroundCommunications() {
     })
 
     while (true) {
-      yield take(waitForBackgroundMessages)
+      const message = yield take(waitForBackgroundMessages)
+      if (!message) {
+        continue
+      }
+      switch (message.message) {
+        case 'FRAME_REFRESHED':
+          yield put(screenIsLoading(message.screenId))
+          break
+      }
     }
   } catch (error) {
     console.error('unable to comunicate')

@@ -1,4 +1,14 @@
+const rewire = require('rewire')
+const paths = rewire('react-scripts/config/paths.js')
 const config = require('./config')
+const fs = require('fs-extra')
+
+function copyPublicFolder() {
+  fs.copySync(paths.appPublic, paths.appBuild, {
+    dereference: true,
+    filter: file => file !== paths.appHtml,
+  })
+}
 
 function findPlugin(plugins, name) {
   for (let plugin of plugins) {
@@ -7,6 +17,7 @@ function findPlugin(plugins, name) {
     }
   }
 }
+
 function applyWebpackConfig(webpackConfig) {
   webpackConfig.output.filename = `static/js/[name].js`
 
@@ -19,9 +30,14 @@ function applyWebpackConfig(webpackConfig) {
     miniCssExtractPlugin.options.filename = `static/css/[name].css`
   }
 
-  findPlugin(webpackConfig.plugins, 'HtmlWebpackPlugin').userOptions.chunks = [
-    'main',
-  ]
+  const htmlWebpackPlugin = findPlugin(
+    webpackConfig.plugins,
+    'HtmlWebpackPlugin'
+  )
+
+  htmlWebpackPlugin.userOptions.chunks = ['main']
+
+  copyPublicFolder()
 
   webpackConfig.entry = config.entry
 }

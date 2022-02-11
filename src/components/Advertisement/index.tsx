@@ -21,6 +21,7 @@ const Advertisement = () => {
 
       const height = Math.min(190, message.data.height)
 
+      iframeRef.current.style.flexShrink = '0'
       iframeRef.current.style.width = '100%'
       iframeRef.current.style.height = `${height}px`
     }
@@ -33,8 +34,9 @@ const Advertisement = () => {
   }, [])
   return (
     <iframe
+      ref={iframeRef}
       width={20}
-      height={20}
+      height={0}
       title="Preview"
       src="https://preview.responsiveviewer.org/"
       scrolling="no"

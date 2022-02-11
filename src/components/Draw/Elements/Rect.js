@@ -5,7 +5,6 @@ import { useElement } from '../hooks/useElement'
 const Rect = ({ element }) => {
   const props = useElement(element)
 
-  console.log(element)
   return (
     <KonvaRect
       {...props}

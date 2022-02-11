@@ -1,22 +1,33 @@
 import { call, put, select, take, takeLatest } from 'redux-saga/effects'
 import { saveAs } from 'file-saver'
-import JSZip, { OutputType } from 'jszip'
+import JSZip from 'jszip'
 import { extractHostname, slugify } from '../utils/url'
 import { iframeChannel } from './utils/iframeChannel'
 import { sendMessageToScreens } from './utils/sendMessageToScreens'
-import { scrollToElement } from './utils/scrollToElement'
+import { scrollToElement } from '../utils/scrollToElement'
 import { getIframeId } from '../utils/screen'
 import { buildScreenshotScrolls } from './utils/buildScreenshotScrolls'
 import { screenCaptureRequest } from './utils/screenCaptureRequest'
-import { screenshot, screenshotDone } from '../reducers/layout'
 import { Device, ScreenDirection, ScreenshotType } from '../types'
 import {
   selectScreenDirection,
   selectScreensByIds,
+  selectScreensByTab,
+  selectSelectedTab,
   selectUrl,
   selectZoom,
 } from '../reducers/app'
 import { PayloadAction } from '@reduxjs/toolkit'
+import {
+  addScreenshots,
+  download,
+  Screenshot,
+  selectScreenshotsById,
+  screenshot,
+} from '../reducers/screenshots'
+import uuid from 'uuid'
+import { notify } from '../reducers/notifications'
+import { imgSrcToBlob } from 'blob-util'
 
 const makeScreenshotFilename = (
   screen: Device,
@@ -40,39 +51,69 @@ function* doScreenshot(
     screens: string[]
     type: ScreenshotType
   }>
-) {
+): unknown {
   const { type, screens: screenIds } = action.payload
-
   const screens: Device[] = yield select(state =>
-    selectScreensByIds(state, screenIds)
+    screenIds.length
+      ? selectScreensByIds(state, screenIds)
+      : selectScreensByTab(state, selectSelectedTab(state))
   )
-  const { screenDirection, url } = yield select(state => ({
-    screenDirection: selectScreenDirection(state),
-    url: selectUrl(state),
-  }))
 
-  var zip = new JSZip()
+  const url = yield select(selectUrl)
+  const screenDirection = yield select(selectScreenDirection)
+
+  const screenshots: Screenshot[] = []
+
+  yield put(
+    notify({
+      message: 'Taking a screenshot please wait',
+      type: 'info',
+      loading: true,
+      cancellable: false,
+    })
+  )
 
   for (let screen of screens) {
     const image: Blob = yield call(captureScreen, screen, {
       type,
     })
 
-    zip.file(makeScreenshotFilename(screen, screenDirection), image)
+    screenshots.push({
+      screenId: screen.id,
+      image: URL.createObjectURL(image),
+      filename: makeScreenshotFilename(screen, screenDirection),
+    })
   }
 
-  const file: OutputType = yield call(zip.generateAsync, { type: 'blob' })
+  const id = uuid.v4()
 
-  yield saveAs(file, slugify(`${extractHostname(url)}-screenshots.zip`))
+  yield put(
+    addScreenshots({
+      id,
+      screenshots,
+      url,
+    })
+  )
 
-  yield put(screenshotDone())
+  yield put(
+    notify({
+      type: 'success',
+      message: 'Screnshots are ready',
+      actions: [
+        {
+          label: 'Download',
+          action: download(id),
+        },
+      ],
+    })
+  )
 }
 
 function* captureScreen(
   screen: Device,
   { type }: { type: ScreenshotType }
 ): unknown {
-  const margin = 10
+  const margin = 16
 
   const { screenDirection, zoom } = yield select(state => ({
     screenDirection: selectScreenDirection(state),
@@ -83,11 +124,6 @@ function* captureScreen(
     { context: document, fn: document.getElementById },
     getIframeId(screen.id)
   )
-
-  // const screenElement: HTMLDivElement = yield call(
-  //   { context: document, fn: document.getElementById },
-  //   getDomId(screen.id)
-  // )
 
   yield scrollToElement(iframeElement, {
     topOffset: margin,
@@ -122,7 +158,6 @@ function* captureScreen(
   )
 
   const parentBoundingBox = parent.getBoundingClientRect()
-  // const screenElementBoundingBox = screenElement.getBoundingClientRect()
 
   const parentBox = {
     x: parentBoundingBox.x + margin,
@@ -130,10 +165,6 @@ function* captureScreen(
     width: parentBoundingBox.width - margin * 2,
     height: parentBoundingBox.height - margin * 2,
   }
-  // const oldScreenPosition = {
-  //   y: screenElementBoundingBox.y - parentBox.y,
-  //   x: screenElementBoundingBox.x - parentBox.x,
-  // }
 
   const canvas = document.createElement('canvas')
   canvas.width = screenWidth * zoom
@@ -161,8 +192,6 @@ function* captureScreen(
       topOffset: (scroll.y - margin) * -1,
     })
 
-    console.log('started')
-
     const image = yield screenCaptureRequest()
 
     if (image) {
@@ -171,7 +200,6 @@ function* captureScreen(
       let x = iframeBox.x < parentBox.x ? parentBox.x : iframeBox.x
       let y = iframeBox.y < parentBox.y ? parentBox.y : iframeBox.y
 
-      const initialY = y
       if (scroll.height < parentBox.height) {
         y = iframeBox.bottom - scroll.height
       }
@@ -180,14 +208,6 @@ function* captureScreen(
         x = iframeBox.right - scroll.width
       }
 
-      console.log({
-        initialY,
-        'parentBox.height': parentBox.height,
-        'parentBox.y': parentBox.y,
-        x,
-        y,
-        scroll,
-      })
       ctx.drawImage(
         image,
         scale(x),
@@ -206,23 +226,38 @@ function* captureScreen(
   }
 
   iframeElement.style.height = `${screenHeight}px`
-  // if (resetPosition) {
-  //   yield scrollToElement(screenElement, {
-  //     topOffset: oldScreenPosition.y,
-  //     leftOffset: oldScreenPosition.x,
-  //   })
-  // }
 
   const blob = yield new Promise(accept => {
     canvas.toBlob(accept, 'image/png', 1)
   })
 
-  console.log('END', screen.name)
-
-  console.log('---------------')
   return blob
+}
+
+function* doDownload(action: PayloadAction<string>): unknown {
+  const screenshots = yield select(state =>
+    selectScreenshotsById(state, action.payload)
+  )
+
+  var zip = new JSZip()
+
+  for (let screenshot of screenshots.screenshots) {
+    const image = yield call(imgSrcToBlob, screenshot.image)
+
+    zip.file(screenshot.filename, image)
+  }
+
+  const result = yield zip.generateAsync({ type: 'blob' })
+
+  yield call(
+    saveAs,
+    result,
+    slugify(`${extractHostname(screenshots.url)}-screenshots.zip`)
+  )
 }
 
 export default function* rootSaga() {
   yield takeLatest(screenshot.toString(), doScreenshot)
+
+  yield takeLatest(download.toString(), doDownload)
 }

@@ -48,7 +48,6 @@ export default class Circle extends Tool {
 
   finished() {
     this.instance.destroy()
-    console.log(this.instance.points())
     return this.createDataElement({
       type: 'arrow',
       points: this.instance.points(),

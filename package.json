@@ -1,6 +1,6 @@
 {
-  "name": "responsive-chrome-extension",
-  "version": "0.1.0",
+  "name": "responsive-viewer",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@dnd-kit/core": "^3.1.1",
@@ -12,10 +12,12 @@
     "@mui/material": "^5.4.1",
     "@reduxjs/toolkit": "^1.7.2",
     "array-move": "^2.1.0",
+    "blob-util": "^2.0.2",
     "file-saver": "^2.0.5",
     "husky": "^3.1.0",
     "jszip": "^3.7.1",
     "konva": "^8.3.2",
+    "lodash": "^4.17.21",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
     "react": "^17.0.2",
@@ -37,6 +39,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
+    "start:local": "react-scripts start",
     "start": "REACT_APP_PLATFORM=CHROME node ./scripts/start.js",
     "build": "REACT_APP_PLATFORM=CHROME node ./scripts/build.js",
     "build:manifest": "cp ./public/manifest.json ./build/manifest.json",

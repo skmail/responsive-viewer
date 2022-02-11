@@ -1,17 +1,13 @@
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
-import { Device, ScreenshotType, ScreensTab, UserAgent } from '../types'
+import { Device, ScreensTab, UserAgent } from '../types'
 import { initialized } from './app'
 
 export type State = {
   initialized: boolean
   drawerOpened: boolean
   inspectByMouse: boolean
-  screenshot: {
-    screens: string[]
-    isRunning: boolean
-    type: ScreenshotType
-  }
+
   tabDialog: {
     open: boolean
     values: Pick<ScreensTab, 'name'>
@@ -33,11 +29,6 @@ const initialState: State = {
   initialized: false,
   drawerOpened: true,
   inspectByMouse: false,
-  screenshot: {
-    screens: [],
-    isRunning: false,
-    type: ScreenshotType.partial,
-  },
 
   highlightedScreen: '',
   tabDialog: {
@@ -76,26 +67,7 @@ export const slice = createSlice({
       state.inspectByMouse =
         action.payload === undefined ? !state.inspectByMouse : action.payload
     },
-    screenshot(
-      state,
-      action: PayloadAction<{
-        screens: string[]
-        type: ScreenshotType
-      }>
-    ) {
-      state.screenshot = {
-        screens: action.payload.screens,
-        type: action.payload.type,
-        isRunning: true,
-      }
-    },
-    screenshotDone(state) {
-      state.screenshot = {
-        screens: [],
-        isRunning: false,
-        type: ScreenshotType.partial,
-      }
-    },
+
     highlightScreen(state, action: PayloadAction<string>) {
       state.highlightedScreen = action.payload
     },
@@ -169,8 +141,6 @@ export const slice = createSlice({
 
 export const {
   toggleMouseInspect,
-  screenshot,
-  screenshotDone,
   highlightScreen,
   dehighlightScreen,
 
@@ -185,6 +155,7 @@ export const {
 
 export const scrollToScreen = createAction<string>('layout/scrollToScreen')
 export const searchElement = createAction<string>('layout/searchElement')
+export const refresh = createAction('layout/refresh')
 
 export const selectLayout = (state: RootState) => state.layout
 

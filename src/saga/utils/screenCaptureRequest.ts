@@ -1,4 +1,4 @@
-// import platform from '../../platform'
+import platform from '../../platform'
 
 export const screenCaptureRequest = () =>
   new Promise(accept => {
@@ -16,12 +16,10 @@ export const screenCaptureRequest = () =>
       }
       image.src = response.image
     }
-    return resolve({
-      image: '/test.jpeg',
+
+    platform.runtime.sendMessage({ message: 'CAPTURE_SCREEN' }, function(
+      response: any
+    ) {
+      resolve(response)
     })
-    // platform.runtime.sendMessage({ message: 'CAPTURE_SCREEN' }, function(
-    //   response
-    // ) {
-    //   resolve(response)
-    // })
   })

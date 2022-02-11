@@ -12,11 +12,11 @@ if ('scrollRestoration' in window.history) {
 }
 
 ReactDOM.render(
-  <Provider store={store}>
-    <ThemeProvider theme={theme}>
+  <ThemeProvider theme={theme}>
+    <Provider store={store}>
       <CssBaseline />
       <App />
-    </ThemeProvider>
-  </Provider>,
+    </Provider>
+  </ThemeProvider>,
   document.getElementById('RESPONSIVE-VIEWER-ROOT')
 )

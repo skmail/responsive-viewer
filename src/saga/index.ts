@@ -12,6 +12,8 @@ import mouseInspect from './mouseInspect'
 import screenScroll from './screenScroll'
 import searchElement from './searchElement'
 import fillUserAgent from './fillUserAgent'
+import onRefresh from './onRefresh'
+import iframeLoaded from './iframeLoaded'
 
 export default function* rootSaga() {
   yield fork(autoSave)
@@ -26,4 +28,7 @@ export default function* rootSaga() {
   yield fork(screenScroll)
   yield fork(searchElement)
   yield fork(fillUserAgent)
+
+  yield fork(onRefresh)
+  yield fork(iframeLoaded)
 }

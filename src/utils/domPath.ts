@@ -3,10 +3,10 @@ function getDomPath(el: HTMLElement) {
   var stack = []
 
   while (el.parentElement != null) {
-    var sibCount = 0
-    var sibIndex = 0
-    for (var i = 0; i < el.parentElement.childNodes.length; i++) {
-      var sib = el.parentElement.childNodes[i]
+    let sibCount = 0
+    let sibIndex = 0
+    for (let i = 0; i < el.parentElement.childNodes.length; i++) {
+      let sib = el.parentElement.childNodes[i]
       if (sib.nodeName === el.nodeName) {
         if (sib === el) {
           sibIndex = sibCount

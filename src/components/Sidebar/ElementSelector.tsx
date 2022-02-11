@@ -1,8 +1,7 @@
 import React, { useState, MouseEvent } from 'react'
-import Popover from '@mui/material/Popover'
 import ToggleButton from '../ToggleButton'
+import Popover from '@mui/material/Popover'
 import TextField from '@mui/material/TextField'
-import Box from '@mui/material/Box'
 import IconButton from '@mui/material/IconButton'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
@@ -37,7 +36,7 @@ const ElementInspect = () => {
   }
 
   const open = Boolean(anchorEl)
-  const id = open ? 'element-selector-popover' : undefined
+  const id = 'element-selector-popover'
 
   const searchIcon = (
     <svg
@@ -53,15 +52,17 @@ const ElementInspect = () => {
   )
 
   return (
-    <div>
-      <ToggleButton title="Elements Search" active={open} onClick={handleClick}>
+    <>
+      <ToggleButton
+        aria-describedby={id}
+        title="Elements Search"
+        active={open}
+        onClick={handleClick}
+      >
         {searchIcon}
       </ToggleButton>
+
       <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
         anchorOrigin={{
           vertical: 'center',
           horizontal: 'right',
@@ -70,30 +71,32 @@ const ElementInspect = () => {
           vertical: 'center',
           horizontal: 'left',
         }}
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Box display="flex" alignItems="center">
-            <TextField
-              size="small"
-              variant="outlined"
-              color="primary"
-              placeholder="#app"
-              {...register('selector', {
-                required: true,
-              })}
-              InputProps={{
-                endAdornment: (
-                  <IconButton type="submit" disabled={!isValid}>
-                    {searchIcon}
-                  </IconButton>
-                ),
-              }}
-              autoFocus
-            />
-          </Box>
+          <TextField
+            size="small"
+            variant="outlined"
+            color="primary"
+            placeholder="#app"
+            {...register('selector', {
+              required: true,
+            })}
+            InputProps={{
+              endAdornment: (
+                <IconButton type="submit" disabled={!isValid}>
+                  {searchIcon}
+                </IconButton>
+              ),
+            }}
+            autoFocus
+          />
         </form>
       </Popover>
-    </div>
+    </>
   )
 }
 
