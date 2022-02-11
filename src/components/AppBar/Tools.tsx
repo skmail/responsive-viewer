@@ -19,14 +19,6 @@ const Tools = () => {
     setAnchorEl(event.currentTarget as HTMLButtonElement)
   }
 
-  const tools = (
-    <Stack spacing={2} direction="row">
-      <ViewMode />
-      <ScreenDirection />
-      <Screenshot />
-      <Zoom />
-    </Stack>
-  )
   const theme = useTheme()
   const isSmall = useMediaQuery(theme.breakpoints.down('lg'))
 
@@ -35,6 +27,16 @@ const Tools = () => {
       setAnchorEl(null)
     }
   }, [isSmall])
+
+  const tools = (
+    <Stack spacing={2} direction="row" alignItems={'center'}>
+      <ViewMode />
+      <ScreenDirection />
+      <Screenshot />
+      <Zoom />
+    </Stack>
+  )
+
   return (
     <>
       {!isSmall && tools}
@@ -47,12 +49,12 @@ const Tools = () => {
 
           <Popover
             anchorOrigin={{
-              vertical: 'center',
-              horizontal: 'right',
+              vertical: 'bottom',
+              horizontal: 'center',
             }}
             transformOrigin={{
-              vertical: 'center',
-              horizontal: 'left',
+              vertical: 'top',
+              horizontal: 'center',
             }}
             id={id}
             open={open}

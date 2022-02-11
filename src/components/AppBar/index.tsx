@@ -11,9 +11,12 @@ import GitHubIcon from '@mui/icons-material/GitHub'
 import AppLogo from '../AppLogo'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { toggleHelpDialog, toggleScreenDialog } from '../../reducers/layout'
-import { styled } from '@mui/material/styles'
+import { styled, lighten } from '@mui/material/styles'
 import Tools from './Tools'
 
+const AppBarView = styled(MuiAppBar)(({ theme }) => ({
+  borderBottom: `1px solid ${lighten(theme.palette.background.default, 0.2)} `,
+}))
 const Logo = styled(AppLogo)(() => ({
   width: 40,
   height: 'auto',
@@ -25,7 +28,7 @@ const AppBar = () => {
   const dispatch = useAppDispatch()
 
   return (
-    <MuiAppBar position="static" color="default">
+    <AppBarView position="static" color="default">
       <Stack
         spacing={2}
         direction="row"
@@ -92,7 +95,7 @@ const AppBar = () => {
           </IconButton>
         </Stack>
       </Stack>
-    </MuiAppBar>
+    </AppBarView>
   )
 }
 

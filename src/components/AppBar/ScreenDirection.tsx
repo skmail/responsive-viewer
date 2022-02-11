@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import ToggleButton from '../ToggleButton'
+import IconButton from '@mui/material/IconButton'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import {
   selectScreenDirection,
@@ -69,13 +69,13 @@ const ScreenDirection = () => {
       : directions[1]
 
   return (
-    <ToggleButton
+    <IconButton
+      aria-label={direction.label}
       title={direction.label}
       onClick={() => dispatch(switchScreenDirection(direction.name))}
-      active={screenDirection === direction.name}
     >
       {direction.icon}
-    </ToggleButton>
+    </IconButton>
   )
 }
 

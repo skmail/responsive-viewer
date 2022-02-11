@@ -1,13 +1,17 @@
 import React, { useState, MouseEvent } from 'react'
-import ToggleButton from '../ToggleButton'
+import IconButton from '@mui/material/IconButton'
 import Popover from '@mui/material/Popover'
 import TextField from '@mui/material/TextField'
-import IconButton from '@mui/material/IconButton'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { searchElement } from '../../reducers/layout'
+import Tooltip from '@mui/material/Tooltip'
 
-const ElementInspect = () => {
+const ElementInspect = ({
+  tooltipPlacement,
+}: {
+  tooltipPlacement: 'right' | 'bottom'
+}) => {
   const dispatch = useAppDispatch()
 
   const {
@@ -53,14 +57,11 @@ const ElementInspect = () => {
 
   return (
     <>
-      <ToggleButton
-        aria-describedby={id}
-        title="Elements Search"
-        active={open}
-        onClick={handleClick}
-      >
-        {searchIcon}
-      </ToggleButton>
+      <Tooltip arrow placement={tooltipPlacement} title="Element search">
+        <IconButton aria-describedby={id} onClick={handleClick} size="small">
+          {searchIcon}
+        </IconButton>
+      </Tooltip>
 
       <Popover
         anchorOrigin={{

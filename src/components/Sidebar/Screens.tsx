@@ -4,9 +4,14 @@ import React, {
   forwardRef,
   useRef,
   useState,
+  MouseEvent,
+  useEffect,
 } from 'react'
+
+import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
+import Popover from '@mui/material/Popover'
 import Remove from '@mui/icons-material/Remove'
 import Add from '@mui/icons-material/Add'
 import Box from '@mui/material/Box'
@@ -119,6 +124,18 @@ const VisibilityButton = styled(IconButton)(({ theme }) => ({
   },
 }))
 
+const ScreensPopover = styled(Popover)(({ theme }) => ({
+  '& .MuiPaper-root': {
+    height: 400,
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing(1),
+    width: 300,
+    [theme.breakpoints.down('sm')]: {
+      width: 230,
+    },
+  },
+}))
 const Item = forwardRef(
   (
     {
@@ -193,7 +210,7 @@ const SortableItem = (props: any) => {
   )
 }
 
-export default function Screens() {
+function ScreensView() {
   const rootRef = useRef<HTMLDivElement>(null)
 
   const selectedTab = useSelector(selectSelectedTab)
@@ -296,7 +313,7 @@ export default function Screens() {
 
   return (
     <>
-      <Heading>Screens</Heading>
+      <Heading>Active Screens</Heading>
       <Box sx={{ paddingRight: 1, paddingLeft: 1 }}>
         <SearchField
           value={searchKeyword}
@@ -350,7 +367,7 @@ export default function Screens() {
 
           {!hasSearch && !!invisibleScreens.length && (
             <Box mb="1">
-              <Heading>Disabled screens</Heading>
+              <Heading>Inactive Screens</Heading>
             </Box>
           )}
           {!hasSearch && (
@@ -368,6 +385,65 @@ export default function Screens() {
           )}
         </ScreensList>
       </Scrollbars>
+    </>
+  )
+}
+
+export default function Screens({ view }: { view: 'list' | 'popover' }) {
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
+
+  const onClick = (event: MouseEvent) => {
+    setAnchorEl(event.currentTarget as HTMLDivElement)
+  }
+  const open = Boolean(anchorEl)
+  const id = open ? 'screens-popover' : undefined
+  const screens = <ScreensView />
+
+  useEffect(() => {
+    setAnchorEl(null)
+  }, [view])
+
+  return (
+    <>
+      {view === 'list' && screens}
+      {view === 'popover' && (
+        <Box display="flex" justifyContent="center">
+          <Tooltip arrow placement="right" title="Screens">
+            <IconButton aria-describedby={id} onClick={onClick}>
+              <svg
+                width={20}
+                height={20}
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M2.87868 2.87868C3.44129 2.31607 4.20435 2 5 2H19C19.7957 2 20.5587 2.31607 21.1213 2.87868C21.6839 3.44129 22 4.20435 22 5V15C22 15.7957 21.6839 16.5587 21.1213 17.1213C20.5587 17.6839 19.7957 18 19 18H15.5308L15.903 19.4888L16.7071 20.2929C16.9931 20.5789 17.0787 21.009 16.9239 21.3827C16.7691 21.7564 16.4045 22 16 22H8C7.59554 22 7.2309 21.7564 7.07612 21.3827C6.92134 21.009 7.0069 20.5789 7.29289 20.2929L8.09704 19.4888L8.46922 18H5C4.20435 18 3.44129 17.6839 2.87868 17.1213C2.31607 16.5587 2 15.7956 2 15V5C2 4.20435 2.31607 3.44129 2.87868 2.87868ZM4 14H20V15C20 15.2652 19.8946 15.5196 19.7071 15.7071C19.5196 15.8946 19.2652 16 19 16H5C4.73478 16 4.48043 15.8946 4.29289 15.7071C4.10536 15.5196 4 15.2652 4 15V14ZM20 12H4V5C4 4.73478 4.10536 4.48043 4.29289 4.29289C4.48043 4.10536 4.73478 4 5 4H19C19.2652 4 19.5196 4.10536 19.7071 4.29289C19.8946 4.48043 20 4.73478 20 5V12ZM10.5308 18L10.0308 20H13.9692L13.4692 18H10.5308Z"
+                />
+              </svg>
+            </IconButton>
+          </Tooltip>
+
+          <ScreensPopover
+            anchorOrigin={{
+              vertical: 'center',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'center',
+              horizontal: 'left',
+            }}
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={() => setAnchorEl(null)}
+          >
+            {screens}
+          </ScreensPopover>
+        </Box>
+      )}
     </>
   )
 }

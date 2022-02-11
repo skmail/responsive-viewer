@@ -2,7 +2,7 @@ import React, { MouseEvent, useState } from 'react'
 import CameraIcon from '@mui/icons-material/CameraAlt'
 import MenuItem from '@mui/material/MenuItem'
 import Menu from '@mui/material/Menu'
-import ToggleButton from '../ToggleButton'
+import IconButton from '@mui/material/IconButton'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { ScreenshotType } from '../../types'
 import { screenshot } from '../../reducers/screenshots'
@@ -27,13 +27,9 @@ const Screenshot = () => {
 
   return (
     <React.Fragment>
-      <ToggleButton
-        title="take a screenshot for all screens"
-        size={'small'}
-        onClick={onClick}
-      >
+      <IconButton title="take a screenshot for all screens" onClick={onClick}>
         <CameraIcon fontSize={'small'} />
-      </ToggleButton>
+      </IconButton>
 
       <Menu
         anchorEl={anchorEl}
