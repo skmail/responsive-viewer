@@ -11,7 +11,7 @@ function* doSearchElement({ payload: selector }: PayloadAction<string>) {
   )
 
   yield call(sendMessageToScreens, screens, {
-    message: '@APP/SCROLL_TO_ELEMENT',
+    message: 'SCROLL_TO_ELEMENT',
     path: selector,
   })
 }

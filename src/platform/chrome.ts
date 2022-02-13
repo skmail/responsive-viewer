@@ -7,7 +7,9 @@ const platform: Platform = {
     local: {
       get: key =>
         new Promise(resolve => {
-          window.chrome.storage.local.get(key, resolve)
+          window.chrome.storage.local.get(key, result => {
+            resolve(result[key])
+          })
         }),
       set: items =>
         new Promise(resolve => window.chrome.storage.local.set(items, resolve)),

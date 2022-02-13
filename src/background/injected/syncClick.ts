@@ -14,7 +14,7 @@ const onClick = (e: MouseEvent) => {
 
   const path = getDomPath(target)
 
-  sendMessage('@APP/CLICK', {
+  sendMessage('CLICK', {
     path,
   })
 }
@@ -32,7 +32,7 @@ const onInput = (e: Event) => {
 
   const path = getDomPath(target)
 
-  sendMessage('@APP/DELEGATE_EVENT', {
+  sendMessage('DELEGATE_EVENT', {
     path,
     value: target.value,
   })
@@ -50,12 +50,17 @@ export const triggerClickEvent = ({ path }: { path: string }) => {
     return
   }
 
-  const evt = new MouseEvent('click', {
-    bubbles: true,
-    cancelable: false,
-    view: window,
-  })
-  element.dispatchEvent(evt)
+  if (element.tagName.toLowerCase() === 'input') {
+    const evt = new MouseEvent('focus', {
+      view: window,
+    })
+    element.dispatchEvent(evt)
+  } else {
+    const evt = new MouseEvent('click', {
+      view: window,
+    })
+    element.dispatchEvent(evt)
+  }
 }
 
 export const triggerInputEvent = ({

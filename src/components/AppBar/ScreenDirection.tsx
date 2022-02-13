@@ -8,6 +8,7 @@ import {
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { ScreenDirection as ScreenDirectionEnum } from '../../types'
 import { styled } from '@mui/material/styles'
+import Tooltip from '@mui/material/Tooltip'
 
 const Icon = styled('svg')(({ theme }) => ({
   width: theme.spacing(3),
@@ -22,7 +23,7 @@ const ScreenDirection = () => {
     () => [
       {
         name: ScreenDirectionEnum.portrait,
-        label: 'Portrait screens',
+        label: 'Portrait mode',
         icon: (
           <Icon
             fill="none"
@@ -41,7 +42,7 @@ const ScreenDirection = () => {
       },
       {
         name: ScreenDirectionEnum.landscape,
-        label: 'Landscape screens',
+        label: 'Landscape mode',
         icon: (
           <Icon
             fill="none"
@@ -69,13 +70,14 @@ const ScreenDirection = () => {
       : directions[1]
 
   return (
-    <IconButton
-      aria-label={direction.label}
-      title={direction.label}
-      onClick={() => dispatch(switchScreenDirection(direction.name))}
-    >
-      {direction.icon}
-    </IconButton>
+    <Tooltip arrow title={direction.label}>
+      <IconButton
+        aria-label={direction.label}
+        onClick={() => dispatch(switchScreenDirection(direction.name))}
+      >
+        {direction.icon}
+      </IconButton>
+    </Tooltip>
   )
 }
 

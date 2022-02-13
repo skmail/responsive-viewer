@@ -97,9 +97,9 @@ const Iframe = ({ id }: Props) => {
         id={getIframeId(screen.id)}
         sandbox="allow-scripts allow-forms allow-same-origin allow-presentation allow-orientation-lock allow-modals allow-popups-to-escape-sandbox allow-pointer-lock "
         title={`${screen.name} - ${width}x${height}`}
-        style={{
-          width,
-          height,
+        sx={{
+          width: `${width}px`,
+          height: `${height}px`,
         }}
         src={url}
       />

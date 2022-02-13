@@ -31,3 +31,5 @@ export enum ScreenshotType {
   full = 'full',
   partial = 'partial',
 }
+
+export type ToZipInput = { filename: string; url: string }[]

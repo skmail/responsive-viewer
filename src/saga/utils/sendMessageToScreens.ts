@@ -1,10 +1,12 @@
 import { Device } from '../../types'
+import { getPrefixedMessage } from '../../utils/getPrefixedMessage'
 import { getIframeId } from '../../utils/screen'
 
 export const sendMessageToScreens = (
   screens: Device[],
   message: { [key: string]: any },
-  delay = 0
+  delay = 0,
+  forwarded = false
 ) => {
   const send = () => {
     for (let screen of screens) {
@@ -19,6 +21,9 @@ export const sendMessageToScreens = (
         {
           screen,
           ...message,
+          message: forwarded
+            ? message.message
+            : getPrefixedMessage(message.message),
         },
         '*'
       )

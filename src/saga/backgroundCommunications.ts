@@ -3,6 +3,7 @@ import { put, take, takeLatest } from 'redux-saga/effects'
 import platform from '../platform'
 import { initialized } from '../reducers/app'
 import { screenIsLoading } from '../reducers/runtime'
+import { getPrefixedMessage } from '../utils/getPrefixedMessage'
 function* doBackgroundCommunications(): unknown {
   try {
     const waitForBackgroundMessages = eventChannel(emitter => {
@@ -27,7 +28,7 @@ function* doBackgroundCommunications(): unknown {
         continue
       }
       switch (message.message) {
-        case 'FRAME_REFRESHED':
+        case getPrefixedMessage('FRAME_REFRESHED'):
           yield put(screenIsLoading(message.screenId))
           break
       }

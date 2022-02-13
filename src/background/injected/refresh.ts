@@ -3,7 +3,7 @@ import { sendMessage } from './sendMessage'
 
 export const onRefresh = () => {
   onRefresh_(() => {
-    sendMessage('@APP/REFRESH')
+    sendMessage('REFRESH')
 
     window.location.reload()
   })

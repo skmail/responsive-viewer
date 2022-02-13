@@ -1,43 +1,27 @@
-import React from 'react'
-import Popover from '@mui/material/Popover'
+import { ReactNode, useState, MouseEvent } from 'react'
+import MuiPopover from '@mui/material/Popover'
 import Button from '@mui/material/Button'
 import Color from './Color'
-import { makeStyles } from '@mui/material/styles'
+import { styled } from '@mui/material/styles'
+import { ColorChangeHandler, Color as ColorType } from 'react-color'
 const width = 170
-const useStyles = makeStyles(theme => ({
-  root: {
+const Popover = styled(MuiPopover)(({ theme }) => ({
+  '& .MuiPaper-root': {
     width,
     padding: theme.spacing(1),
     boxShadow: `0 0 0 2px ${theme.palette.primary.main}`,
   },
-
-  saturation: {
-    position: 'relative',
-    height: width / 1.5,
-    margin: theme.spacing(-1),
-  },
-  hue: {
-    height: 10,
-    position: 'relative',
-  },
-  alpha: {
-    height: 10,
-    position: 'relative',
-    background: '#fff',
-  },
-  inputs: {
-    display: 'flex',
-  },
-  input: {
-    fontSize: 12,
-  },
 }))
+interface Props {
+  color?: ColorType
+  onChange: ColorChangeHandler
+  children: ReactNode
+}
+const ColorPopover = ({ color, onChange, children }: Props) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
-const ColorPopover = ({ color, onChange, children }) => {
-  const [anchorEl, setAnchorEl] = React.useState(null)
-
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget)
+  const handleClick = (event: MouseEvent) => {
+    setAnchorEl(event.currentTarget as HTMLButtonElement)
   }
 
   const handleClose = () => {
@@ -47,8 +31,6 @@ const ColorPopover = ({ color, onChange, children }) => {
   const open = Boolean(anchorEl)
 
   const id = open ? 'color-popover' : undefined
-
-  const classes = useStyles()
 
   return (
     <>
@@ -63,9 +45,6 @@ const ColorPopover = ({ color, onChange, children }) => {
         transformOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
-        }}
-        classes={{
-          paper: classes.root,
         }}
       >
         <Color color={color} onChange={onChange} />

@@ -1,14 +1,16 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 import { ScreenshotType } from '../types'
 
 export type Screenshot = {
   screenId: string
   filename: string
-  image: string
+  url: string
+  width: number
+  height: number
 }
 
-type ScreenshotsAction = {
+export type ScreenshotsAction = {
   id: string
   url: string
   screenshots: Screenshot[]
@@ -66,6 +68,7 @@ export const slice = createSlice({
 })
 
 export const { addScreenshots, download, screenshot } = slice.actions
+export const editScreenshots = createAction<string>('screenshots/edit')
 
 export const select = (state: RootState) => state.screenshots
 

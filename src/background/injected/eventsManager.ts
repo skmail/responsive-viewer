@@ -12,6 +12,8 @@ import {
 } from './inspectElement'
 import { sendMessage } from './sendMessage'
 import { onMessage } from './onMessage'
+import { getPrefixedMessage } from '../../utils/getPrefixedMessage'
+import platform from '../../platform'
 
 window.frameID = uuid.v4()
 
@@ -19,57 +21,49 @@ onDomReady(() => {
   syncClick()
   onRefresh()
 
-  sendMessage('@APP/READY')
+  sendMessage('READY')
 
   onMessage(data => {
-    if (!data || !String(data.message).startsWith('@APP')) {
-      return
-    }
-
-    if (data.frameId === window.frameID) {
-      return
-    }
-
     switch (data.message) {
-      case '@APP/WHO_ARE_YOU':
+      case getPrefixedMessage('WHO_ARE_YOU'):
         if (window.frameID === data.fromFrameId) {
-          sendMessage('@APP/IDENTIFIED', data)
+          sendMessage('IDENTIFIED', data)
         }
         break
-      case '@APP/FRAME_SCROLL':
+      case getPrefixedMessage('FRAME_SCROLL'):
         syncScroll(data)
         break
 
-      case '@APP/CLICK':
+      case getPrefixedMessage('CLICK'):
         triggerClickEvent(data)
         break
 
-      case '@APP/INSPECT_ELEMENT':
+      case getPrefixedMessage('INSPECT_ELEMENT'):
         inspectByEvent(data)
         break
 
-      case '@APP/FINISH_INSPECT_ELEMENT':
-      case '@APP/CLEAR_INSPECT_ELEMENT':
+      case getPrefixedMessage('FINISH_INSPECT_ELEMENT'):
+      case getPrefixedMessage('CLEAR_INSPECT_ELEMENT'):
         clearInspector()
         break
 
-      case '@APP/ENABLE_MOUSE_INSPECTOR':
+      case getPrefixedMessage('ENABLE_MOUSE_INSPECTOR'):
         enableMouseInspector()
         break
 
-      case '@APP/DISABLE_MOUSE_INSPECTOR':
+      case getPrefixedMessage('DISABLE_MOUSE_INSPECTOR'):
         disableMouseInspector()
         break
 
-      case '@APP/DIMENSIONS':
+      case getPrefixedMessage('DIMENSIONS'):
         dimensions(data)
         break
 
-      case '@APP/DELEGATE_EVENT':
+      case getPrefixedMessage('DELEGATE_EVENT'):
         triggerInputEvent(data)
         break
 
-      case '@APP/REFRESH':
+      case getPrefixedMessage('REFRESH'):
         refresh()
         break
 
@@ -79,4 +73,7 @@ onDomReady(() => {
   })
 })
 
-chrome.runtime.sendMessage({ message: 'SET_FRAME_ID', frameId: window.frameID })
+chrome.runtime.sendMessage({
+  message: getPrefixedMessage('SET_FRAME_ID'),
+  frameId: window.frameID,
+})

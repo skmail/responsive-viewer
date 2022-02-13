@@ -1,15 +1,19 @@
 import React from 'react'
-import { Arrow as KonvaArrow } from 'react-konva'
+import { Line as KonvaLine } from 'react-konva'
+import { PenElement } from '../../../types/draw'
 import { useElement } from '../hooks/useElement'
 
-const Arrow = ({ element }) => {
+interface Props {
+  element: PenElement
+}
+
+const Pen = ({ element }: Props) => {
   const props = useElement(element)
 
   return (
-    <KonvaArrow
+    <KonvaLine
       {...props}
       points={element.points}
-      shadowBlur={10}
       fill={element.stroke}
       stroke={element.stroke}
       strokeWidth={element.strokeWidth}
@@ -19,4 +23,4 @@ const Arrow = ({ element }) => {
   )
 }
 
-export default Arrow
+export default Pen

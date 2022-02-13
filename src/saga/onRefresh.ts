@@ -30,7 +30,7 @@ function* doOnRefresh(): unknown {
   )
 
   yield call(sendMessageToScreens, screens, {
-    message: '@APP/REFRESH',
+    message: 'REFRESH',
   })
 }
 export default function* rootSaga() {

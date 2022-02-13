@@ -6,7 +6,8 @@ import circle from './Circle'
 import arrow from './Arrow'
 import pen from './Pen'
 import text from './Text'
-
+import { useAppSelector } from '../../../hooks/useAppSelector'
+import { selectElementById } from '../../../reducers/draw'
 const types = {
   image,
   rect,
@@ -16,15 +17,25 @@ const types = {
   pen,
   text,
 }
+interface Props {
+  id: string
+}
 
-const Element = ({ element, onChange }) => {
+const Element = ({ id }: Props) => {
+  const element = useAppSelector(state => selectElementById(state, id))
+
+  if (!element) {
+    return null
+  }
+
   const ElementType = types[element.type]
 
   if (!ElementType) {
     return null
   }
-
-  return <ElementType onChange={onChange} element={element} />
+  // TODO - handle ts-ignore
+  // @ts-ignore
+  return <ElementType element={element} />
 }
 
 export default Element

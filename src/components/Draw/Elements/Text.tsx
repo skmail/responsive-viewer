@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { Text as KonvaText } from 'react-konva'
-import { useSelectionContext } from '../contexts/SelectionProvider'
-import { useTransformerContext } from '../contexts/TransformerProvider'
 import { useElement } from '../hooks/useElement'
+import { TextElement } from '../../../types/draw'
+import { useAppSelector } from '../../../hooks/useAppSelector'
+import { selectSelectedElementId, updateElement } from '../../../reducers/draw'
+import { useAppDispatch } from '../../../hooks/useAppDispatch'
+import { useStageContext } from '../contexts/StageProvider'
 
-const Text = ({ element, onChange }) => {
+interface Props {
+  element: TextElement
+}
+const Text = ({ element }: Props) => {
   const { ref, ...props } = useElement(element)
   const [isEditing, setIsEditing] = useState(false)
-  const { selected } = useSelectionContext()
-  const transformerRef = useTransformerContext()
+  const selected = useAppSelector(selectSelectedElementId)
+  const { getRef } = useStageContext()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     const textNode = ref.current
-
     textNode.on('dblclick dbltap', () => {
       setIsEditing(true)
     })
@@ -20,16 +26,18 @@ const Text = ({ element, onChange }) => {
     setTimeout(() => {
       setIsEditing(true)
     }, 10)
-  }, [])
+  }, [ref])
 
   useEffect(() => {
-    if (selected !== element.id) {
+    const transformer = getRef('transformer')
+    if (selected !== element.id || !transformer) {
       return
     }
-    const textNode = ref.current
-    const oldAnchors = transformerRef.current.enabledAnchors()
 
-    transformerRef.current.enabledAnchors(['middle-left', 'middle-right'])
+    const textNode = ref.current
+    const oldAnchors = transformer.enabledAnchors()
+
+    transformer.enabledAnchors(['middle-left', 'middle-right'])
 
     textNode.on('transform', function() {
       // reset scale, so only with is changing by transformer
@@ -40,24 +48,26 @@ const Text = ({ element, onChange }) => {
     })
 
     return () => {
-      if (transformerRef.current) {
-        transformerRef.current.enabledAnchors(oldAnchors)
+      if (transformer && transformer.children?.length) {
+        transformer.enabledAnchors(oldAnchors)
       }
       textNode.off('transform')
     }
-  }, [element.id, selected])
+  }, [selected, element.id, ref, getRef])
 
   useEffect(() => {
-    if (!isEditing) {
+    const transformer = getRef('transformer')
+
+    if (!isEditing || !transformer) {
       return
     }
-    const transformer = transformerRef.current
-    const dom = document.getElementById('canvas-dom-wrapper')
+
+    const dom = document.getElementById('canvas-dom-wrapper') as HTMLDivElement
 
     const overlay = document.createElement('div')
 
     overlay.style.position = 'absolute'
-    overlay.style.inset = 0
+    overlay.style.inset = '0'
 
     const textarea = document.createElement('textarea')
 
@@ -68,7 +78,7 @@ const Text = ({ element, onChange }) => {
     transformer.hide()
 
     textarea.value = textNode.text()
-    textarea.style.zIndex = 100
+    textarea.style.zIndex = '100'
     textarea.style.position = 'absolute'
     textarea.style.top = textNode.y() + 'px'
     textarea.style.left = textNode.x() + 'px'
@@ -111,20 +121,23 @@ const Text = ({ element, onChange }) => {
     textarea.style.height = textarea.scrollHeight + 3 + 'px'
 
     textarea.focus()
+    textarea.select()
 
-    function setTextareaWidth(newWidth) {
+    function setTextareaWidth(newWidth: number) {
       if (!newWidth) {
         // set width for placeholder
         newWidth = textNode.placeholder.length * textNode.fontSize()
       }
       // some extra fixes on different browsers
-      var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+      const isSafari = /^((?!chrome|android).)*safari/i.test(
+        navigator.userAgent
+      )
       var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
       if (isSafari || isFirefox) {
         newWidth = Math.ceil(newWidth)
       }
 
-      var isEdge = document.documentMode || /Edge/.test(navigator.userAgent)
+      const isEdge = document.DOCUMENT_NODE || /Edge/.test(navigator.userAgent)
       if (isEdge) {
         newWidth += 1
       }
@@ -144,9 +157,14 @@ const Text = ({ element, onChange }) => {
 
     textarea.addEventListener('click', e => e.stopPropagation())
     overlay.addEventListener('click', () => {
-      onChange({
-        text: textarea.value,
-      })
+      dispatch(
+        updateElement({
+          id: element.id,
+          props: {
+            text: textarea.value,
+          },
+        })
+      )
       close()
     })
 
@@ -159,14 +177,14 @@ const Text = ({ element, onChange }) => {
 
     window.removeEventListener('click', close)
     return () => {
-      overlay.parentNode.removeChild(overlay)
-      textarea.parentNode.removeChild(textarea)
+      overlay.parentNode?.removeChild(overlay)
+      textarea.parentNode?.removeChild(textarea)
       window.removeEventListener('click', close)
       textNode.show()
       transformer.show()
       transformer.forceUpdate()
     }
-  }, [isEditing, ref])
+  }, [isEditing, getRef, ref, dispatch, element.id])
 
   return (
     <>
@@ -179,7 +197,6 @@ const Text = ({ element, onChange }) => {
         height={element.height}
         text={element.text}
         fontSize={20}
-        shadowBlur={10}
         fill={element.fill}
       />
     </>

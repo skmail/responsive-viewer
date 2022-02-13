@@ -1,6 +1,6 @@
 //https://gist.github.com/karlgroves/7544592
 function getDomPath(el: HTMLElement) {
-  var stack = []
+  const stack = []
 
   while (el.parentElement != null) {
     let sibCount = 0
@@ -24,7 +24,11 @@ function getDomPath(el: HTMLElement) {
     el = el.parentElement
   }
 
-  return stack.slice(1) // removes the html element
+  stack.shift()
+  stack.unshift('  ')
+
+  // removes the html element
+  return stack
 }
 
 export default function domPath(element: HTMLElement) {

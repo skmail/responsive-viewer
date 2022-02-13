@@ -1,26 +1,25 @@
 import React from 'react'
-import { Rect as KonvaRect } from 'react-konva'
+import { Circle as KonvaCircle } from 'react-konva'
+import { CircleElement } from '../../../types/draw'
 import { useElement } from '../hooks/useElement'
-
-const Rect = ({ element }) => {
+interface Props {
+  element: CircleElement
+}
+const Circle = ({ element }: Props) => {
   const props = useElement(element)
-
   return (
-    <KonvaRect
+    <KonvaCircle
       {...props}
       x={element.x}
       y={element.y}
-      width={element.width}
-      height={element.height}
+      radius={element.radius}
       fill={element.fill}
       stroke={element.stroke}
       strokeWidth={element.strokeWidth}
       lineJoin={'round'}
       lineCap={'round'}
-      shadowBlur={10}
-      cornerRadius={4}
     />
   )
 }
 
-export default Rect
+export default Circle

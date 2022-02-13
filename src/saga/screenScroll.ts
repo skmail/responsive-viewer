@@ -36,12 +36,8 @@ function* doScrollToScreen({ payload: id }: PayloadAction<string>) {
   yield put(dehighlightScreen())
 }
 
-function* doScrollAfterScreenSaved({
-  payload,
-}: PayloadAction<{ screen: Device }>) {
-  const {
-    screen: { id },
-  } = payload
+function* doScrollAfterScreenSaved({ payload }: PayloadAction<Device>) {
+  const { id } = payload
 
   const screens: Device[] = yield select(state =>
     selectScreensByTab(state, selectSelectedTab(state))

@@ -14,11 +14,11 @@ function* doInspectByMouse(): unknown {
   )
   if (mouseInspect) {
     yield call(sendMessageToScreens, screens, {
-      message: '@APP/ENABLE_MOUSE_INSPECTOR',
+      message: 'ENABLE_MOUSE_INSPECTOR',
     })
   } else {
     yield call(sendMessageToScreens, screens, {
-      message: '@APP/DISABLE_MOUSE_INSPECTOR',
+      message: 'DISABLE_MOUSE_INSPECTOR',
     })
   }
 }

@@ -3,13 +3,14 @@ import MuiTabs from '@mui/material/Tabs'
 import MuiTab from '@mui/material/Tab'
 import {
   selectSelectedTabIndex,
-  selectTabByIndex,
+  setTabByIndex,
   selectTabs,
 } from '../../reducers/app'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { toggleTabDialog } from '../../reducers/layout'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { styled, darken } from '@mui/material/styles'
+import Add from '@mui/icons-material/Add'
 
 const StyledTabs = styled(MuiTabs)(({ theme }) => ({
   height: 30,
@@ -33,7 +34,7 @@ const Tabs = () => {
       dispatch(toggleTabDialog())
       return
     }
-    dispatch(selectTabByIndex(index))
+    dispatch(setTabByIndex(index))
   }
 
   return (
@@ -58,7 +59,7 @@ const Tabs = () => {
           />
         ))}
 
-        <StyledTab label={'add'} value={-1} />
+        <StyledTab label={<Add />} value={-1} />
       </StyledTabs>
     </div>
   )

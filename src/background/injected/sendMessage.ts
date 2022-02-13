@@ -1,3 +1,5 @@
+import { getPrefixedMessage } from '../../utils/getPrefixedMessage'
+
 export const sendMessage = (
   message: string,
   data: { [key: string]: any } = {}
@@ -8,7 +10,7 @@ export const sendMessage = (
   window.top.postMessage(
     {
       ...data,
-      message,
+      message: getPrefixedMessage(message),
       frameId: window.frameID,
     },
     '*'

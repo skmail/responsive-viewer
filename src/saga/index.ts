@@ -14,6 +14,7 @@ import searchElement from './searchElement'
 import fillUserAgent from './fillUserAgent'
 import onRefresh from './onRefresh'
 import iframeLoaded from './iframeLoaded'
+import onSetTab from './onSetTab'
 
 export default function* rootSaga() {
   yield fork(autoSave)
@@ -31,4 +32,5 @@ export default function* rootSaga() {
 
   yield fork(onRefresh)
   yield fork(iframeLoaded)
+  yield fork(onSetTab)
 }

@@ -16,6 +16,8 @@ const Drawer = styled(({ open, ...rest }: Props) => <Box {...rest} />)(
     width: open ? 225 : 60,
     background: darken(theme.palette.background.default, 0),
     borderRight: `1px solid ${lighten(theme.palette.background.default, 0.2)} `,
+    display: 'flex',
+    flexDirection: 'column',
   })
 )
 

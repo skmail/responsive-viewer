@@ -1,7 +1,7 @@
 import { call, select, takeLatest } from 'redux-saga/effects'
 import { exportApp, selectApp, State } from '../reducers/app'
 
-import { saveAs } from 'file-saver'
+import { saveAs } from '../utils/saveAs'
 
 function* doExportApp() {
   const state: State = yield select(selectApp)

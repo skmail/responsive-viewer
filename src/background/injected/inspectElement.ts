@@ -15,28 +15,18 @@ export const clearInspector = () => {
 const onMouseLeave = () => {
   clearInspector()
 
-  sendMessage('@APP/CLEAR_INSPECT_ELEMENT')
+  sendMessage('CLEAR_INSPECT_ELEMENT')
 }
 
 const onClick = (e: MouseEvent) => {
-  sendMessage('@APP/FINISH_INSPECT_ELEMENT')
+  sendMessage('FINISH_INSPECT_ELEMENT')
 }
 
-const getMouseElement = (e: MouseEvent, log = false) => {
+const getMouseElement = (e: MouseEvent) => {
   const element = document
     .elementsFromPoint(e.clientX, e.clientY)
     .find(element => element !== highlightElement) as HTMLElement
 
-  if (log) {
-    // @ts-ignore
-    console.log(
-      e.clientX,
-      e.clientY,
-
-      // @ts-ignore
-      document.elementsFromPoint(e.clientX, e.clientY).map(domPath)
-    )
-  }
   const parentSvg = findWrappingSvg(element)
 
   return parentSvg ? parentSvg : element
@@ -78,7 +68,7 @@ const inspectByMouseMove = throttle((e: MouseEvent) => {
 
   renderHighlight(rect)
 
-  sendMessage('@APP/INSPECT_ELEMENT', {
+  sendMessage('INSPECT_ELEMENT', {
     path: domPath(element),
   })
 }, 200)

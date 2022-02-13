@@ -1,7 +1,7 @@
 import { sendMessage } from './sendMessage'
 
 export default function dimensions(data = {}) {
-  sendMessage('@APP/DIMENSIONS', {
+  sendMessage('DIMENSIONS', {
     ...data,
     height: Math.max(
       document.body.scrollHeight,

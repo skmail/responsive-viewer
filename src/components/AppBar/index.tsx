@@ -16,6 +16,9 @@ import Tools from './Tools'
 
 const AppBarView = styled(MuiAppBar)(({ theme }) => ({
   borderBottom: `1px solid ${lighten(theme.palette.background.default, 0.2)} `,
+  [theme.breakpoints.down('md')]: {
+    minWidth: 750,
+  },
 }))
 const Logo = styled(AppLogo)(() => ({
   width: 40,

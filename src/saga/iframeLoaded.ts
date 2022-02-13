@@ -8,7 +8,7 @@ function* doIframeLoaded(action: PayloadAction<string>): unknown {
   const screen = yield select(state => selectScreenById(state, action.payload))
 
   yield call(sendMessageToScreens, [screen], {
-    message: '@APP/READY',
+    message: 'READY',
   })
 }
 

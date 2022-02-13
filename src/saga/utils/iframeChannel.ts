@@ -1,4 +1,5 @@
 import { END, eventChannel } from 'redux-saga'
+import { getPrefixedMessage } from '../../utils/getPrefixedMessage'
 
 type Message = {
   message: string
@@ -7,7 +8,10 @@ type Message = {
 type Event<T> = {
   data: T
 }
-export const iframeChannel = (name = '@APP/', stopOnFirstMessage = false) =>
+export const iframeChannel = (
+  name = getPrefixedMessage(),
+  stopOnFirstMessage = false
+) =>
   eventChannel(emitter => {
     const onMessage = (event: Event<Message>) => {
       if (!event.data || !String(event.data.message).startsWith(name)) {

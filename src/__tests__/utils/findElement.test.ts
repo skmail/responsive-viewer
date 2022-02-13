@@ -11,6 +11,12 @@ test('split dom path', () => {
   ])
 })
 
+test('split dom path 2', () => {
+  const result = splitPath('div:eq(0) > header > div:eq(1) ')
+
+  expect(result).toStrictEqual(['div', 0, ':scope > header > div', 1])
+})
+
 const createElement = (id?: string) => {
   const element = document.createElement('div')
   if (id) {

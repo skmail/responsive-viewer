@@ -12,6 +12,7 @@ import { RootState } from '../store'
 import { Device } from '../types'
 import { iframeChannel } from './utils/iframeChannel'
 import { sendMessageToScreens } from './utils/sendMessageToScreens'
+import { getPrefixedMessage } from '../utils/getPrefixedMessage'
 
 function* doIframeCommunications(): unknown {
   const channel = iframeChannel()
@@ -30,15 +31,15 @@ function* doIframeCommunications(): unknown {
     })
 
     switch (data.message) {
-      case '@APP/READY':
+      case getPrefixedMessage('READY'):
         yield call(sendMessageToScreens, screens, {
-          message: '@APP/WHO_ARE_YOU',
+          message: 'WHO_ARE_YOU',
           fromFrameId: data.frameId,
         })
 
         break
 
-      case '@APP/IDENTIFIED':
+      case getPrefixedMessage('IDENTIFIED'):
         yield put(
           screenConnected({
             screenId: data.screen.id,
@@ -46,24 +47,24 @@ function* doIframeCommunications(): unknown {
           })
         )
         yield call(platform.runtime.sendMessage, {
-          message: 'SCREEN_IDENTIFIED',
+          message: getPrefixedMessage('SCREEN_IDENTIFIED'),
           screenId: data.screen.id,
           frameId: data.frameId,
         })
         break
-      case '@APP/FRAME_SCROLL':
+      case getPrefixedMessage('FRAME_SCROLL'):
         allowedToSend = yield select(selectSyncScroll)
         break
 
-      case '@APP/CLICK':
-      case '@APP/DELEGATE_EVENT':
+      case getPrefixedMessage('CLICK'):
+      case getPrefixedMessage('DELEGATE_EVENT'):
         allowedToSend = yield select(selectSyncClick)
         break
 
-      case '@APP/FINISH_INSPECT_ELEMENT':
-      case '@APP/CLEAR_INSPECT_ELEMENT':
-      case '@APP/INSPECT_ELEMENT':
-      case '@APP/REFRESH':
+      case getPrefixedMessage('FINISH_INSPECT_ELEMENT'):
+      case getPrefixedMessage('CLEAR_INSPECT_ELEMENT'):
+      case getPrefixedMessage('INSPECT_ELEMENT'):
+      case getPrefixedMessage('REFRESH'):
         allowedToSend = true
         break
 
@@ -72,7 +73,7 @@ function* doIframeCommunications(): unknown {
     }
 
     if (allowedToSend) {
-      yield call(sendMessageToScreens, screens, data)
+      yield call(sendMessageToScreens, screens, data, 0, true)
     }
   }
 }

@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { ScreenshotType } from '../../types'
 import { screenshot } from '../../reducers/screenshots'
+import Tooltip from '@mui/material/Tooltip'
 
 const Screenshot = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null)
@@ -27,9 +28,11 @@ const Screenshot = () => {
 
   return (
     <React.Fragment>
-      <IconButton title="take a screenshot for all screens" onClick={onClick}>
-        <CameraIcon fontSize={'small'} />
-      </IconButton>
+      <Tooltip arrow title={`Screenshot all screens`}>
+        <IconButton onClick={onClick}>
+          <CameraIcon fontSize={'small'} />
+        </IconButton>
+      </Tooltip>
 
       <Menu
         anchorEl={anchorEl}

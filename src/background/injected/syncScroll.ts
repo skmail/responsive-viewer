@@ -46,7 +46,7 @@ window.addEventListener(
     if (window.userScroll === false) {
       return
     }
-    sendMessage('@APP/FRAME_SCROLL', {
+    sendMessage('FRAME_SCROLL', {
       scrollTop: document.documentElement.scrollTop,
       scrollLeft: document.documentElement.scrollLeft,
       path: getDomPath(e.target as HTMLElement),

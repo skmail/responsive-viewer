@@ -1,14 +1,12 @@
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
-type ScreenState = {
+export type ScreenRuntime = {
   isLoading: boolean
   frameId?: string
 }
 export type State = {
-  screens: {
-    [key: string]: ScreenState
-  }
+  screens: Record<string, ScreenRuntime>
 }
 
 const initialState: State = {
@@ -41,14 +39,26 @@ export const slice = createSlice({
         isLoading: true,
       }
     },
+
+    replaceScreensRuntime(
+      state,
+      action: PayloadAction<Record<string, ScreenRuntime>>
+    ) {
+      state.screens = action.payload
+    },
   },
 })
 
-export const { screenConnected, screenIsLoading } = slice.actions
+export const {
+  screenConnected,
+  screenIsLoading,
+  replaceScreensRuntime,
+} = slice.actions
 
 export const iframeLoaded = createAction<string>('runtime/iframeLoaded')
 export const select = (state: RootState) => state.runtime
 
+export const selectSreensRuntime = (state: RootState) => select(state).screens
 export const selectIsScreenLoading = (state: RootState, screenId: string) => {
   const screen = select(state).screens[screenId]
   if (!screen) {

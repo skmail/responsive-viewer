@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react'
 import IconButton from '@mui/material/IconButton'
+import Tooltip from '@mui/material/Tooltip'
+
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { selectViewMode, switchViewMode } from '../../reducers/app'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
@@ -18,7 +20,7 @@ const ViewMode = () => {
     () => [
       {
         name: ViewModeEnum.vertical,
-        label: 'Stack screens grid',
+        label: 'Stack screens on grid',
         icon: (
           <Icon
             fill="none"
@@ -57,12 +59,14 @@ const ViewMode = () => {
   const mode = viewMode === ViewModeEnum.vertical ? modes[1] : modes[0]
 
   return (
-    <IconButton
-      value={mode.name}
-      onClick={() => dispatch(switchViewMode(mode.name))}
-    >
-      {mode.icon}
-    </IconButton>
+    <Tooltip arrow title={mode.label}>
+      <IconButton
+        value={mode.name}
+        onClick={() => dispatch(switchViewMode(mode.name))}
+      >
+        {mode.icon}
+      </IconButton>
+    </Tooltip>
   )
 }
 

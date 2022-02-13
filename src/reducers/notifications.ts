@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
 type Notification = {
-  type: 'success' | 'info'
+  type: 'success' | 'info' | 'error'
   message: string
   loading?: boolean
   cancellable?: boolean

@@ -14,7 +14,7 @@ export const findWrappingSvg = (element: HTMLElement): HTMLElement | null => {
 }
 
 export const splitPath = (path: string): (string | number)[] => {
-  const splitByDotRegexUsingEq = /(:eq\(.*\))/g
+  const splitByDotRegexUsingEq = /(:eq\(.*?\))/gi
 
   return path
     .trim()
@@ -29,7 +29,7 @@ export const splitPath = (path: string): (string | number)[] => {
       }
       r = r.trim()
       if (r.startsWith('>')) {
-        r = r.substring(1)
+        r = `:scope ${r}`
       }
       return r
     })
@@ -38,6 +38,7 @@ export const splitPath = (path: string): (string | number)[] => {
 
 export default function findElement(path: string) {
   const paths = splitPath(path)
+
   let element = document.body
 
   while (paths.length > 0) {

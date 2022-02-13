@@ -1,17 +1,20 @@
 import React from 'react'
-import { Circle as KonvaCircle } from 'react-konva'
+import { Ellipse as KonvaEllipse } from 'react-konva'
 import { useElement } from '../hooks/useElement'
-
-const Circle = ({ element }) => {
+import { EllipseElement } from '../../../types/draw'
+interface Props {
+  element: EllipseElement
+}
+const Ellipse = ({ element }: Props) => {
   const props = useElement(element)
   return (
-    <KonvaCircle
+    <KonvaEllipse
       {...props}
       x={element.x}
       y={element.y}
-      radius={element.radius}
+      radiusX={element.radiusX}
+      radiusY={element.radiusY}
       fill={element.fill}
-      shadowBlur={10}
       stroke={element.stroke}
       strokeWidth={element.strokeWidth}
       lineJoin={'round'}
@@ -20,4 +23,4 @@ const Circle = ({ element }) => {
   )
 }
 
-export default Circle
+export default Ellipse

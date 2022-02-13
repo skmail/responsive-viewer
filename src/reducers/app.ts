@@ -194,7 +194,7 @@ export const slice = createSlice({
       state.syncClick = !state.syncClick
     },
 
-    selectTabByIndex(state, action: PayloadAction<number>) {
+    setTabByIndex(state, action: PayloadAction<number>) {
       state.tab = state.tabs[action.payload].name
     },
 
@@ -276,7 +276,7 @@ export const {
   toggleSyncClick,
   toggleSyncScroll,
 
-  selectTabByIndex,
+  setTabByIndex,
 } = slice.actions
 
 export const appSaved = createAction('app/saved')
@@ -289,8 +289,12 @@ export const selectApp = (state: RootState) => state.app
 export const selectScreens = (state: RootState) => selectApp(state).screens
 
 export const selectSelectedTab = (state: RootState) => selectApp(state).tab
+
 export const selectSelectedTabIndex = (state: RootState) =>
   selectTabs(state).findIndex(tab => tab.name === selectSelectedTab(state))
+
+export const selectTabByIndex = (state: RootState, index: number) =>
+  selectTabs(state).find((tab, i) => i === index) as ScreensTab
 
 export const selectTabs = (state: RootState) => selectApp(state).tabs
 

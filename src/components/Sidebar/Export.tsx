@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem'
 import IconButton from '@mui/material/IconButton'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { exportApp, importApp } from '../../reducers/app'
-import Tooltip, { TooltipProps } from '@mui/material/Tooltip'
+import Tooltip from '@mui/material/Tooltip'
 
 export default function Export({
   tooltipPlacement,

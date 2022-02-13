@@ -1,21 +1,4 @@
-import platform from '../platform'
-
 const init = () => {
-  window.console = console
-
-  function setTimeout<TArgs extends any[]>(
-    callback: (...args: TArgs) => void,
-    ms?: number,
-    ...args: TArgs
-  ): number {
-    platform.runtime.sendMessage({ message: 'WAIT', time: ms, args }, callback)
-
-    return 0
-  }
-
-  // @ts-ignore
-  window.setTimeout = setTimeout
-
   const children = document.documentElement.children
 
   for (let i = 0; i < children.length; i++) {

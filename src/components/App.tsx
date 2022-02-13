@@ -7,7 +7,7 @@ import UserAgentDialog from './UserAgentDialog'
 import HelpDialog from './HelpDialog'
 import Tabs from './Tabs'
 import TabDialog from './TabDialog'
-// import Draw from './Draw'
+import Draw from './Draw'
 import { initialize } from '../reducers/app'
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { useAppSelector } from '../hooks/useAppSelector'
@@ -17,6 +17,15 @@ import Box from '@mui/material/Box'
 import LoadingScreen from './LoadingScreen'
 import Notifications from './Notifications'
 import ScreenshotBlocker from './ScreenshotBlocker'
+import { styled } from '@mui/material/styles'
+
+const Root = styled('div')(({ theme }) => ({
+  overflow: 'hidden',
+  height: '100vh',
+  width: '100vw',
+  display: 'flex',
+  flexDirection: 'column',
+}))
 
 function App() {
   const dispatch = useAppDispatch()
@@ -31,7 +40,7 @@ function App() {
   }
 
   return (
-    <Box overflow="hidden" height="100vh" display="flex" flexDirection="column">
+    <Root>
       <Notifications />
       <TabDialog />
       <ScreenDialog />
@@ -40,7 +49,7 @@ function App() {
       <HelpDialog />
 
       <AppBar />
-      {/* <Draw /> */}
+      <Draw />
 
       <Box display="flex" overflow="hidden" flex={1}>
         <Sidebar />
@@ -52,7 +61,7 @@ function App() {
       </Box>
 
       <ScreenshotBlocker />
-    </Box>
+    </Root>
   )
 }
 

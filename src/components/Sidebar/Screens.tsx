@@ -87,6 +87,7 @@ const ScreenItem = styled('div')(({ theme }) => ({
   fontSize: 11,
   padding: theme.spacing(0.5),
   margin: theme.spacing(0.5),
+  boxSizing: 'border-box',
   userSelect: 'none',
   '&:hover': {
     color: theme.palette.text.primary,
@@ -247,7 +248,10 @@ function ScreensView() {
               visible: true,
             })
           } else {
-            acc.invisibleScreens.push(screen)
+            acc.invisibleScreens.push({
+              ...screen,
+              visible: false,
+            })
           }
           return acc
         },
@@ -418,8 +422,8 @@ export default function Screens({ view }: { view: 'list' | 'popover' }) {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
+                  fillRule="evenodd"
+                  clipRule="evenodd"
                   d="M2.87868 2.87868C3.44129 2.31607 4.20435 2 5 2H19C19.7957 2 20.5587 2.31607 21.1213 2.87868C21.6839 3.44129 22 4.20435 22 5V15C22 15.7957 21.6839 16.5587 21.1213 17.1213C20.5587 17.6839 19.7957 18 19 18H15.5308L15.903 19.4888L16.7071 20.2929C16.9931 20.5789 17.0787 21.009 16.9239 21.3827C16.7691 21.7564 16.4045 22 16 22H8C7.59554 22 7.2309 21.7564 7.07612 21.3827C6.92134 21.009 7.0069 20.5789 7.29289 20.2929L8.09704 19.4888L8.46922 18H5C4.20435 18 3.44129 17.6839 2.87868 17.1213C2.31607 16.5587 2 15.7956 2 15V5C2 4.20435 2.31607 3.44129 2.87868 2.87868ZM4 14H20V15C20 15.2652 19.8946 15.5196 19.7071 15.7071C19.5196 15.8946 19.2652 16 19 16H5C4.73478 16 4.48043 15.8946 4.29289 15.7071C4.10536 15.5196 4 15.2652 4 15V14ZM20 12H4V5C4 4.73478 4.10536 4.48043 4.29289 4.29289C4.48043 4.10536 4.73478 4 5 4H19C19.2652 4 19.5196 4.10536 19.7071 4.29289C19.8946 4.48043 20 4.73478 20 5V12ZM10.5308 18L10.0308 20H13.9692L13.4692 18H10.5308Z"
                 />
               </svg>
