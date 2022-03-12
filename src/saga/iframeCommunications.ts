@@ -7,12 +7,12 @@ import {
   selectSyncClick,
   selectSyncScroll,
 } from '../reducers/app'
-import { screenConnected } from '../reducers/runtime'
 import { RootState } from '../store'
 import { Device } from '../types'
 import { iframeChannel } from './utils/iframeChannel'
 import { sendMessageToScreens } from './utils/sendMessageToScreens'
 import { getPrefixedMessage } from '../utils/getPrefixedMessage'
+import { screenIsLoaded } from '../reducers/runtime'
 
 function* doIframeCommunications(): unknown {
   const channel = iframeChannel()
@@ -32,26 +32,9 @@ function* doIframeCommunications(): unknown {
 
     switch (data.message) {
       case getPrefixedMessage('READY'):
-        yield call(sendMessageToScreens, screens, {
-          message: 'WHO_ARE_YOU',
-          fromFrameId: data.frameId,
-        })
-
+        yield put(screenIsLoaded(data.screenId))
         break
 
-      case getPrefixedMessage('IDENTIFIED'):
-        yield put(
-          screenConnected({
-            screenId: data.screen.id,
-            frameId: data.frameId,
-          })
-        )
-        yield call(platform.runtime.sendMessage, {
-          message: getPrefixedMessage('SCREEN_IDENTIFIED'),
-          screenId: data.screen.id,
-          frameId: data.frameId,
-        })
-        break
       case getPrefixedMessage('FRAME_SCROLL'):
         allowedToSend = yield select(selectSyncScroll)
         break

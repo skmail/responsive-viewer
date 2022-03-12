@@ -11,6 +11,7 @@ export type State = {
   pageId: string
   elementId: string
   latestStyles: Partial<Element>
+  pan: boolean
 }
 
 const initialState: State = {
@@ -22,6 +23,7 @@ const initialState: State = {
   pageId: '',
   drawingTool: undefined,
   latestStyles: {},
+  pan: false,
 }
 
 export const slice = createSlice({
@@ -30,6 +32,7 @@ export const slice = createSlice({
   reducers: {
     setDrawingTool(state, action: PayloadAction<DrawingTool>) {
       state.drawingTool = action.payload
+      state.pan = false
     },
 
     addElement(state, action: PayloadAction<Element>) {
@@ -99,7 +102,6 @@ export const slice = createSlice({
     nextPage(state) {
       const pages = state.pageIds
       const index = pages.findIndex(id => id === state.pageId)
-      console.log(index, pages.length - 1)
       if (index < pages.length - 1) {
         state.pageId = state.pageIds[index + 1]
         state.elementId = ''
@@ -112,6 +114,10 @@ export const slice = createSlice({
         state.pageId = state.pageIds[index - 1]
         state.elementId = ''
       }
+    },
+    togglePan(state) {
+      state.pan = !state.pan
+      state.drawingTool = undefined
     },
   },
 })
@@ -127,6 +133,7 @@ export const {
   setDrawData,
   nextPage,
   previousPage,
+  togglePan,
 } = slice.actions
 
 export const select = (state: RootState) => state.draw
@@ -154,6 +161,7 @@ export const selectLatestStyles = (state: RootState) =>
   select(state).latestStyles
 
 export const selectIsDrawOpen = (state: RootState) => select(state).open
+export const selectPan = (state: RootState) => select(state).pan
 
 export const selectHasNextPage = (state: RootState) => {
   const pages = select(state).pageIds

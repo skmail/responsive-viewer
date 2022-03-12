@@ -9,7 +9,7 @@ import {
 } from '../../../reducers/draw'
 import { Element } from '../../../types/draw'
 import { tools } from '../tools'
-export function useDrawingTool(stageRef: RefObject<Konva.Stage>) {
+export function useDrawingTool(stageRef: RefObject<Konva.Stage>, zoom = 1) {
   const drawingTool = useAppSelector(selectDrawingTool)
   const dispatch = useAppDispatch()
   const latestStyles = useRef<Partial<Element>>({})
@@ -28,21 +28,22 @@ export function useDrawingTool(stageRef: RefObject<Konva.Stage>) {
     const onDown = (event: Konva.KonvaEventObject<MouseEvent>) => {
       event.evt.stopPropagation()
       const stageBox = stage.content.getBoundingClientRect()
+
       const tool = new tools[drawingTool](
         {
           tool: drawingTool,
-          x: event.evt.pageX - stageBox.x,
-          y: event.evt.pageY - stageBox.y,
+          x: (event.evt.pageX - stageBox.x) / zoom,
+          y: (event.evt.pageY - stageBox.y) / zoom,
           latestStyles: latestStyles.current,
         },
 
         stage
       )
 
-      const onMove = (e: MouseEvent) => {
+      const onMove = (event: MouseEvent) => {
         tool.move({
-          x: e.pageX - stageBox.x,
-          y: e.pageY - stageBox.y,
+          x: (event.pageX - stageBox.x) / zoom,
+          y: (event.pageY - stageBox.y) / zoom,
         })
       }
       const onUp = () => {
@@ -63,5 +64,5 @@ export function useDrawingTool(stageRef: RefObject<Konva.Stage>) {
     return () => {
       stage.off('mousedown')
     }
-  }, [drawingTool, dispatch, stageRef])
+  }, [drawingTool, dispatch, stageRef, zoom])
 }

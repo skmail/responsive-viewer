@@ -11,7 +11,11 @@ import {
 import { selectHighlightedScreen } from '../../reducers/layout'
 import { styled } from '@mui/material/styles'
 import { shallowEqual } from 'react-redux'
-import { selectIsScreenLoading } from '../../reducers/runtime'
+import {
+  selectIsScreenLoading,
+  selectRuntimeFrameStatus,
+} from '../../reducers/runtime'
+import { FrameStatus } from '../../types'
 interface Props {
   id: string
 }
@@ -45,19 +49,27 @@ const Progress = styled(LinearProgress)(() => ({
 
 const Iframe = ({ id }: Props) => {
   const screenDirection = useAppSelector(selectScreenDirection)
-  const url = useAppSelector(selectUrl)
   const screen = useAppSelector(
     state => selectScreenById(state, id),
     shallowEqual
   )
+
   const isHighlighted = useAppSelector(
     state => selectHighlightedScreen(state) === id
   )
-
   const isLoading = useAppSelector(state => selectIsScreenLoading(state, id))
 
   const [scrolling, setScrolling] = useState(true)
 
+  const url = useAppSelector(state => {
+    const frameStatus = selectRuntimeFrameStatus(state, id)
+    if (frameStatus === FrameStatus.IDLE) {
+      return `about:blank?screenId=${screen.id}`
+    }
+    return selectUrl(state)
+  })
+
+  // const url =
   useEffect(() => {
     let isShift = false
 

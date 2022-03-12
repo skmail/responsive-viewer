@@ -34,18 +34,6 @@ export function useElement(element: Element) {
 
   const draggable = element.draggable !== false && !drawingTool
 
-  const onUpdate = () => {
-    // const stage = getRef('stage')
-    // const transformer = getRef('transformer')
-    // if (!transformer || !transformer) {
-    //   return
-    // }
-    //save
-    // transformerRef.current.hide()
-    // const uri = stageRef.current.toDataURL()
-    // console.log(uri)
-    // transformerRef.current.show()
-  }
   return {
     id: element.id,
     ref,
@@ -63,7 +51,6 @@ export function useElement(element: Element) {
           },
         })
       )
-      onUpdate()
     },
     onTransformEnd: () => {
       dispatch(
@@ -77,7 +64,6 @@ export function useElement(element: Element) {
           },
         })
       )
-      onUpdate()
     },
   }
 }

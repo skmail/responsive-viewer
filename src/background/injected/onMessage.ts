@@ -9,7 +9,7 @@ export const onMessage = (callback: (data: any) => void) => {
       return
     }
 
-    if (event.data.frameId === window.frameID) {
+    if (event.data.screenId === window.screenId) {
       return
     }
 

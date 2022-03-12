@@ -157,6 +157,8 @@ export const scrollToScreen = createAction<string>('layout/scrollToScreen')
 export const searchElement = createAction<string>('layout/searchElement')
 export const refresh = createAction('layout/refresh')
 
+export const zoomToFit = createAction('layout/zoomToFit')
+
 export const selectLayout = (state: RootState) => state.layout
 
 export const selectMouseInspect = (state: RootState) =>

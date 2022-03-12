@@ -8,7 +8,7 @@ import { loadState } from '../utils/state'
 function* doInitialize(): unknown {
   let state: State = {
     ...(yield select(selectApp)),
-    // ...(yield call(loadState)),
+    ...(yield call(loadState)),
   }
 
   const tabUrl = window.location.href

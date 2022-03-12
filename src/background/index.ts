@@ -1,11 +1,23 @@
 ///<reference types="chrome"/>
 import { State } from '../reducers/app'
+import { Device } from '../types'
 import { getPrefixedMessage } from '../utils/getPrefixedMessage'
 
 import * as url from '../utils/url'
 
-const frames = new Map()
-const screens = new Map()
+const replaceHeader = (
+  headers: chrome.webRequest.HttpHeader[],
+  name: string,
+  value: string
+) => {
+  return [
+    ...headers.filter(header => header.name !== value),
+    {
+      name,
+      value,
+    },
+  ]
+}
 
 const injectContents = (tab: chrome.tabs.Tab) => {
   if (!tab.id) {
@@ -26,8 +38,23 @@ const injectContents = (tab: chrome.tabs.Tab) => {
 
 const start = (tab: chrome.tabs.Tab) => {
   let state: State
-
   let started = false
+
+  const getScreenUserAgent = (screen: Device) => {
+    let userAgent = screen.userAgent
+
+    const userAgents = state.userAgents
+
+    const value = userAgents.find(agent => agent.name === userAgent)
+
+    if (value) {
+      userAgent = value.value
+    }
+
+    return userAgent
+  }
+
+  const screens = new Map()
 
   if (!tab.id || !tab.url) {
     return
@@ -48,6 +75,10 @@ const start = (tab: chrome.tabs.Tab) => {
   ) {
     const responseHeaders = [...(details.responseHeaders || [])]
 
+    if (tab.id !== details.tabId) {
+      return { responseHeaders }
+    }
+
     if (details.frameId === 0) {
       responseHeaders.push({ name: 'Content-Type', value: 'image/png' })
     }
@@ -63,10 +94,6 @@ const start = (tab: chrome.tabs.Tab) => {
         )
       }),
     }
-  }
-
-  const onWebNavigationError = () => {
-    chrome.contentSettings.javascript.clear({})
   }
 
   const onWebNavigationComplete = function(
@@ -87,6 +114,9 @@ const start = (tab: chrome.tabs.Tab) => {
     if (url.extractHostname(details.url) !== tabHostname) {
       return
     }
+    if (!screens.get(details.frameId)) {
+      return
+    }
 
     chrome.tabs.executeScript(details.tabId, {
       file: 'static/js/inject.js',
@@ -98,8 +128,25 @@ const start = (tab: chrome.tabs.Tab) => {
   const onBeforeNavigate = function(
     details: chrome.webNavigation.WebNavigationTransitionCallbackDetails
   ) {
+    if (details.tabId !== tab.id) {
+      return
+    }
     if (details.frameId !== 0) {
-      const screenId = screens.get(frames.get(details.frameId))
+      if (details.url.startsWith('about:blank?screenId=')) {
+        const screenId = new URL(details.url).searchParams.get('screenId')
+        screens.set(details.frameId, screenId)
+        chrome.tabs.sendMessage(
+          details.tabId,
+          {
+            message: getPrefixedMessage('FRAME_CONNECTED'),
+            frameId: details.frameId,
+            screenId,
+          },
+          () => {}
+        )
+        return
+      }
+      const screenId = screens.get(details.frameId)
       if (screenId) {
         chrome.tabs.sendMessage(
           details.tabId,
@@ -149,16 +196,17 @@ const start = (tab: chrome.tabs.Tab) => {
         }, message.time)
         break
 
-      case getPrefixedMessage('SET_FRAME_ID'):
-        frames.set(sender.frameId, message.frameId)
-        break
-
       case getPrefixedMessage('LOAD_STATE'):
         state = message.state
         break
-      case getPrefixedMessage('SCREEN_IDENTIFIED'):
-        screens.set(message.frameId, message.screenId)
+
+      case getPrefixedMessage('GET_SCREEN_ID'):
+        sendResponse({
+          screenId: screens.get(sender.frameId),
+          ok: true,
+        })
         break
+
       default:
         // do nothing.
         sendResponse({})
@@ -171,44 +219,32 @@ const start = (tab: chrome.tabs.Tab) => {
   const onBeforeSendHeaders = function(
     details: chrome.webRequest.WebRequestHeadersDetails
   ) {
-    const screenId = frames.get(details.frameId)
-
-    const screen = state?.screens?.find(screen => screen.id === screenId)
-    console.log(screenId, screen)
-    if (!screenId || !screen) {
-      return {
-        requestHeaders: details.requestHeaders,
-      }
+    if (details.tabId !== tab.id) {
+      return
     }
-
-    let userAgent = screen.userAgent
-
-    const userAgents = state.userAgents
-
-    const value = userAgents.find(agent => agent.name === userAgent)
-
-    if (value) {
-      userAgent = value.value
+    const screenId = screens.get(details.frameId)
+    if (!screenId) {
+      return
     }
-    console.log('user agent', userAgent, screen.userAgent)
-    details.requestHeaders = details.requestHeaders?.filter(
-      header => header.name !== 'User-Agent'
-    )
+    const screen = state.screens.find(screen => screen.id === screenId)
 
-    details.requestHeaders?.push({
-      name: 'User-Agent',
-      value: userAgent,
-    })
+    if (!screen) {
+      return
+    }
+    let headers = [...(details.requestHeaders || [])]
 
-    return { requestHeaders: details.requestHeaders }
+    headers = replaceHeader(headers, 'User-Agent', getScreenUserAgent(screen))
+
+    return { requestHeaders: headers }
   }
 
-  const onBeforeRequest = () => {
-    if (!started) {
+  const onBeforeRequest = (
+    details: chrome.webRequest.WebRequestBodyDetails
+  ) => {
+    if (!started || details.tabId !== tab.id) {
       return
     }
 
-    console.log('onBeforeRequest')
     chrome.webRequest.onHeadersReceived.removeListener(onHeadersReceived)
     chrome.webRequest.onBeforeSendHeaders.removeListener(onBeforeSendHeaders)
 
@@ -219,8 +255,6 @@ const start = (tab: chrome.tabs.Tab) => {
     chrome.webRequest.onBeforeRequest.removeListener(onBeforeRequest)
 
     chrome.runtime.onMessage.removeListener(onMessages)
-
-    chrome.webNavigation.onErrorOccurred.removeListener(onWebNavigationError)
   }
 
   chrome.webRequest.onHeadersReceived.addListener(
@@ -233,7 +267,6 @@ const start = (tab: chrome.tabs.Tab) => {
     ['blocking', 'responseHeaders', 'extraHeaders']
   )
 
-  chrome.webNavigation.onErrorOccurred.addListener(onWebNavigationError)
   chrome.webNavigation.onCompleted.addListener(onWebNavigationComplete)
 
   chrome.webNavigation.onCommitted.addListener(onBeforeNavigate)

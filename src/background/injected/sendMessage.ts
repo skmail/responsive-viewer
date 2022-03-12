@@ -11,7 +11,7 @@ export const sendMessage = (
     {
       ...data,
       message: getPrefixedMessage(message),
-      frameId: window.frameID,
+      screenId: window.screenId,
     },
     '*'
   )

@@ -15,6 +15,7 @@ import {
   selectSelectedTab,
   selectUrl,
   selectZoom,
+  updateZoom,
 } from '../reducers/app'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
@@ -57,6 +58,7 @@ function* doScreenshot(
     type: ScreenshotType
   }>
 ): unknown {
+  yield put(updateZoom(1))
   const { type, screens: screenIds } = action.payload
   const screens: Device[] = yield select(state =>
     screenIds.length
@@ -170,7 +172,6 @@ function* captureScreen(
   const height = (type === 'full' ? iframeResponse.height : screenHeight) * zoom
 
   iframeElement.style.height = `${height}px`
-
   const parent: HTMLDivElement = yield call(
     { context: document, fn: document.getElementById },
     'screens-wrapper'
@@ -264,7 +265,7 @@ function* doDownload(action: PayloadAction<string>): unknown {
     selectScreenshotsById(state, action.payload)
   )
 
-  const result = yield call(toZip, screenshots)
+  const result = yield call(toZip, screenshots.screenshots)
 
   saveAs(result, slugify(`${extractHostname(screenshots.url)}-screenshots.zip`))
 }

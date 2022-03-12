@@ -1,10 +1,13 @@
 import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
+import { FrameStatus } from '../types'
 
 export type ScreenRuntime = {
   isLoading: boolean
-  frameId?: string
+  frameId?: number
+  frameStatus: FrameStatus
 }
+
 export type State = {
   screens: Record<string, ScreenRuntime>
 }
@@ -19,16 +22,16 @@ export const slice = createSlice({
     screenConnected(
       state,
       action: PayloadAction<{
-        frameId: string
+        frameId: number
         screenId: string
       }>
     ) {
-      let screen = state.screens[action.payload.screenId]
-
+      let screen = state.screens[action.payload.screenId] || {}
       state.screens[action.payload.screenId] = {
         ...screen,
-        isLoading: false,
+        isLoading: true,
         frameId: action.payload.frameId,
+        frameStatus: FrameStatus.CONNECTED,
       }
     },
 
@@ -46,12 +49,17 @@ export const slice = createSlice({
     ) {
       state.screens = action.payload
     },
+
+    screenIsLoaded(state, action: PayloadAction<string>) {
+      state.screens[action.payload].isLoading = false
+    },
   },
 })
 
 export const {
   screenConnected,
   screenIsLoading,
+  screenIsLoaded,
   replaceScreensRuntime,
 } = slice.actions
 
@@ -66,5 +74,16 @@ export const selectIsScreenLoading = (state: RootState, screenId: string) => {
   }
   return screen.isLoading
 }
+export const selectRuntimeFrameStatus = (
+  state: RootState,
+  screenId: string
+) => {
+  const screen = selectSreensRuntime(state)[screenId]
 
+  if (!screen) {
+    return FrameStatus.IDLE
+  }
+
+  return screen.frameStatus
+}
 export default slice.reducer

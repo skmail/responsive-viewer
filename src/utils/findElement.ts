@@ -39,7 +39,7 @@ export const splitPath = (path: string): (string | number)[] => {
 export default function findElement(path: string) {
   const paths = splitPath(path)
 
-  let element = document.body
+  let element = document.documentElement
 
   while (paths.length > 0) {
     const path = paths.shift()
@@ -69,7 +69,7 @@ export default function findElement(path: string) {
   const wrappingSvg = findWrappingSvg(element)
 
   if (wrappingSvg) {
-    return wrappingSvg
+    return wrappingSvg.parentElement || wrappingSvg
   }
 
   return element

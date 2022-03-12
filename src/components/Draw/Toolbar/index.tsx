@@ -6,15 +6,16 @@ import { DrawingTool } from '../../../types/draw'
 import { useAppSelector } from '../../../hooks/useAppSelector'
 import {
   selectDrawingTool,
+  selectPan,
   selectSelectedElement,
   setDrawingTool,
+  togglePan,
   updateElement,
 } from '../../../reducers/draw'
 import { useAppDispatch } from '../../../hooks/useAppDispatch'
 import { shallowEqual } from 'react-redux'
 import ToggleButton from '@mui/material/ToggleButton'
 import Stack from '@mui/material/Stack'
-import Button from '@mui/material/Button'
 
 const Root = styled(Stack)(({ theme }) => ({
   position: 'absolute',
@@ -50,6 +51,7 @@ const Toolbar = () => {
   ]
   const dispatch = useAppDispatch()
   const activeDrawingTool = useAppSelector(selectDrawingTool)
+  const pan = useAppSelector(selectPan)
 
   const setActiveTool = (tool: DrawingTool) => {
     dispatch(setDrawingTool(tool))
@@ -71,6 +73,35 @@ const Toolbar = () => {
 
   return (
     <Root spacing={1} direction="row">
+      <ToggleButton
+        selected={pan}
+        onClick={() => dispatch(togglePan())}
+        value={pan}
+      >
+        {!pan && (
+          <Icon viewBox="0 0 24 24" stroke="currentColor" fill="none">
+            <path
+              d="M8.135 11.57v2.148m0-2.147V6.417a1.288 1.288 0 0 1 2.577 0M8.135 11.57a1.288 1.288 0 0 0-2.577 0v1.717a6.442 6.442 0 0 0 12.884 0V8.994a1.288 1.288 0 0 0-2.577 0m-5.153-2.577v4.724m0-4.724v-.86a1.288 1.288 0 0 1 2.576 0v.86m0 0v4.724m0-4.724a1.288 1.288 0 0 1 2.577 0v2.577m0 0v2.147"
+              stroke="currentColor"
+              fill="none"
+            />
+          </Icon>
+        )}
+        {pan && (
+          <Icon viewBox="0 0 24 24">
+            <path
+              d="m12.5 12.5-2 5-4-11 11 4-5 2Zm0 0 5 5"
+              stroke="currentColor"
+              strokeWidth="1"
+              fill="none"
+              fillRule="evenodd"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Icon>
+        )}
+      </ToggleButton>
+
       {tools.map(tool => (
         <ToggleButton
           selected={tool === activeDrawingTool}

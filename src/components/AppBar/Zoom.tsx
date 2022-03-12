@@ -10,6 +10,8 @@ import { selectZoom, updateZoom } from '../../reducers/app'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 
 import { styled } from '@mui/material/styles'
+import Button from '@mui/material/Button'
+import { zoomToFit } from '../../reducers/layout'
 
 const Slider = styled(MuiSlider)(({ theme }) => ({
   width: 200,
@@ -91,6 +93,7 @@ const Zoom = () => {
       <IconButton disabled={canZoomIn} onClick={zoomIn}>
         <ZoomInIcon />
       </IconButton>
+      <Button onClick={() => dispatch(zoomToFit())}>Zoom to fit</Button>
     </Box>
   )
 }

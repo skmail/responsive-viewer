@@ -16,11 +16,12 @@ import Transformer from './Transformer'
 interface Props {
   width: number
   height: number
+  zoom?: number
 }
-const Canvas = ({ width, height }: Props) => {
+const Canvas = ({ width, height, zoom = 1 }: Props) => {
   const [stageRef] = useStageDrag()
 
-  useDrawingTool(stageRef)
+  useDrawingTool(stageRef, zoom)
 
   useKeyboardShortcuts()
 

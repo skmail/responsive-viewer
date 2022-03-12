@@ -46,6 +46,7 @@ export default function syncClick() {
 
 export const triggerClickEvent = ({ path }: { path: string }) => {
   let element = findElement(path) as HTMLElement
+
   if (!element) {
     return
   }
@@ -53,10 +54,14 @@ export const triggerClickEvent = ({ path }: { path: string }) => {
   if (element.tagName.toLowerCase() === 'input') {
     const evt = new MouseEvent('focus', {
       view: window,
+      bubbles: true,
+      cancelable: false,
     })
     element.dispatchEvent(evt)
   } else {
     const evt = new MouseEvent('click', {
+      bubbles: true,
+      cancelable: false,
       view: window,
     })
     element.dispatchEvent(evt)

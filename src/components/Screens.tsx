@@ -23,15 +23,18 @@ interface StyledProps extends BoxProps {
 }
 const ScreensView = styled(({ viewMode, zoom, ...rest }: StyledProps) => (
   <Box {...rest} />
-))<StyledProps>(({ viewMode, zoom }) => ({
+))<StyledProps>(({ theme, viewMode, zoom }) => ({
   display: 'flex',
-  width: `calc( (100vw - ${250}px) / ${zoom})`,
+  width: `calc( (100vw - ${225}px) / ${zoom})`,
   flexWrap: viewMode === 'vertical' ? 'wrap' : 'nowrap',
   transform: `scale(${zoom})`,
   transformOrigin: '0 0',
   backfaceVisibility: 'hidden',
   WebkitFontSmoothing: 'antialiased',
   position: 'relative',
+  [theme.breakpoints.down('lg')]: {
+    width: `calc( (100vw - ${60}px) / ${zoom})`,
+  },
 }))
 
 const Screens = () => {

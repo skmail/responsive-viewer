@@ -33,3 +33,8 @@ export enum ScreenshotType {
 }
 
 export type ToZipInput = { filename: string; url: string }[]
+
+export enum FrameStatus {
+  IDLE,
+  CONNECTED,
+}

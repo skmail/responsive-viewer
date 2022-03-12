@@ -1,9 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  WheelEvent,
+  MouseEvent as ReactMouseEvent,
+} from 'react'
 import Box from '@mui/material/Box'
 import { styled } from '@mui/material/styles'
 import Canvas from './Canvas'
 import { useAppSelector } from '../../hooks/useAppSelector'
-import { selectSelectedPage } from '../../reducers/draw'
+import { selectPan, selectSelectedPage } from '../../reducers/draw'
 
 const Root = styled(Box)(({ theme }) => ({
   height: '100%',
@@ -15,12 +21,19 @@ const Root = styled(Box)(({ theme }) => ({
   overflow: 'hidden',
 }))
 
+const PanArea = styled(Box)(({ theme }) => ({
+  inset: 0,
+  position: 'absolute',
+  cursor: 'grab',
+}))
+
 const DialogWrapper = () => {
   const canvasRef = useRef<HTMLDivElement>()
 
-  const [scale, setScale] = useState(1)
-  const [zoom, setZoom] = useState(0)
+  const [zoom, setZoom] = useState(1)
+  const [translate, setTranslate] = useState({ x: 0, y: 0 })
 
+  const pan = useAppSelector(selectPan)
   const { pageWidth, pageHeight } = useAppSelector(state => {
     const page = selectSelectedPage(state)
 
@@ -29,6 +42,7 @@ const DialogWrapper = () => {
       pageHeight: page?.height || 0,
     }
   })
+  const toFixed = (num: number) => parseFloat(num.toFixed(2))
   useEffect(() => {
     if (!canvasRef.current) {
       return
@@ -40,13 +54,15 @@ const DialogWrapper = () => {
 
       const containerRect = canvasRef.current.getBoundingClientRect()
 
-      setScale(
-        Math.min(
+      setZoom(
+        toFixed(
           Math.min(
-            containerRect.width / pageWidth,
-            containerRect.height / pageHeight
-          ),
-          1
+            Math.min(
+              containerRect.width / pageWidth,
+              containerRect.height / pageHeight
+            ),
+            1
+          )
         )
       )
     }
@@ -58,17 +74,50 @@ const DialogWrapper = () => {
     }
   }, [pageWidth, pageHeight])
 
+  const onPan = (event: ReactMouseEvent) => {
+    const initial = {
+      x: event.pageX,
+      y: event.pageY,
+    }
+    const onDrag = (event: MouseEvent) => {
+      event.stopPropagation()
+      event.preventDefault()
+      const x = event.pageX - initial.x
+      const y = event.pageY - initial.y
+      initial.x = event.pageX
+      initial.y = event.pageY
+      setTranslate(translate => ({
+        x: translate.x + x,
+        y: translate.y + y,
+      }))
+    }
+    const onUp = () => {
+      document.removeEventListener('mousemove', onDrag)
+      document.removeEventListener('mouseup', onUp)
+    }
+
+    document.addEventListener('mousemove', onDrag)
+    document.addEventListener('mouseup', onUp)
+  }
+
+  const onZoom = (event: WheelEvent) => {
+    if (event.deltaY > 0) {
+      setZoom(zoom => toFixed(Math.min(zoom + 0.1, 2)))
+    } else {
+      setZoom(zoom => toFixed(Math.max(0.2, zoom - 0.1)))
+    }
+  }
   return (
-    <Root ref={canvasRef}>
+    <Root onWheel={onZoom} ref={canvasRef}>
       <Box
         sx={{
-          transform: `scale(${scale})`,
+          transform: `translate(${translate.x}px, ${translate.y}px) scale(${zoom})`,
         }}
       >
-        <Canvas width={pageWidth} height={pageHeight} />
+        <Canvas width={pageWidth} height={pageHeight} zoom={zoom} />
+        <div id="canvas-dom-wrapper" />
       </Box>
-
-      <div id="canvas-dom-wrapper" />
+      {pan && <PanArea onMouseDown={onPan} />}
     </Root>
   )
 }

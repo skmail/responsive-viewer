@@ -24,10 +24,6 @@ function getDomPath(el: HTMLElement) {
     el = el.parentElement
   }
 
-  stack.shift()
-  stack.unshift('  ')
-
-  // removes the html element
   return stack
 }
 
