@@ -1,15 +1,22 @@
 import Tool from './tool'
 import Konva from 'konva'
 import { applyStrokeDashArray } from '../utils/stroke'
+import { Element } from '../../../types/draw'
 
 export default class Pen extends Tool {
   startX = 0
   startY = 0
   width = 0
   height = 0
-  instance = null
-
-  constructor({ x, y, latestStyles }, stage) {
+  instance: Konva.Line
+  constructor(
+    {
+      x,
+      y,
+      latestStyles,
+    }: { x: number; y: number; latestStyles: Partial<Element> },
+    stage: Konva.Stage
+  ) {
     super(stage)
     this.startX = x
     this.startY = y
@@ -26,7 +33,7 @@ export default class Pen extends Tool {
     this.layer.add(this.instance)
   }
 
-  move({ x, y }) {
+  move({ x, y }: { x: number; y: number }) {
     this.instance.points(this.instance.points().concat([x, y]))
   }
 

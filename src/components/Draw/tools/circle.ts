@@ -1,21 +1,26 @@
 import Tool from './tool'
 import Konva from 'konva'
 import { applyStrokeDashArray } from '../utils/stroke'
+import { Element } from '../../../types/draw'
 
-export default class Rect extends Tool {
+export default class Circle extends Tool {
   startX = 0
   startY = 0
-  width = 0
-  height = 0
-  instance = null
-
-  constructor({ x, y, latestStyles }, stage) {
+  instance: Konva.Circle
+  constructor(
+    {
+      x,
+      y,
+      latestStyles,
+    }: { x: number; y: number; latestStyles: Partial<Element> },
+    stage: Konva.Stage
+  ) {
     super(stage)
     this.startX = x
     this.startY = y
     const strokeWidth = latestStyles.strokeWidth || 2
 
-    this.instance = new Konva.Rect({
+    this.instance = new Konva.Circle({
       stroke: latestStyles.stroke || 'red',
       fill: latestStyles.fill,
       strokeWidth,
@@ -26,23 +31,23 @@ export default class Rect extends Tool {
     this.layer.add(this.instance)
   }
 
-  move({ x, y }) {
-    this.instance.x(x < this.startX ? x : this.startX)
-    this.instance.y(y < this.startY ? y : this.startY)
-    this.instance.width(x < this.startX ? this.startX - x : x - this.startX)
-    this.instance.height(y < this.startY ? this.startY - y : y - this.startY)
+  move({ x, y }: { x: number; y: number }) {
+    const radius = Math.sqrt(
+      Math.pow(x - this.startX, 2) + Math.pow(y - this.startY, 2)
+    )
+
+    this.instance.radius(radius)
+    this.instance.x(this.startX)
+    this.instance.y(this.startY)
   }
 
   finished() {
     this.instance.destroy()
-
     return this.createDataElement({
-      type: 'rect',
+      type: 'circle',
       x: this.instance.x(),
       y: this.instance.y(),
-      width: this.instance.width(),
-      height: this.instance.height(),
-
+      radius: this.instance.radius(),
       fill: this.instance.fill(),
       stroke: this.instance.stroke(),
       strokeWidth: this.instance.strokeWidth(),

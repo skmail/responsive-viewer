@@ -1,15 +1,23 @@
 import Tool from './tool'
 import Konva from 'konva'
 import { applyStrokeDashArray } from '../utils/stroke'
+import { Element } from '../../../types/draw'
 
 export default class Circle extends Tool {
   startX = 0
   startY = 0
-  tool = null
-  stroke = null
-  strokeWidth = null
+  tool: string
+  instance: Konva.Arrow
 
-  constructor({ x, y, tool, latestStyles }, stage) {
+  constructor(
+    {
+      x,
+      y,
+      tool,
+      latestStyles,
+    }: { x: number; y: number; tool: string; latestStyles: Partial<Element> },
+    stage: Konva.Stage
+  ) {
     super(stage)
     this.startX = x
     this.startY = y
@@ -31,7 +39,7 @@ export default class Circle extends Tool {
     this.layer.add(this.instance)
   }
 
-  move({ x, y }) {
+  move({ x, y }: { x: number; y: number }) {
     x = x - 1
     y = y - 1
     if (this.tool === 'arrow-pen') {

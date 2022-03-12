@@ -1,13 +1,14 @@
+import Konva from 'konva'
 import uuid from 'uuid'
 
 export default class Tool {
-  stage = null
-  layer = null
-  constructor(stage) {
+  stage: Konva.Stage
+  layer: Konva.Layer
+  constructor(stage: Konva.Stage) {
     this.stage = stage
     this.layer = stage.getLayers()[0]
   }
-  move() {}
+  move(data: any) {}
   finished() {}
 
   createDataElement(data = {}) {

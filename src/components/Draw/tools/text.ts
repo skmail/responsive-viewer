@@ -1,14 +1,21 @@
 import Tool from './tool'
+import { Element } from '../../../types/draw'
+import Konva from 'konva'
 
 export default class Text extends Tool {
   startX = 0
   startY = 0
   width = 0
   height = 0
-  instance = null
   fill = 'red'
-
-  constructor({ x, y, latestStyles }, stage) {
+  constructor(
+    {
+      x,
+      y,
+      latestStyles,
+    }: { x: number; y: number; latestStyles: Partial<Element> },
+    stage: Konva.Stage
+  ) {
     super(stage)
     this.startX = x
     this.startY = y

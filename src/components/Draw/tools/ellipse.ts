@@ -1,12 +1,20 @@
 import Tool from './tool'
 import Konva from 'konva'
 import { applyStrokeDashArray } from '../utils/stroke'
+import { Element } from '../../../types/draw'
 
 export default class Ellipse extends Tool {
   startX = 0
   startY = 0
-
-  constructor({ x, y, latestStyles }, stage) {
+  instance: Konva.Ellipse
+  constructor(
+    {
+      x,
+      y,
+      latestStyles,
+    }: { x: number; y: number; latestStyles: Partial<Element> },
+    stage: Konva.Stage
+  ) {
     super(stage)
     this.startX = x
     this.startY = y
@@ -19,11 +27,13 @@ export default class Ellipse extends Tool {
       dash: applyStrokeDashArray(latestStyles.dash, strokeWidth),
       lineCap: 'round',
       lineJoin: 'round',
+      radiusX: this.startX,
+      radiusY: this.startY,
     })
     this.layer.add(this.instance)
   }
 
-  move({ x, y }) {
+  move({ x, y }: { x: number; y: number }) {
     const [radiusX, drawX] = this.drawPoint(x, this.startX)
     const [radiusY, drawY] = this.drawPoint(y, this.startY)
 
@@ -33,7 +43,7 @@ export default class Ellipse extends Tool {
     this.instance.radiusY(radiusY)
   }
 
-  drawPoint(point1, point2) {
+  drawPoint(point1: number, point2: number) {
     if (point1 < point2) {
       return [(point2 - point1) * 0.5, point1]
     } else {
