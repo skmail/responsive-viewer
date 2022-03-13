@@ -4,11 +4,20 @@ import { initialize, initialized, selectApp, State } from '../reducers/app'
 import { getPrefixedMessage } from '../utils/getPrefixedMessage'
 
 import { loadState } from '../utils/state'
+import { validateAppState } from '../utils/validateAppState'
 
 function* doInitialize(): unknown {
+  let loadedState: Partial<State>
+
+  try {
+    loadedState = yield call(loadState)
+    loadedState = validateAppState(loadedState)
+  } catch (error) {
+    loadedState = {}
+  }
   let state: State = {
     ...(yield select(selectApp)),
-    ...(yield call(loadState)),
+    ...loadedState,
   }
 
   const tabUrl = window.location.href

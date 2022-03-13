@@ -29,6 +29,7 @@ import {
 } from '../reducers/app'
 import { useAppDispatch } from '../hooks/useAppDispatch'
 import { shallowEqual } from 'react-redux'
+import Typography from '@mui/material/Typography'
 
 const ScreenDialog = () => {
   const [isDeleteDialogOpened, setIsDeleteDialogOpened] = useState(false)
@@ -82,6 +83,7 @@ const ScreenDialog = () => {
   const onScreenDelete = () => {
     dispatch(deleteScreen(screenId))
     handleClose()
+    setIsDeleteDialogOpened(false)
   }
 
   useEffect(() => {
@@ -188,6 +190,13 @@ const ScreenDialog = () => {
               />
             </Box>
           </Stack>
+
+          <Typography variant="caption" sx={{ marginTop: 2, display: 'block' }}>
+            Changes on the screen config will be applied on all tabs that
+            includes this screen. if you are looking to change only this screen,
+            duplicate the screen by + icon on the right corner of the app
+            header.
+          </Typography>
         </DialogContent>
 
         <DialogActions>
@@ -195,6 +204,12 @@ const ScreenDialog = () => {
             <React.Fragment>
               <Dialog open={isDeleteDialogOpened}>
                 <DialogTitle>Confirm screen deletion?</DialogTitle>
+
+                <DialogContent>
+                  This action will delete this screen from all tabs, if you wish
+                  to delete this screen from specific tab, you can click the
+                  remove icon from screens view on the sidebar.
+                </DialogContent>
                 <DialogActions>
                   <Button
                     variant={'contained'}
@@ -203,6 +218,7 @@ const ScreenDialog = () => {
                   >
                     Confirm
                   </Button>
+
                   <Button onClick={() => setIsDeleteDialogOpened(false)}>
                     Cancel
                   </Button>

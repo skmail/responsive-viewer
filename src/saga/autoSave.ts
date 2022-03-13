@@ -10,6 +10,7 @@ import {
   exportApp,
   importApp,
 } from '../reducers/app'
+import { getPrefixedMessage } from '../utils/getPrefixedMessage'
 import { saveState } from '../utils/state'
 
 function* doWatchAllAction(): unknown {
@@ -24,6 +25,10 @@ function* doWatchAllAction(): unknown {
       action.type !== appSaved.toString()
     ) {
       yield fork(doSaveToState)
+      yield call(platform.runtime.sendMessage, {
+        message: getPrefixedMessage('LOAD_STATE'),
+        state: yield select(selectApp),
+      })
     }
     yield fork(notifyAdvertisment, action)
   }

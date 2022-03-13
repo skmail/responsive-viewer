@@ -9,45 +9,7 @@ import {
   saveApp,
 } from '../reducers/app'
 import { saveState } from '../utils/state'
-
-const validateConfig = (config: Partial<State>) => {
-  if (!config.screens) {
-    throw new Error('Invalid screens')
-  }
-
-  for (let screen of config.screens) {
-    if (typeof screen.width !== 'number') {
-      throw new Error('Invalid screens')
-    }
-    if (typeof screen.height !== 'number') {
-      throw new Error('Invalid screens')
-    }
-    if (screen.userAgent && typeof screen.userAgent !== 'string') {
-      throw new Error('Invalid screens')
-    }
-    if (typeof screen.id !== 'string') {
-      throw new Error('Invalid screens')
-    }
-  }
-  if (!config.userAgents) {
-    throw new Error('Invalid screens')
-  }
-
-  for (let screen of config.userAgents) {
-    if (typeof screen.name !== 'string') {
-      throw new Error('Invalid userAgents')
-    }
-    if (typeof screen.value !== 'string') {
-      throw new Error('Invalid userAgents')
-    }
-  }
-
-  if (typeof config.zoom !== 'number') {
-    config.zoom = 1
-  }
-
-  return config
-}
+import { validateAppState } from '../utils/validateAppState'
 
 const loadFile = (file: File) => {
   return new Promise((resolve, reject) => {
@@ -60,7 +22,7 @@ const loadFile = (file: File) => {
 
         const result = event.target.result as string
 
-        const data = validateConfig(JSON.parse(result))
+        const data = validateAppState(JSON.parse(result))
 
         resolve(data)
       } catch (error) {
@@ -75,6 +37,7 @@ function* doImportApp(action: PayloadAction<File>) {
     const data: State = yield call(loadFile, action.payload)
 
     const state: State = yield select(selectApp)
+
     const newState = {
       ...state,
       ...data,

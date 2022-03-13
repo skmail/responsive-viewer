@@ -40,7 +40,7 @@ export const StageProvider = ({ children, stageRef }: Props) => {
     if (stageRef && stageRef.current) {
       setRef('stage', stageRef.current)
     }
-  }, [])
+  }, [setRef, stageRef])
 
   return (
     <StageContext.Provider

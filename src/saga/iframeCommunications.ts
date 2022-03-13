@@ -1,4 +1,3 @@
-import platform from '../platform'
 import { call, put, select, take, takeLatest } from 'redux-saga/effects'
 import {
   initialized,

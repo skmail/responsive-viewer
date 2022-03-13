@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
-import { DrawingTool, Element, Page } from '../types/draw'
+import { DrawingTool, Element, Page, ImageElement } from '../types/draw'
 
 export type State = {
   open: boolean
@@ -142,6 +142,17 @@ export const selectDrawingTool = (state: RootState) => select(state).drawingTool
 
 export const selectSelectedElement = (state: RootState) =>
   select(state).elements[select(state).elementId]
+
+export const selectDefaultImages = (state: RootState) => {
+  return select(state).pageIds.map(id => {
+    const page = select(state).pages[id]
+
+    return {
+      name: page.name,
+      url: (select(state).elements[page.elements[0]] as ImageElement).src,
+    }
+  })
+}
 
 export const selectSelectedPage = (state: RootState) =>
   select(state).pages[select(state).pageId]

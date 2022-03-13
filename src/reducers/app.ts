@@ -11,6 +11,7 @@ import {
 } from '../types'
 
 import { RootState } from '../store'
+import { defaultTabs } from '../utils/defaultTabs'
 
 export interface State {
   screens: Device[]
@@ -34,31 +35,7 @@ const initialState: State = {
   syncScroll: true,
   syncClick: true,
   tab: 'default',
-  tabs: [
-    {
-      name: 'default',
-      screens: [
-        'ad6154e2-cebb-4e72-9adb-fdef4f7686ca',
-        '02b0f88c-5d8f-4a28-b461-1d9fee1ecfba',
-        // '46d80c57-3792-46d2-822d-3069414339bc',
-        // '8ce37d37-0bd3-4dce-9440-0eafeb4f2450',
-        // '1169e6f9-63d8-464a-96cb-127bc5f97119',
-        // '390040ea-de20-4652-843e-6a6dafe0e900',
-      ],
-    },
-    {
-      name: 'mobile',
-      screens: [],
-    },
-    {
-      name: 'tablet',
-      screens: [],
-    },
-    {
-      name: 'desktop',
-      screens: [],
-    },
-  ],
+  tabs: defaultTabs(),
 }
 
 export const slice = createSlice({
@@ -176,6 +153,12 @@ export const slice = createSlice({
       state.userAgents.push(action.payload)
     },
     deleteScreen(state, action: PayloadAction<string>) {
+      state.tabs = state.tabs.map(tab => {
+        return {
+          ...tab,
+          screens: tab.screens.filter(id => id !== action.payload),
+        }
+      })
       state.screens = state.screens.filter(
         screen => screen.id !== action.payload
       )

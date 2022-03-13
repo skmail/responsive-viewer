@@ -65,6 +65,8 @@ const DialogWrapper = () => {
           )
         )
       )
+
+      setTranslate({ x: 0, y: 0 })
     }
     updateSize()
     window.addEventListener('resize', updateSize)

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Stage, Layer } from 'react-konva'
 import Element from './Elements/Element'
 import { useStageDrag } from './hooks/useStageDrag'

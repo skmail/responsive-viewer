@@ -3,6 +3,7 @@ import Button from '@mui/material/Button'
 import { useStageContext } from '../contexts/StageProvider'
 import { useAppSelector } from '../../../hooks/useAppSelector'
 import {
+  selectDefaultImages,
   selectSelectedElement,
   selectSelectedPage,
 } from '../../../reducers/draw'
@@ -11,6 +12,7 @@ import { toZip } from '../../../utils/toZip'
 import { saveAs } from '../../../utils/saveAs'
 import { selectUrl } from '../../../reducers/app'
 import { extractHostname } from '../../../utils/url'
+import { shallowEqual } from 'react-redux'
 
 const Download = () => {
   const { getRef } = useStageContext()
@@ -18,6 +20,20 @@ const Download = () => {
   const element = useAppSelector(selectSelectedElement)
   const pageName = useAppSelector(state => selectSelectedPage(state)?.name)
   const url = useAppSelector(selectUrl)
+
+  const defaultImages = useAppSelector(
+    state => selectDefaultImages(state),
+    shallowEqual
+  )
+
+  useEffect(() => {
+    defaultImages.forEach(image => {
+      if (!images.current.has(image.name)) {
+        images.current.set(image.name, image.url)
+      }
+    })
+  }, [defaultImages])
+
   const download = async () => {
     const files: ToZipInput = []
 

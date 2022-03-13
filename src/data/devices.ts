@@ -6,7 +6,7 @@ const devices: Device[] = [
     name: 'iPhone XR, XS Max',
     width: 414,
     height: 896,
-    visible: false,
+    visible: true,
     userAgent: 'iPhone',
   },
   {
@@ -14,7 +14,7 @@ const devices: Device[] = [
     name: 'iPhone XS, X',
     width: 375,
     height: 812,
-    visible: false,
+    visible: true,
     userAgent: 'iPhone',
   },
   {
@@ -38,7 +38,7 @@ const devices: Device[] = [
     name: 'Galaxy S9 Plus, S8 Plus',
     width: 412,
     height: 846,
-    visible: false,
+    visible: true,
     userAgent: 'Samsung Phone',
   },
   {
@@ -46,7 +46,7 @@ const devices: Device[] = [
     name: 'Galaxy S9, Note 8, S8',
     width: 360,
     height: 740,
-    visible: false,
+    visible: true,
     userAgent: 'Samsung Phone',
   },
   {
@@ -54,7 +54,7 @@ const devices: Device[] = [
     name: 'Pixel 3, 3 XL',
     width: 393,
     height: 786,
-    visible: false,
+    visible: true,
     userAgent: 'Google Pixel',
   },
   {
@@ -62,7 +62,7 @@ const devices: Device[] = [
     name: 'Medium Screen',
     width: 1024,
     height: 800,
-    visible: false,
+    visible: true,
     userAgent: 'Google Chrome',
   },
   {
