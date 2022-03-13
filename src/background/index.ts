@@ -266,7 +266,7 @@ const start = (tab: chrome.tabs.Tab) => {
       types: ['main_frame', 'sub_frame'],
       tabId: tab.id,
     },
-    ['blocking', 'responseHeaders', 'extraHeaders']
+    ['responseHeaders', 'extraHeaders']
   )
 
   chrome.webNavigation.onCompleted.addListener(onWebNavigationComplete)
@@ -284,7 +284,7 @@ const start = (tab: chrome.tabs.Tab) => {
   chrome.webRequest.onBeforeSendHeaders.addListener(
     onBeforeSendHeaders,
     { urls: ['<all_urls>'], types: ['sub_frame'], tabId: tab.id },
-    ['blocking', 'requestHeaders']
+    ['requestHeaders']
   )
 }
 
