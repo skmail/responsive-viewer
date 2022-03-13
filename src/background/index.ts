@@ -198,6 +198,8 @@ const start = (tab: chrome.tabs.Tab) => {
 
       case getPrefixedMessage('LOAD_STATE'):
         state = message.state
+
+        sendResponse({})
         break
 
       case getPrefixedMessage('GET_SCREEN_ID'):

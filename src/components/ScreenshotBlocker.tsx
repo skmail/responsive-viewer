@@ -38,6 +38,7 @@ const ScreenshotBlocker = () => {
       window.removeEventListener('keydown', onCancel)
     }
   }, [isRunning, dispatch])
+
   if (!isRunning) {
     return null
   }

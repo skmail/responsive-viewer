@@ -53,7 +53,7 @@ const BoxIcon = ({ dashArray }: { dashArray?: number[] }) => {
     >
       <line
         strokeWidth={strokeWidth}
-        strokeDasharray={applyStrokeDashArray(dashArray, strokeWidth)}
+        strokeDasharray={applyStrokeDashArray(dashArray, strokeWidth).join(' ')}
         strokeLinecap="round"
         strokeLinejoin="round"
         x1="4.37114e-08"

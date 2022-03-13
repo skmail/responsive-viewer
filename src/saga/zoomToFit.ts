@@ -17,6 +17,10 @@ export function* doZoomToFit() {
     (acc, screen) => screen.width + 32 + acc,
     0
   )
+  const maxHeight = screens.reduce(
+    (acc, screen) => Math.max(screen.height, acc),
+    0
+  )
 
   const root = document.getElementById('screens-wrapper')
 
@@ -26,7 +30,11 @@ export function* doZoomToFit() {
     return
   }
 
-  yield put(updateZoom((box.width - 60) / screensWidth))
+  yield put(
+    updateZoom(
+      Math.min((box.width - 20) / screensWidth, (box.height - 80) / maxHeight)
+    )
+  )
 }
 export default function* rootSaga() {
   yield takeLatest(zoomToFit.toString(), doZoomToFit)
