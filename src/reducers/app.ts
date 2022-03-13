@@ -24,6 +24,7 @@ export interface State {
   syncClick: boolean
   tab: string
   tabs: ScreensTab[]
+  singleView: boolean
 }
 const initialState: State = {
   screens: devices,
@@ -36,6 +37,7 @@ const initialState: State = {
   syncClick: true,
   tab: 'default',
   tabs: defaultTabs(),
+  singleView: true,
 }
 
 export const slice = createSlice({
