@@ -5,13 +5,13 @@
   "version": "1.0.14",
   "description": "Show multiple screens once, Responsive design tester",
   "icons": {
-    "128": "16.png"
+    "128": "logo.png"
   },
   "browser_action": {
-    "default_icon": "16.png"
+    "default_icon": "logo.png"
   },
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["static/js/background.js"],
     "persistent": true
   },
   "permissions": [
