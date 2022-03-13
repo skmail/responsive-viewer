@@ -55,19 +55,23 @@ export const slice = createSlice({
       state,
       action: PayloadAction<{
         screens: string[]
-        type: ScreenshotType
+        type?: ScreenshotType
+        cancel?: boolean
       }>
     ) {
       state.latest = {
         screens: action.payload.screens,
-        type: action.payload.type,
+        type: action.payload.type || ScreenshotType.partial,
         isRunning: true,
       }
+    },
+    stopped(state) {
+      state.latest.isRunning = false
     },
   },
 })
 
-export const { addScreenshots, download, screenshot } = slice.actions
+export const { addScreenshots, download, screenshot, stopped } = slice.actions
 export const editScreenshots = createAction<string>('screenshots/edit')
 
 export const select = (state: RootState) => state.screenshots

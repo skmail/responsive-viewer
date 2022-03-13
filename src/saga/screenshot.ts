@@ -26,6 +26,7 @@ import {
   screenshot,
   editScreenshots,
   ScreenshotsAction,
+  stopped,
 } from '../reducers/screenshots'
 import uuid from 'uuid'
 import { notify, removeNotification } from '../reducers/notifications'
@@ -33,6 +34,7 @@ import { getPrefixedMessage } from '../utils/getPrefixedMessage'
 import { saveAs } from '../utils/saveAs'
 import { openDraw, setDrawData } from '../reducers/draw'
 import { toZip } from '../utils/toZip'
+import { selectIsScreenLoading } from '../reducers/runtime'
 
 const makeScreenshotFilename = (
   screen: Device,
@@ -56,15 +58,39 @@ function* doScreenshot(
   action: PayloadAction<{
     screens: string[]
     type: ScreenshotType
+    cancel?: boolean
   }>
 ): unknown {
-  yield put(updateZoom(1))
-  const { type, screens: screenIds } = action.payload
+  const { type, screens: screenIds, cancel } = action.payload
+
+  if (cancel) {
+    yield put(removeNotification())
+    yield put(stopped())
+    return
+  }
+
   const screens: Device[] = yield select(state =>
     screenIds.length
       ? selectScreensByIds(state, screenIds)
       : selectScreensByTab(state, selectSelectedTab(state))
   )
+
+  const atLeastScreenLoading = yield select(state =>
+    screens.some(screen => selectIsScreenLoading(state, screen.id))
+  )
+
+  if (atLeastScreenLoading) {
+    yield put(stopped())
+    yield put(
+      notify({
+        type: 'error',
+        message: 'Cannot take a screenshot while screens still loading',
+      })
+    )
+    return
+  }
+
+  yield put(updateZoom(1))
 
   const url = yield select(selectUrl)
   const screenDirection = yield select(selectScreenDirection)
@@ -73,7 +99,7 @@ function* doScreenshot(
 
   yield put(
     notify({
-      message: 'Taking a screenshot please wait',
+      message: 'Taking a screenshot please wait, press ESC to cancel',
       type: 'info',
       loading: true,
       cancellable: false,

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAppSelector } from '../hooks/useAppSelector'
-import { selectIsTakingScreenshots } from '../reducers/screenshots'
+import { screenshot, selectIsTakingScreenshots } from '../reducers/screenshots'
+import { useAppDispatch } from '../hooks/useAppDispatch'
 
 const Root = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -12,9 +13,32 @@ const Root = styled('div')(({ theme }) => ({
   cursor: 'none',
 }))
 const ScreenshotBlocker = () => {
-  const is = useAppSelector(selectIsTakingScreenshots)
+  const isRunning = useAppSelector(selectIsTakingScreenshots)
+  const dispatch = useAppDispatch()
 
-  if (!is) {
+  useEffect(() => {
+    // if (!isRunning) {
+    //   return
+    // }
+    const onCancel = (event: KeyboardEvent) => {
+      if (event.code !== 'Escape') {
+        return
+      }
+
+      dispatch(
+        screenshot({
+          screens: [],
+          cancel: true,
+        })
+      )
+    }
+    window.addEventListener('keydown', onCancel)
+
+    return () => {
+      window.removeEventListener('keydown', onCancel)
+    }
+  }, [isRunning, dispatch])
+  if (!isRunning) {
     return null
   }
 
