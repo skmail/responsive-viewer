@@ -1,4 +1,4 @@
-export const applyStrokeDashArray = (dashArray, strokeWidth = 0) =>
+export const applyStrokeDashArray = (dashArray: number[], strokeWidth = 0) =>
   dashArray
     ? dashArray.map((dash, index) => {
         if ((index + 1) % 2 === 0) {
