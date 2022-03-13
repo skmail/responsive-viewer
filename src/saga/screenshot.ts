@@ -219,9 +219,10 @@ function* captureScreen(
   if (!ctx) {
     return null
   }
+  const devicePixelRatio = 1
 
-  ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
-  const scale = (value: number) => value * window.devicePixelRatio
+  ctx.scale(devicePixelRatio, devicePixelRatio)
+  const scale = (value: number) => value * devicePixelRatio
   ctx.fillStyle = 'blue'
   ctx.fillRect(0, 0, canvas.width, canvas.height)
 
