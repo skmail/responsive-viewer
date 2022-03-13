@@ -9,6 +9,8 @@ config.optimization.splitChunks = {
   },
 }
 
+config.devtool = undefined
+
 config.optimization.runtimeChunk = false
 
 applyWebpackConfig(config)
