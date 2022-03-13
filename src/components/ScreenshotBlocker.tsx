@@ -17,9 +17,9 @@ const ScreenshotBlocker = () => {
   const dispatch = useAppDispatch()
 
   useEffect(() => {
-    // if (!isRunning) {
-    //   return
-    // }
+    if (!isRunning) {
+      return
+    }
     const onCancel = (event: KeyboardEvent) => {
       if (event.code !== 'Escape') {
         return
