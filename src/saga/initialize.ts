@@ -20,7 +20,8 @@ function* doInitialize(): unknown {
     ...loadedState,
   }
 
-  const tabUrl = window.location.href
+  const url =
+    process.env.REACT_APP_PLATFORM === 'LOCAL' ? '' : window.location.href
 
   yield call(platform.runtime.sendMessage, {
     message: getPrefixedMessage('LOAD_STATE'),
@@ -30,7 +31,7 @@ function* doInitialize(): unknown {
   yield put(
     initialized({
       ...state,
-      url: tabUrl || state.url,
+      url: url || state.url,
     })
   )
 }

@@ -12,10 +12,13 @@ import { selectHighlightedScreen } from '../../reducers/layout'
 import { styled } from '@mui/material/styles'
 import { shallowEqual } from 'react-redux'
 import {
+  screenConnected,
+  screenIsLoaded,
   selectIsScreenLoading,
   selectRuntimeFrameStatus,
 } from '../../reducers/runtime'
 import { FrameStatus } from '../../types'
+import { useAppDispatch } from '../../hooks/useAppDispatch'
 interface Props {
   id: string
 }
@@ -48,11 +51,15 @@ const Progress = styled(LinearProgress)(() => ({
 }))
 
 const Iframe = ({ id }: Props) => {
+  const dispatch = useAppDispatch()
+
   const screenDirection = useAppSelector(selectScreenDirection)
   const screen = useAppSelector(
     state => selectScreenById(state, id),
     shallowEqual
   )
+
+  const isLocal = process.env.REACT_APP_PLATFORM === 'LOCAL'
 
   const isHighlighted = useAppSelector(
     state => selectHighlightedScreen(state) === id
@@ -63,14 +70,21 @@ const Iframe = ({ id }: Props) => {
 
   const url = useAppSelector(state => {
     const frameStatus = selectRuntimeFrameStatus(state, id)
-    if (frameStatus === FrameStatus.IDLE) {
+    if (frameStatus === FrameStatus.IDLE && !isLocal) {
       return `about:blank?screenId=${screen.id}`
     }
     return selectUrl(state)
   })
 
-  // const url =
   useEffect(() => {
+    if (isLocal) {
+      dispatch(
+        screenConnected({
+          frameId: Math.random() * 100,
+          screenId: screen.id,
+        })
+      )
+    }
     let isShift = false
 
     const up = () => {
@@ -96,7 +110,7 @@ const Iframe = ({ id }: Props) => {
       document.removeEventListener('keydown', down)
       document.removeEventListener('keyup', up)
     }
-  }, [])
+  }, [isLocal, screen.id, dispatch])
 
   const width = screenDirection === 'landscape' ? screen.height : screen.width
   const height = screenDirection === 'landscape' ? screen.width : screen.height
@@ -107,13 +121,18 @@ const Iframe = ({ id }: Props) => {
       <IframeElement
         scrolling={scrolling ? 'auto' : 'no'}
         id={getIframeId(screen.id)}
-        sandbox="allow-scripts allow-forms allow-same-origin allow-presentation allow-orientation-lock allow-modals allow-popups-to-escape-sandbox allow-pointer-lock "
+        sandbox={`allow-scripts allow-forms allow-same-origin allow-presentation allow-orientation-lock allow-modals allow-popups-to-escape-sandbox allow-pointer-lock`}
         title={`${screen.name} - ${width}x${height}`}
         sx={{
           width: `${width}px`,
           height: `${height}px`,
         }}
         src={url}
+        onLoad={event => {
+          if (isLocal) {
+            dispatch(screenIsLoaded(screen.id))
+          }
+        }}
       />
     </Root>
   )

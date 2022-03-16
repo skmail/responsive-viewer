@@ -40,7 +40,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start:local": "react-scripts start",
+    "start:local": "REACT_APP_PLATFORM=LOCAL react-scripts start",
     "start": "REACT_APP_PLATFORM=CHROME node ./scripts/start.js",
     "build": "REACT_APP_PLATFORM=CHROME node ./scripts/build.js",
     "build:manifest": "cp ./public/manifest.json ./build/manifest.json",
