@@ -3,7 +3,7 @@ import isURL from 'validator/lib/isURL'
 export const url = (value: string) => {
   return isURL(value, {
     require_tld: false,
-    require_protocol: true,
+    require_protocol: false,
   })
 }
 

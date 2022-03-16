@@ -73,7 +73,9 @@ const AddressBar = () => {
     if (values.url === url) {
       dispatch(refresh())
     } else {
-      dispatch(updateUrl(values.url))
+      const url = values.url.replace(/^(?!(?:f|ht)tps?:\/\/)/, 'https://')
+
+      dispatch(updateUrl(url))
     }
   }
 
