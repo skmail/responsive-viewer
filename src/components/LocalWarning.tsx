@@ -56,7 +56,7 @@ const LocalWarning = () => {
             <DialogContentText>
               The responsive viewer website is a preview mode only and has
               limited functionality, to unlock full capablities of the app,
-              please install the chrome extension, for free!
+              install the chrome extension, for free!
             </DialogContentText>
 
             <div>
