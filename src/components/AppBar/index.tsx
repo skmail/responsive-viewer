@@ -7,11 +7,12 @@ import AddIcon from '@mui/icons-material/Add'
 import HelpIcon from '@mui/icons-material/Help'
 import TwitterIcon from '@mui/icons-material/Twitter'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import CloseIcon from '@mui/icons-material/Close'
 
 import AppLogo from '../AppLogo'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { toggleHelpDialog, toggleScreenDialog } from '../../reducers/layout'
-import { styled, lighten } from '@mui/material/styles'
+import { styled, lighten, darken } from '@mui/material/styles'
 import Tools from './Tools'
 
 const AppBarView = styled(MuiAppBar)(({ theme }) => ({
@@ -25,6 +26,13 @@ const Logo = styled(AppLogo)(() => ({
   height: 'auto',
   flexShrink: 0,
   objectFit: 'contain',
+}))
+const CloseButton = styled(IconButton)(({ theme }) => ({
+  borderRadius: 0,
+  margin: `${theme.spacing(-1, -1, -1, 1)} !important`,
+  padding: theme.spacing(2),
+  borderLeft: `1px solid ${lighten(theme.palette.background.default, 0.2)}`,
+  backgroundColor: lighten(theme.palette.background.default, 0.05),
 }))
 
 const AppBar = () => {
@@ -96,6 +104,18 @@ const AppBar = () => {
           >
             <AddIcon />
           </IconButton>
+
+          {process.env.REACT_APP_PLATFORM !== 'LOCAL' && (
+            <CloseButton
+              onClick={() => window.location.reload()}
+              edge="end"
+              aria-label="Add Screen"
+              aria-haspopup="true"
+              color="inherit"
+            >
+              <CloseIcon />
+            </CloseButton>
+          )}
         </Stack>
       </Stack>
     </AppBarView>

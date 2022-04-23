@@ -77,6 +77,16 @@ export const slice = createSlice({
         })
       } else {
         state.screens.push(action.payload)
+
+        state.tabs = state.tabs.map(tab => {
+          if (tab.name === state.tab) {
+            return {
+              ...tab,
+              screens: [...(tab.screens || []), action.payload.id],
+            }
+          }
+          return tab
+        })
       }
     },
 

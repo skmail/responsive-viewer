@@ -26,7 +26,7 @@ const loadFile = (file: File) => {
 
         resolve(data)
       } catch (error) {
-        reject()
+        reject(error)
       }
     }
     reader.readAsText(file)

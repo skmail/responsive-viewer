@@ -1,18 +1,21 @@
 import { Device } from '../types'
 import { defaultTabs } from './defaultTabs'
 import { State } from '../reducers/app'
+const isNumber = (value: any) => {
+  return /^-?[0-9]+$/.test(value)
+}
 const validateScreen = (screen: Device) => {
-  if (typeof screen.width !== 'number') {
-    throw new Error('Invalid screens')
+  if (!isNumber(screen.width)) {
+    throw new Error('Invalid screen width')
   }
-  if (typeof screen.height !== 'number') {
-    throw new Error('Invalid screens')
+  if (!isNumber(screen.height)) {
+    throw new Error('Invalid screen height')
   }
   if (screen.userAgent && typeof screen.userAgent !== 'string') {
-    throw new Error('Invalid screens')
+    throw new Error('Invalid user agents')
   }
   if (typeof screen.id !== 'string') {
-    throw new Error('Invalid screens')
+    throw new Error('Invalid screen id')
   }
 }
 
@@ -53,7 +56,7 @@ export const validateAppState = (config: Partial<State>) => {
     }
   }
 
-  if (typeof config.zoom !== 'number') {
+  if (!config.zoom) {
     config.zoom = 1
   }
 

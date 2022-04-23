@@ -11,6 +11,7 @@ import AddIcon from '@mui/icons-material/Add'
 import IconButton from '@mui/material/IconButton'
 import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
+import uuid from 'uuid'
 
 import { useForm, SubmitHandler, Controller } from 'react-hook-form'
 import { useAppSelector } from '../hooks/useAppSelector'
@@ -19,7 +20,7 @@ import {
   toggleScreenDialog,
   toggleUserAgentDialog,
 } from '../reducers/layout'
-import { Device } from '../types'
+import { Device, UserAgent } from '../types'
 import { errorMessage } from '../utils/errorMessage'
 import {
   deleteScreen,
@@ -31,11 +32,26 @@ import { useAppDispatch } from '../hooks/useAppDispatch'
 import { shallowEqual } from 'react-redux'
 import Typography from '@mui/material/Typography'
 
+const getUserAgentsList = (userAgents: UserAgent[], current: string) => {
+  if (!current) {
+    return userAgents
+  }
+
+  const found = userAgents.find(userAgent => userAgent.value === current)
+
+  if (found) {
+    return userAgents
+  }
+
+  return [...userAgents, { value: current, name: current }]
+}
+
 const ScreenDialog = () => {
   const [isDeleteDialogOpened, setIsDeleteDialogOpened] = useState(false)
 
   const screenDialog = useAppSelector(selectScreenDialog)
-  const userAgents = useAppSelector(selectUserAgents)
+  const userAgents = useAppSelector(selectUserAgents, shallowEqual)
+  const [userAgentsList, setUserAgentsList] = useState<UserAgent[]>([])
 
   const dispatch = useAppDispatch()
 
@@ -53,7 +69,7 @@ const ScreenDialog = () => {
   const screenId = screenDialog.values.id
 
   const screen = useAppSelector(
-    state => selectScreenById(state, screenId),
+    state => (screenId ? selectScreenById(state, screenId) : null),
     shallowEqual
   )
 
@@ -74,6 +90,13 @@ const ScreenDialog = () => {
   }
 
   const onSubmit: SubmitHandler<Device> = values => {
+    values = {
+      ...values,
+      id: screenId || uuid.v4(),
+      width: values.width,
+      height: values.height,
+    }
+
     dispatch(saveScreen(values))
     handleClose()
   }
@@ -87,8 +110,10 @@ const ScreenDialog = () => {
   }
 
   useEffect(() => {
-    setValue('userAgent', screenDialog.values.userAgent)
-  }, [screenDialog.values.userAgent, setValue])
+    let userAgent = screenDialog.values.userAgent
+    setValue('userAgent', userAgent)
+    setUserAgentsList(getUserAgentsList(userAgents, userAgent))
+  }, [screenDialog.values.userAgent, setValue, userAgents])
 
   return (
     <Dialog id={id} open={screenDialog.open} onClose={handleClose}>
@@ -179,7 +204,7 @@ const ScreenDialog = () => {
                         ),
                       }}
                     >
-                      {userAgents.map(userAgent => (
+                      {userAgentsList.map(userAgent => (
                         <MenuItem key={userAgent.name} value={userAgent.name}>
                           {userAgent.name}
                         </MenuItem>
