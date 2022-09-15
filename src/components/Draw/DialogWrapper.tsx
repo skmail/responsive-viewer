@@ -103,11 +103,11 @@ const DialogWrapper = () => {
   }
 
   const onZoom = (event: WheelEvent) => {
-    if (event.deltaY > 0) {
-      setZoom(zoom => toFixed(Math.min(zoom + 0.1, 2)))
-    } else {
-      setZoom(zoom => toFixed(Math.max(0.2, zoom - 0.1)))
-    }
+    event.preventDefault()
+    event.stopPropagation()
+    const ZOOM_SENSITIVITY = 200
+    const zoomAmount = -(event.deltaY / ZOOM_SENSITIVITY)
+    setZoom(zoom => toFixed(Math.max(Math.min(zoom + zoomAmount, 2), 0.2)))
   }
   return (
     <Root onWheel={onZoom} ref={canvasRef}>

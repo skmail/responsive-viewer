@@ -37,6 +37,14 @@ const Download = () => {
   const download = async () => {
     const files: ToZipInput = []
 
+    if (images.current.size === 1) {
+      const [imageUrl] = Array.from(images.current.values())
+
+      const blob = await (await fetch(imageUrl)).blob()
+
+      saveAs(blob, `${extractHostname(url)}-screenshot.png`)
+      return
+    }
     images.current.forEach((url, name) => {
       files.push({
         filename: name,

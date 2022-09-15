@@ -24,9 +24,9 @@ const Header = ({ id }: Props) => {
   const screenDirection = useAppSelector(selectScreenDirection)
   return (
     <Box display="flex" justifyContent="space-between" alignItems={'center'}>
-      <Stack direction="row" spacing={2} alignItems={'center'}>
-        <ScreenName>{screen.name}</ScreenName>
-        <ScreenSize>
+      <Stack direction="row" spacing={0} alignItems={'center'}>
+        <ScreenName sx={{ marginLeft: 0.5 }}>{screen.name}</ScreenName>
+        <ScreenSize sx={{ marginLeft: 2 }}>
           {screenDirection === 'landscape'
             ? `${screen.height}x${screen.width}`
             : `${screen.width}x${screen.height}`}

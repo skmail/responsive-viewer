@@ -212,19 +212,16 @@ function* captureScreen(
     height: parentBoundingBox.height - margin * 2,
   }
 
+  const devicePixelRatio = window.devicePixelRatio
+  const scale = (value: number, dpr = devicePixelRatio) => value * dpr
+
   const canvas = document.createElement('canvas')
-  canvas.width = screenWidth * zoom
-  canvas.height = height
+  canvas.width = scale(screenWidth * zoom)
+  canvas.height = scale(height)
   const ctx = canvas.getContext('2d')
   if (!ctx) {
     return null
   }
-  const devicePixelRatio = 1
-
-  ctx.scale(devicePixelRatio, devicePixelRatio)
-  const scale = (value: number) => value * devicePixelRatio
-  ctx.fillStyle = 'blue'
-  ctx.fillRect(0, 0, canvas.width, canvas.height)
 
   const scrolls = buildScreenshotScrolls(
     {
@@ -233,6 +230,8 @@ function* captureScreen(
     },
     parentBox
   )
+
+  let i = 0
 
   for (let scroll of scrolls) {
     yield scrollToElement(iframeElement, {
@@ -243,6 +242,17 @@ function* captureScreen(
     const image = yield screenCaptureRequest()
 
     if (image) {
+      let realDevicePixelRatio =
+        image.width / (window.innerWidth * devicePixelRatio)
+
+      if (realDevicePixelRatio === 1) {
+        realDevicePixelRatio = devicePixelRatio
+      }
+
+      if (i === 0) {
+        canvas.width *= realDevicePixelRatio
+        canvas.height *= realDevicePixelRatio
+      }
       const iframeBox = iframeElement.getBoundingClientRect()
 
       let x = iframeBox.x < parentBox.x ? parentBox.x : iframeBox.x
@@ -258,19 +268,21 @@ function* captureScreen(
 
       ctx.drawImage(
         image,
-        scale(x),
-        scale(y),
+        scale(x, realDevicePixelRatio),
+        scale(y, realDevicePixelRatio),
 
-        scale(scroll.width),
-        scale(scroll.height),
+        scale(scroll.width, realDevicePixelRatio),
+        scale(scroll.height, realDevicePixelRatio),
 
-        scale(scroll.x),
-        scale(scroll.y),
+        scale(scroll.x, realDevicePixelRatio),
+        scale(scroll.y, realDevicePixelRatio),
 
-        scale(scroll.width),
-        scale(scroll.height)
+        scale(scroll.width, realDevicePixelRatio),
+        scale(scroll.height, realDevicePixelRatio)
       )
     }
+
+    i++
     yield delay(500)
   }
 
