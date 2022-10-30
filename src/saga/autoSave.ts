@@ -45,7 +45,9 @@ function* notifyAdvertisment(action: PayloadAction) {
   }
 
   yield call<any>(
-    advertismentIframe.contentWindow.postMessage,
+    advertismentIframe.contentWindow.postMessage.bind(
+      advertismentIframe.contentWindow
+    ),
     {
       action: action.type,
     },
