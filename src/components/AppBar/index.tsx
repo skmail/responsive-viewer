@@ -12,7 +12,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import AppLogo from '../AppLogo'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
 import { toggleHelpDialog, toggleScreenDialog } from '../../reducers/layout'
-import { styled, lighten, darken } from '@mui/material/styles'
+import { styled, lighten } from '@mui/material/styles'
 import Tools from './Tools'
 
 const AppBarView = styled(MuiAppBar)(({ theme }) => ({
