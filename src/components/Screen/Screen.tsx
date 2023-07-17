@@ -6,7 +6,9 @@ import { styled } from '@mui/material/styles'
 
 const Root = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
+  position: 'relative',
 }))
+
 interface Props {
   id: string
 }

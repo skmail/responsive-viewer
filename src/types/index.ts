@@ -15,6 +15,8 @@ export type Device = {
   height: number
   visible: boolean
   userAgent: string
+
+  originalSize?: [number, number]
 }
 
 export type UserAgent = {

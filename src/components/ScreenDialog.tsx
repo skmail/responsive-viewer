@@ -73,6 +73,15 @@ const ScreenDialog = () => {
     shallowEqual
   )
 
+  const onDimensionReset = () => {
+    if (!screen || !screen?.originalSize) {
+      return
+    }
+    setValue('width', screen?.originalSize?.[0])
+    setValue('height', screen?.originalSize?.[1])
+    setValue('originalSize', undefined)
+  }
+
   const isUpdate = !!screen
 
   useEffect(() => {
@@ -136,7 +145,7 @@ const ScreenDialog = () => {
               })}
             />
 
-            <Stack spacing={2} direction="row">
+            <Stack spacing={2} direction="row" alignItems={'center'}>
               <TextField
                 autoComplete={'off'}
                 variant="outlined"
@@ -172,6 +181,16 @@ const ScreenDialog = () => {
                 error={!!errors.height}
                 helperText={!!errors.height && errorMessage(errors.height)}
               />
+              {!!screen?.originalSize && (
+                <Button
+                  sx={{ whiteSpace: 'no-wrap' }}
+                  onClick={onDimensionReset}
+                  color={'primary'}
+                  size="small"
+                >
+                  Reset
+                </Button>
+              )}
             </Stack>
 
             <Box display={'flex'} alignItems={'center'}>

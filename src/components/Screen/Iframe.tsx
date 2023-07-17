@@ -19,6 +19,8 @@ import {
 } from '../../reducers/runtime'
 import { FrameStatus } from '../../types'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
+import { ResizeHandles } from './ResizeHandles'
+
 interface Props {
   id: string
 }
@@ -31,6 +33,7 @@ const Root = styled(({ isHighlighted, ...rest }: RootProps) => (
 ))<RootProps>(({ theme, isHighlighted }) => ({
   position: 'relative',
   transition: 'all ease 0.5s',
+  width: 'fit-content',
   boxShadow: isHighlighted
     ? `0 0 0 4px ${theme.palette.primary.main}`
     : undefined,
@@ -134,6 +137,7 @@ const Iframe = ({ id }: Props) => {
           }
         }}
       />
+      <ResizeHandles screen={screen} />
     </Root>
   )
 }
