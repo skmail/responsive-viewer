@@ -5,7 +5,27 @@ import { getPrefixedMessage } from '../utils/getPrefixedMessage'
 
 import { loadState } from '../utils/state'
 import { validateAppState } from '../utils/validateAppState'
+import qs from 'qs'
+import * as validation from '../utils/validation'
 
+const getUrlFromQueryString = (querystring: string, defaultValue?: string) => {
+  if (querystring.startsWith('?')) {
+    querystring = querystring.substring(1)
+  }
+  let url = qs.parse(querystring).url as string | undefined
+
+  if (typeof url !== 'string') {
+    url = defaultValue
+  }
+
+  if (!url || !validation.url(url)) {
+    return
+  }
+
+  url = url.replace(/^(?!(?:f|ht)tps?:\/\/)/, 'https://')
+
+  return url
+}
 function* doInitialize(): unknown {
   let loadedState: Partial<State>
 
@@ -21,7 +41,9 @@ function* doInitialize(): unknown {
   }
 
   const url =
-    process.env.REACT_APP_PLATFORM === 'LOCAL' ? '' : window.location.href
+    process.env.REACT_APP_PLATFORM === 'LOCAL'
+      ? getUrlFromQueryString(window.location.search, '')
+      : window.location.href
 
   yield call(platform.runtime.sendMessage, {
     message: getPrefixedMessage('LOAD_STATE'),
