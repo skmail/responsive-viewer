@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
@@ -6,6 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import DialogActions from '@mui/material/DialogActions'
 import Button from '@mui/material/Button'
 import { styled, alpha, lighten } from '@mui/material/styles'
+import platform from '../platform'
 
 const ChromeBox = styled('a')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
@@ -35,13 +36,22 @@ const ChromeHint = styled('div')(({ theme }) => ({
 
 const LocalWarning = () => {
   const isLocal = process.env.REACT_APP_PLATFORM === 'LOCAL'
+  const [isClosedByLocalStorage, setIsClosedByLocalStorage] = useState(true)
 
+  useEffect(() => {
+    platform.storage.local.get('local-warning').then(value => {
+      setIsClosedByLocalStorage(!!value)
+    })
+  }, [])
   const [isOpened, setIsOpened] = useState(isLocal)
 
   const id = isOpened ? 'local-wraning-dialog' : undefined
 
   const onClose = () => {
     setIsOpened(false)
+    platform.storage.local.set({
+      'local-warning': true,
+    })
   }
 
   const extensionUrl =
@@ -49,7 +59,11 @@ const LocalWarning = () => {
 
   return (
     <div>
-      <Dialog id={id} open={isOpened} onClose={onClose}>
+      <Dialog
+        id={id}
+        open={isOpened && !isClosedByLocalStorage}
+        onClose={onClose}
+      >
         <DialogTitle>Limited functionality!</DialogTitle>
         <DialogContent>
           <div>
@@ -110,7 +124,7 @@ const LocalWarning = () => {
 
                 <div>
                   Available on Chrome store
-                  <ChromeHint>Installed by 90,000+ users</ChromeHint>
+                  <ChromeHint>Installed by 200,000+ users</ChromeHint>
                 </div>
               </ChromeBox>
             </div>
