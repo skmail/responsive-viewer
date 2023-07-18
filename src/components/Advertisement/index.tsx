@@ -1,8 +1,7 @@
-import { Box, Chip, IconButton, styled } from '@mui/material'
+import { Box, Chip, styled } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { selectAdvertismentPosition } from '../../reducers/layout'
-import { useAppDispatch } from '../../hooks/useAppDispatch'
 
 type Message = {
   data: {
@@ -58,7 +57,6 @@ const Advertisement = ({ fixed }: { fixed?: boolean }) => {
     }
   }, [isAdsLoaded, isLoaded])
   const advertisementPosition = useAppSelector(selectAdvertismentPosition)
-  const dispatch = useAppDispatch()
   let sx = fixed
     ? {
         position: 'absolute',

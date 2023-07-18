@@ -4,8 +4,6 @@ import Screens from './Screens'
 import Toolbar from './Toolbar'
 import Advertisement from '../Advertisement'
 import { styled, darken, lighten } from '@mui/material/styles'
-import { useTheme } from '@mui/material/styles'
-import useMediaQuery from '@mui/material/useMediaQuery'
 import { useAppSelector } from '../../hooks/useAppSelector'
 import { selectDrawer } from '../../reducers/layout'
 
@@ -24,8 +22,6 @@ const Drawer = styled(({ open, ...rest }: Props) => <Box {...rest} />)(
 )
 
 const Sidebar = () => {
-  const theme = useTheme()
-  // const open = useMediaQuery(theme.breakpoints.up('lg'))
   const open = useAppSelector(selectDrawer)
   return (
     <Drawer open={open}>
