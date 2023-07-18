@@ -5,9 +5,10 @@ import { initialized } from './app'
 
 export type State = {
   initialized: boolean
-  drawerOpened: boolean
+  drawer: boolean
   inspectByMouse: boolean
 
+  advertismentPosition: [number, number]
   tabDialog: {
     open: boolean
     values: Pick<ScreensTab, 'name'>
@@ -27,8 +28,9 @@ export type State = {
 }
 const initialState: State = {
   initialized: false,
-  drawerOpened: true,
+  drawer: true,
   inspectByMouse: false,
+  advertismentPosition: [0, 0],
 
   highlightedScreen: '',
   tabDialog: {
@@ -63,6 +65,12 @@ export const slice = createSlice({
   name: 'layout',
   initialState,
   reducers: {
+    updateAdvertismentPosition(state, action: PayloadAction<[number, number]>) {
+      state.advertismentPosition = action.payload
+    },
+    toggleDrawer(state) {
+      state.drawer = !state.drawer
+    },
     toggleMouseInspect(state, action: PayloadAction<boolean | undefined>) {
       state.inspectByMouse =
         action.payload === undefined ? !state.inspectByMouse : action.payload
@@ -151,6 +159,8 @@ export const {
   updateScreenDialogValues,
 
   toggleHelpDialog,
+  toggleDrawer,
+  updateAdvertismentPosition,
 } = slice.actions
 
 export const scrollToScreen = createAction<string>('layout/scrollToScreen')
@@ -181,5 +191,9 @@ export const selectUserAgentDialog = (state: RootState) =>
 
 export const selectHelpDialog = (state: RootState) =>
   selectLayout(state).helpDialog
+
+export const selectDrawer = (state: RootState) => selectLayout(state).drawer
+export const selectAdvertismentPosition = (state: RootState) =>
+  selectLayout(state).advertismentPosition
 
 export default slice.reducer

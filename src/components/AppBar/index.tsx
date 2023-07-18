@@ -11,7 +11,11 @@ import CloseIcon from '@mui/icons-material/Close'
 
 import AppLogo from '../AppLogo'
 import { useAppDispatch } from '../../hooks/useAppDispatch'
-import { toggleHelpDialog, toggleScreenDialog } from '../../reducers/layout'
+import {
+  toggleDrawer,
+  toggleHelpDialog,
+  toggleScreenDialog,
+} from '../../reducers/layout'
 import { styled, lighten } from '@mui/material/styles'
 import Tools from './Tools'
 
@@ -49,7 +53,12 @@ const AppBar = () => {
         }}
       >
         <Stack spacing={2} direction="row">
-          <Logo />
+          <Logo
+            sx={{
+              cursor: 'pointer',
+            }}
+            onClick={() => dispatch(toggleDrawer())}
+          />
           <AddressBar />
         </Stack>
 

@@ -1,5 +1,8 @@
-import { Chip, styled } from '@mui/material'
+import { Box, Chip, IconButton, styled } from '@mui/material'
 import React, { useEffect, useRef, useState } from 'react'
+import { useAppSelector } from '../../hooks/useAppSelector'
+import { selectAdvertismentPosition } from '../../reducers/layout'
+import { useAppDispatch } from '../../hooks/useAppDispatch'
 
 type Message = {
   data: {
@@ -12,7 +15,7 @@ const AdBlockerMessage = styled('div')(({ theme }) => ({
   padding: theme.spacing(2),
   fontSize: 14,
 }))
-const Advertisement = () => {
+const Advertisement = ({ fixed }: { fixed?: boolean }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isLoaded, setIsLoaded] = useState(false)
   const [isAdsLoaded, setIsAdsLoaded] = useState(false)
@@ -54,8 +57,22 @@ const Advertisement = () => {
       clearTimeout(timer)
     }
   }, [isAdsLoaded, isLoaded])
+  const advertisementPosition = useAppSelector(selectAdvertismentPosition)
+  const dispatch = useAppDispatch()
+  let sx = fixed
+    ? {
+        position: 'absolute',
+        left: `clamp( 0px, ${advertisementPosition[0]}px, calc(100vw - 200px))`,
+        bottom: `clamp(0px, ${advertisementPosition[1]}px, calc(100vh - 200px))`,
+        zIndex: 100,
+        width: 200,
+        borderRadius: 2,
+        overflow: 'hidden',
+        background: 'rgb(33, 33, 33)',
+      }
+    : {}
   return (
-    <>
+    <Box sx={sx}>
       <iframe
         ref={iframeRef}
         width={20}
@@ -83,7 +100,7 @@ const Advertisement = () => {
           the importance of advertisements to keep ResponsiveViewer up to date.
         </AdBlockerMessage>
       )}
-    </>
+    </Box>
   )
 }
 
